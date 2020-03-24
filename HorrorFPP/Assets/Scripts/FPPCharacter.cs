@@ -11,6 +11,7 @@ public class FPPCharacter : MonoBehaviour
     [SerializeField] private float jumpPower = 5f;
 
     [SerializeField] private bool walkByDefault = true;
+    [SerializeField] private bool crouchByDefault = false;
     [SerializeField] private AdvancedSettings advanced = new AdvancedSettings();
 
     [System.Serializable]
@@ -25,7 +26,8 @@ public class FPPCharacter : MonoBehaviour
     private Rigidbody rigidbody;
 
     private const float jumpRayLength = 0.7f;
-    [SerializeField] public bool grounded { get; private set; }
+    public bool grounded { get; private set; }
+    public bool isCrouching { get; private set; }
 
     private Vector2 input;
 
@@ -34,12 +36,31 @@ public class FPPCharacter : MonoBehaviour
         capsule = GetComponent<CapsuleCollider>();
         rigidbody = GetComponent<Rigidbody>();
         grounded = true;
+        isCrouching = false;
     }
 
     void FixedUpdate()
     {
+        //check Sprint button
         bool walkOrRun = Input.GetKey(KeyCode.LeftShift);
         float speed = walkByDefault ? (walkOrRun ? runSpeed : walkSpeed) : (walkOrRun ? walkSpeed : runSpeed);
+
+
+        if (Input.GetKeyUp(KeyCode.C))
+        {
+            if(isCrouching)
+            {
+                capsule.height = 1.0f;
+                isCrouching = false;
+            }
+            else
+            {
+                capsule.height = 2.0f;
+                isCrouching = true;
+            }
+            
+        }
+      
 
         Ray ray = new Ray(transform.position, -transform.up);
 
