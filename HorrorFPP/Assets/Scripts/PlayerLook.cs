@@ -8,8 +8,15 @@ public class PlayerLook : MonoBehaviour
     [SerializeField] private float mouseSensitivity;
 
     [SerializeField] private Transform playerBody;
+    [SerializeField] private Vector2 rotationRange = new Vector2(-70.0f,70.0f);
 
     private float xAxisClamp;
+
+    private Vector3 targetAngles;
+    private Vector3 followAngles;
+    private Vector3 followVelocity;
+
+    public float dampingTime = 0.2f;
 
     private void Awake()
     {
@@ -22,6 +29,7 @@ public class PlayerLook : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
+
     private void Update()
     {
         CameraRotation();
@@ -33,21 +41,26 @@ public class PlayerLook : MonoBehaviour
         float mouseY = Input.GetAxis(mouseYInputName) * mouseSensitivity * Time.deltaTime;
 
         xAxisClamp += mouseY;
-        if(xAxisClamp>70)
+        if(xAxisClamp > rotationRange.y)
         {
-            xAxisClamp = 70.0f;
+            xAxisClamp = rotationRange.y;
             mouseY = 0;
-            ClampAxisRotationToValue(290.0f);
+            ClampAxisRotationToValue(360.0f - rotationRange.y);
         }
-        else if(xAxisClamp< -70)
+        else if(xAxisClamp< rotationRange.x)
         {
-            xAxisClamp = -70.0f;
+            xAxisClamp = rotationRange.x;
             mouseY = 0;
-            ClampAxisRotationToValue(70.0f);
+            ClampAxisRotationToValue(-rotationRange.x);
         }
 
-        transform.Rotate(Vector3.left * mouseY);
-        playerBody.Rotate(Vector3.up * mouseX);
+        targetAngles.x = mouseX;
+        targetAngles.y = mouseY;
+        followAngles = Vector3.SmoothDamp(followAngles, targetAngles, ref followAngles, dampingTime);
+
+        transform.Rotate(Vector3.left * followAngles.y);
+        playerBody.Rotate(Vector3.up * followAngles.x);
+
     }
 
     private void ClampAxisRotationToValue(float value)
