@@ -22,9 +22,10 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private KeyCode jumpKey;
     [SerializeField] private KeyCode runKey;
     [SerializeField] private KeyCode LeftLeanKey, RightLeanKey;
+    [SerializeField] private KeyCode crouchKey;
 
     private bool isJumping = false;
-
+ 
     [SerializeField] private Transform camera;
 
     //leaning params
@@ -32,14 +33,21 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private float leanSpeed = 5.0f;
     [SerializeField] private float leanBackSpeed = 6.0f;
 
+    //crouching params
+    private float standingHight;
+    private bool isCrouching = false;
+    [SerializeField] private float crouchHeight = 0.4f;
+    [SerializeField] private float crouchPosSpeed;
+
     private void Awake()
     {
         charController = GetComponent<CharacterController>();
+        standingHight = camera.localPosition.y;
     }
 
     private void Start()
     {
-        camera = GetComponent<Transform>();
+        //camera = GetComponent<Transform>();
     }
 
     private void Update()
@@ -63,6 +71,7 @@ public class PlayerMove : MonoBehaviour
         SetMovementSpeed();
         JumpInput();
         CheckLeaning();
+        CrouchInput();
     }
 
     private void SetMovementSpeed()
@@ -118,6 +127,33 @@ public class PlayerMove : MonoBehaviour
         isJumping = false;
     }
 
+    private void CrouchInput()
+    {
+        if(Input.GetKeyDown(crouchKey))
+        {
+            if(isCrouching)
+            {
+                isCrouching = false;
+                StartCoroutine(LerpFromTo(camera.localPosition, new Vector3(camera.localPosition.x, standingHight, camera.localPosition.z), crouchPosSpeed));
+            }
+            else
+            {
+               isCrouching = true;
+               StartCoroutine(LerpFromTo(camera.localPosition, new Vector3(camera.localPosition.x, crouchHeight, camera.localPosition.z), crouchPosSpeed));
+            }
+        }
+    }
+
+    private IEnumerator LerpFromTo(Vector3 pos1, Vector3 pos2, float duration)
+    {
+       duration = 1 / duration;
+       for(float t =0.0f; t<duration; t+= Time.deltaTime)
+        {
+            camera.localPosition = Vector3.Lerp(pos1, pos2, t / duration);
+            yield return null;
+        }
+    }
+
     private void CheckLeaning()
     {
         if(Input.GetKey(LeftLeanKey))
@@ -136,7 +172,7 @@ public class PlayerMove : MonoBehaviour
 
     private void Lean(float value)
     {
-        float currAngle = camera.rotation.eulerAngles.z;
+        float currAngle = transform.rotation.eulerAngles.z;
         float targetAngle;
 
         if (value == -1.0f)
@@ -170,8 +206,8 @@ public class PlayerMove : MonoBehaviour
        
 
         float angle = Mathf.Lerp(currAngle, targetAngle, leanSpeed * Time.deltaTime);
-        Quaternion rotAngle = Quaternion.Euler(camera.rotation.eulerAngles.x, camera.rotation.eulerAngles.y, angle);
-        camera.rotation = rotAngle;
+        Quaternion rotAngle = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, angle);
+        transform.rotation = rotAngle;
     }
 
 }

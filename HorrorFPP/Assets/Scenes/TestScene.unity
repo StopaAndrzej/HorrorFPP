@@ -320,6 +320,15 @@ MonoBehaviour:
   jumpMultiplier: 6
   jumpKey: 32
   runKey: 304
+  LeftLeanKey: 113
+  RightLeanKey: 101
+  crouchKey: 99
+  camera: {fileID: 915588607}
+  leanAngle: 35
+  leanSpeed: 5
+  leanBackSpeed: 6
+  crouchHeight: -0.25
+  crouchPosSpeed: 5.5
 --- !u!143 &304174301
 CharacterController:
   m_ObjectHideFlags: 0
@@ -862,6 +871,8 @@ MonoBehaviour:
   mouseYInputName: Mouse Y
   mouseSensitivity: 150
   playerBody: {fileID: 304174302}
+  rotationRange: {x: -70, y: 70}
+  dampingTime: 0.045
 --- !u!81 &915588609
 AudioListener:
   m_ObjectHideFlags: 0
