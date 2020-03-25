@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PlayerLook : MonoBehaviour
 {
-   [SerializeField] private string mouseXInputName, mouseYInputName;
-   [SerializeField] private float mouseSensitivity;
+    [SerializeField] private string mouseXInputName, mouseYInputName;
+    [SerializeField] private float mouseSensitivity;
 
     [SerializeField] private Transform playerBody;
 
@@ -33,26 +33,24 @@ public class PlayerLook : MonoBehaviour
         float mouseY = Input.GetAxis(mouseYInputName) * mouseSensitivity * Time.deltaTime;
 
         xAxisClamp += mouseY;
-
-        if(xAxisClamp >90.0f)
+        if(xAxisClamp>70)
         {
-            xAxisClamp = 90.0f;
-            mouseY = 0.0f;
-            ClampXAxisRotationToValue(270.0f);
+            xAxisClamp = 70.0f;
+            mouseY = 0;
+            ClampAxisRotationToValue(290.0f);
         }
-
-        else if (xAxisClamp < -90.0f)
+        else if(xAxisClamp< -70)
         {
-            xAxisClamp = -90.0f;
-            mouseY = 0.0f;
-            ClampXAxisRotationToValue(90.0f);
+            xAxisClamp = -70.0f;
+            mouseY = 0;
+            ClampAxisRotationToValue(70.0f);
         }
 
         transform.Rotate(Vector3.left * mouseY);
-        playerBody.Rotate(Vector3.up *mouseX);
+        playerBody.Rotate(Vector3.up * mouseX);
     }
 
-    private void ClampXAxisRotationToValue(float value)
+    private void ClampAxisRotationToValue(float value)
     {
         Vector3 eulerRotation = transform.eulerAngles;
         eulerRotation.x = value;
