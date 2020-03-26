@@ -74,6 +74,8 @@ public class PlayerMove : MonoBehaviour
     Vector3 previousVelocity = Vector3.zero;
     bool prevGrounded;
 
+    public float xTilt, zTilt;
+
     private void Awake()
     {
         charController = GetComponent<CharacterController>();
@@ -332,7 +334,7 @@ public class PlayerMove : MonoBehaviour
             springPosition = 0;
         }
 
-        float flatVelocity = new Vector3(velocity.x, 0.0f, velocity.z).magnitude;
+        float flatVelocity = new Vector3(velocity.x , 0.0f, velocity.z).magnitude;
 
         float strideLengthen = 1 + (flatVelocity * bobStrideSpeedLengthen);
 
@@ -353,10 +355,10 @@ public class PlayerMove : MonoBehaviour
             headBobFade = Mathf.Lerp(headBobFade, 1.0f, Time.deltaTime);
         }
 
-        float xTilt = -springPosition * jumpLandTilt;
-        float zTilt = bobSwayFactor * headBobSwayAngle * headBobFade;
+        xTilt = -springPosition * jumpLandTilt;
+        zTilt = bobSwayFactor * headBobSwayAngle * headBobFade;
 
-        camera.localRotation = Quaternion.Euler(xTilt, 0.0f, zTilt);
+        //camera.localRotation = Quaternion.Euler(xTilt, camera.localRotation.y , zTilt);
     }
 
 }

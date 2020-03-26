@@ -58,9 +58,9 @@ public class PlayerLook : MonoBehaviour
         targetAngles.y = mouseY;
         followAngles = Vector3.SmoothDamp(followAngles, targetAngles, ref followAngles, dampingTime);
 
-        transform.Rotate(Vector3.left * followAngles.y);
+        transform.Rotate(Vector3.left * (followAngles.y + playerBody.gameObject.GetComponent<PlayerMove>().xTilt * 0.25f));
         playerBody.Rotate(Vector3.up * followAngles.x);
-
+        //transform.Rotate(Vector3.forward * playerBody.gameObject.GetComponent<PlayerMove>().zTilt);
     }
 
     private void ClampAxisRotationToValue(float value)

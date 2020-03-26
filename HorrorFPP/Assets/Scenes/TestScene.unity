@@ -385,7 +385,7 @@ MonoBehaviour:
   runSpeed: 200
   crouchSpeed: 50
   runBuildUpSpeed: 4
-  crouchBuildSpeed: 0.5
+  crouchBuildSpeed: 4
   slopeForce: 5
   slopeForceRayLength: 1.5
   jumpFallOff:
@@ -425,6 +425,20 @@ MonoBehaviour:
   crouchHeight: 0
   crouchPosSpeed: 2.5
   crouchAboveRayLength: 0
+  restPosition: {x: 0, y: 0, z: 0}
+  transitionSpeed: 20
+  bobSpeed: 5
+  bobAmount: 0.2
+  headBobFrequency: 1.5
+  headBobSwayAngle: 0.5
+  headBobSideMovement: 0.05
+  headBobSpeedMultiplier: 0.3
+  headBobHeight: 0.3
+  bobStrideSpeedLengthen: 0.3
+  jumpLandMove: 3
+  jumpLandTilt: 60
+  originalLocalPostion: {x: 0, y: 0, z: 0}
+  previousPosition: {x: 0, y: 0, z: 0}
 --- !u!143 &304174301
 CharacterController:
   m_ObjectHideFlags: 0
