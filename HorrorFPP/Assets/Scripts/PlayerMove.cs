@@ -211,7 +211,7 @@ public class PlayerMove : MonoBehaviour
 
         if (!isCrouching)
         {
-            camera.position -= Vector3.up * 0.5f;
+            restPosition += Vector3.up * 0.6f;
             charController.height = 2.0f;
 
         }
@@ -226,7 +226,11 @@ public class PlayerMove : MonoBehaviour
        if(isCrouching)
         {
             charController.height = 1.0f;
+            restPosition -= Vector3.up * 0.6f;
+            //camera.localPosition += Vector3.up * 5.0f;
+            //originalLocalPostion += Vector3.up * 0.5f;
         }
+            //camera.position += Vector3.up * 0.5f;
 
 
        
