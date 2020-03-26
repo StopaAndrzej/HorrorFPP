@@ -76,15 +76,30 @@ public class PlayerMove : MonoBehaviour
 
     public float xTilt, zTilt;
 
+
+    //headbobing diff states params
+    [SerializeField] private float crouchSpeedheadBob = 2.0f;
+    [SerializeField] private float runSpeedheadBob = 10.0f;
+    [SerializeField] private float defaultSpeedheadBob = 5.0f;
+
+    [SerializeField] private float crouchAmountheadBob = 0.1f;
+    [SerializeField] private float runAmountheadBob = 0.1f;
+    [SerializeField] private float defaultAmountheadBob = 0.2f;
+
+    [SerializeField] private float standardCameraFieldOfView = 60.0f;
+    [SerializeField] private float crouchCameraFieldOfView = 50.0f;
+    [SerializeField] private float runCameraFieldOfView = 75.0f;
+    [SerializeField] private float jumpCameraFieldOfView = 90.0f;
+
     private void Awake()
     {
         charController = GetComponent<CharacterController>();
         standingHight = camera.localPosition.y;
+        camera.gameObject.GetComponent<Camera>().fieldOfView = standardCameraFieldOfView;
     }
 
     private void Start()
     {
-        //camera = GetComponent<Transform>();
         crouchAboveRayLength = 1.0f - crouchHeight;
         restPosition = camera.transform.localPosition;
 
@@ -120,17 +135,41 @@ public class PlayerMove : MonoBehaviour
 
     private void SetMovementSpeed()
     {
+        //additional change camera field of view when jump value increase/decrease
+        if(isJumping)
+        {
+            float jumpingVelocity = 0.0f;
+            if(camera.localPosition.y>jumpingVelocity)
+            {
+                camera.gameObject.GetComponent<Camera>().fieldOfView = Mathf.Lerp(camera.gameObject.GetComponent<Camera>().fieldOfView, jumpCameraFieldOfView, Time.deltaTime * 5.0f);
+            }
+            else
+            {
+                camera.gameObject.GetComponent<Camera>().fieldOfView = Mathf.Lerp(camera.gameObject.GetComponent<Camera>().fieldOfView, standardCameraFieldOfView, Time.deltaTime * 10.0f);
+            }
+
+            jumpingVelocity = camera.localPosition.y;
+        }
+
+
         if(isCrouching)
         {
             movementSpeed = Mathf.Lerp(movementSpeed, crouchSpeed, Time.deltaTime * crouchBuildSpeed);
+            camera.gameObject.GetComponent<Camera>().fieldOfView = Mathf.Lerp(camera.gameObject.GetComponent<Camera>().fieldOfView, crouchCameraFieldOfView, Time.deltaTime * 1.1f);
         }
         else if(Input.GetKey(runKey))
         {
             movementSpeed = Mathf.Lerp(movementSpeed, runSpeed, Time.deltaTime * runBuildUpSpeed);
+            camera.gameObject.GetComponent<Camera>().fieldOfView = Mathf.Lerp(camera.gameObject.GetComponent<Camera>().fieldOfView, runCameraFieldOfView, Time.deltaTime * 1.1f);
+            bobSpeed = Mathf.Lerp(bobSpeed, runSpeedheadBob, Time.deltaTime * 10.1f);
+            bobAmount = Mathf.Lerp(bobAmount, runAmountheadBob, Time.deltaTime * 10.1f);
         }
         else
         {
             movementSpeed = Mathf.Lerp(movementSpeed, walkSpeed, Time.deltaTime * runBuildUpSpeed);
+            camera.gameObject.GetComponent<Camera>().fieldOfView = Mathf.Lerp(camera.gameObject.GetComponent<Camera>().fieldOfView, standardCameraFieldOfView, Time.deltaTime * 1.1f);
+            bobSpeed = Mathf.Lerp(bobSpeed, defaultSpeedheadBob, Time.deltaTime * 10.1f);
+            bobAmount = Mathf.Lerp(bobAmount, defaultAmountheadBob, Time.deltaTime * 10.1f);
         }
     }
 
@@ -195,12 +234,16 @@ public class PlayerMove : MonoBehaviour
                 {
                     isCrouching = false;
                     StartCoroutine(LerpFromTo(camera.localPosition, new Vector3(camera.localPosition.x, standingHight, camera.localPosition.z), crouchPosSpeed));
+                    bobSpeed = defaultSpeedheadBob;
+                    bobAmount = defaultAmountheadBob;
                 } 
             }
             else
             {
                isCrouching = true;
                StartCoroutine(LerpFromTo(camera.localPosition, new Vector3(camera.localPosition.x, crouchHeight, camera.localPosition.z), crouchPosSpeed));
+               bobSpeed = crouchSpeedheadBob;
+               bobAmount = crouchAmountheadBob;
             }
         }
     }
@@ -227,10 +270,10 @@ public class PlayerMove : MonoBehaviour
         {
             charController.height = 1.0f;
             restPosition -= Vector3.up * 0.6f;
-            //camera.localPosition += Vector3.up * 5.0f;
-            //originalLocalPostion += Vector3.up * 0.5f;
+
+
         }
-            //camera.position += Vector3.up * 0.5f;
+           
 
 
        
