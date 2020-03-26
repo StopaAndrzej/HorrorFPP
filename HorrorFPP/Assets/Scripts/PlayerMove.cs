@@ -8,8 +8,8 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private string verticalInputName;
     private float movementSpeed;
 
-    [SerializeField] private float walkSpeed, runSpeed;
-    [SerializeField] private float runBuildUpSpeed;
+    [SerializeField] private float walkSpeed, runSpeed, crouchSpeed;
+    [SerializeField] private float runBuildUpSpeed, crouchBuildSpeed;
 
     [SerializeField] private float slopeForce;
     [SerializeField] private float slopeForceRayLength;
@@ -36,8 +36,9 @@ public class PlayerMove : MonoBehaviour
     //crouching params
     private float standingHight;
     private bool isCrouching = false;
-    [SerializeField] private float crouchHeight = 0.4f;
+    [SerializeField] private float crouchHeight = 0.0f;
     [SerializeField] private float crouchPosSpeed;
+    [SerializeField] private float crouchAboveRayLength;
 
     private void Awake()
     {
@@ -48,6 +49,7 @@ public class PlayerMove : MonoBehaviour
     private void Start()
     {
         //camera = GetComponent<Transform>();
+        crouchAboveRayLength = 1.0f - crouchHeight;
     }
 
     private void Update()
@@ -76,7 +78,11 @@ public class PlayerMove : MonoBehaviour
 
     private void SetMovementSpeed()
     {
-        if(Input.GetKey(runKey))
+        if(isCrouching)
+        {
+            movementSpeed = Mathf.Lerp(movementSpeed, crouchSpeed, Time.deltaTime * crouchBuildSpeed);
+        }
+        else if(Input.GetKey(runKey))
         {
             movementSpeed = Mathf.Lerp(movementSpeed, runSpeed, Time.deltaTime * runBuildUpSpeed);
         }
@@ -100,6 +106,16 @@ public class PlayerMove : MonoBehaviour
         }
 
         return false;
+    }
+
+    private bool CheckIfCanStand()
+    {
+        RaycastHit hit;
+        if(Physics.Raycast(transform.position, Vector3.up, out hit, crouchAboveRayLength))
+        {
+            return false;
+        }
+        return true;
     }
 
     private void JumpInput()
@@ -133,8 +149,11 @@ public class PlayerMove : MonoBehaviour
         {
             if(isCrouching)
             {
-                isCrouching = false;
-                StartCoroutine(LerpFromTo(camera.localPosition, new Vector3(camera.localPosition.x, standingHight, camera.localPosition.z), crouchPosSpeed));
+                if (CheckIfCanStand())
+                {
+                    isCrouching = false;
+                    StartCoroutine(LerpFromTo(camera.localPosition, new Vector3(camera.localPosition.x, standingHight, camera.localPosition.z), crouchPosSpeed));
+                } 
             }
             else
             {
@@ -146,12 +165,29 @@ public class PlayerMove : MonoBehaviour
 
     private IEnumerator LerpFromTo(Vector3 pos1, Vector3 pos2, float duration)
     {
-       duration = 1 / duration;
+        movementSpeed = 0.0f;
+
+        if (!isCrouching)
+        {
+            camera.position -= Vector3.up * 0.5f;
+            charController.height = 2.0f;
+
+        }
+
+        duration = 1 / duration;
        for(float t =0.0f; t<duration; t+= Time.deltaTime)
         {
             camera.localPosition = Vector3.Lerp(pos1, pos2, t / duration);
             yield return null;
         }
+
+       if(isCrouching)
+        {
+            charController.height = 1.0f;
+        }
+
+
+       
     }
 
     private void CheckLeaning()
