@@ -40,6 +40,15 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private float crouchPosSpeed;
     [SerializeField] private float crouchAboveRayLength;
 
+    //headbobing
+    public Vector3 restPosition;
+
+    [SerializeField] private float transitionSpeed = 20f; //smooths between moving to not moving
+    [SerializeField] private float bobSpeed = 5.0f;
+    [SerializeField] private float bobAmount = 0.05f;
+
+    private float timer = Mathf.PI / 2;
+
     private void Awake()
     {
         charController = GetComponent<CharacterController>();
@@ -50,6 +59,7 @@ public class PlayerMove : MonoBehaviour
     {
         //camera = GetComponent<Transform>();
         crouchAboveRayLength = 1.0f - crouchHeight;
+        restPosition = camera.transform.localPosition;
     }
 
     private void Update()
@@ -74,6 +84,7 @@ public class PlayerMove : MonoBehaviour
         JumpInput();
         CheckLeaning();
         CrouchInput();
+        HeadBobing();
     }
 
     private void SetMovementSpeed()
@@ -244,6 +255,32 @@ public class PlayerMove : MonoBehaviour
         float angle = Mathf.Lerp(currAngle, targetAngle, leanSpeed * Time.deltaTime);
         Quaternion rotAngle = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, angle);
         transform.rotation = rotAngle;
+    }
+
+    private void HeadBobing()
+    {
+
+        if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)    //moving
+        {
+            timer += bobSpeed * Time.deltaTime;
+
+            Vector3 newPosition = new Vector3(Mathf.Cos(timer) * bobAmount, restPosition.y + Mathf.Abs((Mathf.Sin(timer) * bobAmount)), restPosition.z);
+            camera.transform.localPosition = newPosition;
+        }
+        else
+        {
+            timer = Mathf.PI / 2.0f;
+
+            Vector3 newPosition = new Vector3(Mathf.Lerp(camera.transform.localPosition.x, restPosition.x, transitionSpeed * Time.deltaTime),
+                Mathf.Lerp(camera.transform.localPosition.y, restPosition.y, transitionSpeed * Time.deltaTime), Mathf.Lerp(camera.transform.localPosition.z, restPosition.z, transitionSpeed * Time.deltaTime));
+
+            camera.transform.localPosition = newPosition;
+        }
+
+        if (timer > Mathf.PI * 2)    //complete a full cycle on the unit circle. reset to 0 to aviod bloated values
+        {
+            timer = 0;
+        }
     }
 
 }
