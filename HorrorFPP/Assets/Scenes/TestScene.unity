@@ -439,6 +439,18 @@ MonoBehaviour:
   jumpLandTilt: 60
   originalLocalPostion: {x: 0, y: 0, z: 0}
   previousPosition: {x: 0, y: 0, z: 0}
+  xTilt: 0
+  zTilt: 0
+  crouchSpeedheadBob: 2
+  runSpeedheadBob: 10
+  defaultSpeedheadBob: 5
+  crouchAmountheadBob: 0.1
+  runAmountheadBob: 0.05
+  defaultAmountheadBob: 0.1
+  standardCameraFieldOfView: 60
+  crouchCameraFieldOfView: 50
+  runCameraFieldOfView: 75
+  jumpCameraFieldOfView: 90
 --- !u!143 &304174301
 CharacterController:
   m_ObjectHideFlags: 0
