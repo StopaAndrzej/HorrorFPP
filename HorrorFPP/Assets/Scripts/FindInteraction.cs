@@ -11,6 +11,11 @@ public class FindInteraction : MonoBehaviour
     [SerializeField] private KeyCode interactButton;
 
 
+    [SerializeField] private Shader defaultShader;
+    [SerializeField] private Shader outlineShader;
+
+    private bool selected = false;
+
     private void Update()
     {
         RaycastHit hit;
@@ -21,6 +26,10 @@ public class FindInteraction : MonoBehaviour
             if(hit.collider.CompareTag("Object"))
             {
                 raycastedObject = hit.collider.gameObject;
+
+                foreach (Transform child in raycastedObject.transform)
+                    child.GetComponent<MeshRenderer>().material.shader = outlineShader;
+
                 Debug.Log("Interactive object found!");
 
                 if(Input.GetKeyDown(interactButton))
@@ -28,6 +37,14 @@ public class FindInteraction : MonoBehaviour
                     Debug.Log("DO IT!");
                 }
             }
+
+            selected = true;
+        }
+        else if(selected)
+        {
+            selected = false;
+            foreach (Transform child in raycastedObject.transform)
+                child.GetComponent<MeshRenderer>().material.shader = defaultShader;
         }
     }
 }
