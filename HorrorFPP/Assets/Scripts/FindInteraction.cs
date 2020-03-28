@@ -25,6 +25,12 @@ public class FindInteraction : MonoBehaviour
         {
             if(hit.collider.CompareTag("Object"))
             {
+                if(raycastedObject!=null && raycastedObject!= hit.collider.gameObject)
+                {
+                    foreach (Transform child in raycastedObject.transform)
+                        child.GetComponent<MeshRenderer>().material.shader = defaultShader;
+                }
+
                 raycastedObject = hit.collider.gameObject;
 
                 foreach (Transform child in raycastedObject.transform)
@@ -44,7 +50,12 @@ public class FindInteraction : MonoBehaviour
         {
             selected = false;
             foreach (Transform child in raycastedObject.transform)
+            {
                 child.GetComponent<MeshRenderer>().material.shader = defaultShader;
+            }
+            raycastedObject = null;
+
+
         }
     }
 }
