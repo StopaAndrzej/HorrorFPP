@@ -41,6 +41,7 @@ public class FindInteraction : MonoBehaviour
                 if(Input.GetKeyDown(interactButton))
                 {
                     Debug.Log("DO IT!");
+                    raycastedObject.GetComponent<InteractableObjectBase>().Interact();
                 }
             }
 

@@ -91,6 +91,10 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private float runCameraFieldOfView = 75.0f;
     [SerializeField] private float jumpCameraFieldOfView = 90.0f;
 
+    //rotation-inspection flag. disable player movement
+    public bool inspectMode = false;
+    public Material blurMaterial;
+
     private void Awake()
     {
         charController = GetComponent<CharacterController>();
@@ -105,11 +109,46 @@ public class PlayerMove : MonoBehaviour
 
         originalLocalPostion = camera.localPosition;
         previousPosition = GetComponent<Transform>().position;
+
+        blurMaterial.SetVector("_Color", new Vector4(1, 1, 1, 1));
+        blurMaterial.SetFloat("_Size", 0.0f);
     }
 
     private void Update()
     {
-        PlayerMovement();
+        //disable player movement if inspection mode is active
+        if(!inspectMode)
+        {
+            PlayerMovement();
+
+            //blur
+            blurMaterial.SetFloat("_Size", Mathf.Lerp(blurMaterial.GetFloat("_Size"), 0.0f, Time.deltaTime * 8.0f));
+            if (blurMaterial.GetFloat("_Size") < 0.1f)
+                blurMaterial.SetFloat("_Size", 0.0f);
+
+            blurMaterial.SetVector("_Color", new Vector4(Mathf.Lerp(blurMaterial.GetVector("_Color").x, 1, Time.deltaTime*4.0f), Mathf.Lerp(blurMaterial.GetVector("_Color").y, 1, Time.deltaTime * 4.0f), Mathf.Lerp(blurMaterial.GetVector("_Color").z, 1, Time.deltaTime * 4.0f), 1));
+            if (blurMaterial.GetVector("_Color").x > 0.99f)
+                blurMaterial.SetVector("_Color", new Vector4(1, 1, 1, 1));
+        }
+        else
+        {
+            //blur
+            //blurMaterial.SetFloat("_Size", Mathf.Lerp(blurMaterial.GetFloat("_Size"),20.0f, Time.deltaTime*2.0f));
+            //if (blurMaterial.GetFloat("_Size") > 19.0f)
+            //    blurMaterial.SetFloat("_Size", 20.0f);
+
+            //blurMaterial.SetVector("_Color", new Vector4(Mathf.Lerp(blurMaterial.GetVector("_Color").x,0, Time.deltaTime), Mathf.Lerp(blurMaterial.GetVector("_Color").y, 0, Time.deltaTime), Mathf.Lerp(blurMaterial.GetVector("_Color").z, 0, Time.deltaTime), 1));
+            //if (blurMaterial.GetVector("_Color").x < 0.01f)
+            //    blurMaterial.SetVector("_Color", new Vector4(0, 0, 0, 1));
+
+            Inspect();
+        }
+    }
+
+    private void Inspect()
+    {
+        //object rotation
+
     }
 
     private void PlayerMovement()

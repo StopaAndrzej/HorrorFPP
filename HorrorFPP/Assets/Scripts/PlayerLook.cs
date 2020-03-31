@@ -32,7 +32,9 @@ public class PlayerLook : MonoBehaviour
 
     private void Update()
     {
-        CameraRotation();
+        //disable player movement if inspection mode is active
+        if (!playerBody.GetComponent<PlayerMove>().inspectMode)
+            CameraRotation();
     }
 
     private void CameraRotation()
@@ -62,6 +64,8 @@ public class PlayerLook : MonoBehaviour
         playerBody.Rotate(Vector3.up * followAngles.x);
         //transform.Rotate(Vector3.forward * playerBody.gameObject.GetComponent<PlayerMove>().zTilt);
     }
+
+    
 
     private void ClampAxisRotationToValue(float value)
     {
