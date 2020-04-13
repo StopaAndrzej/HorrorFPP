@@ -28,13 +28,19 @@ public class FindInteraction : MonoBehaviour
                 if(raycastedObject!=null && raycastedObject!= hit.collider.gameObject)
                 {
                     foreach (Transform child in raycastedObject.transform)
-                        child.GetComponent<MeshRenderer>().material.shader = defaultShader;
+                    {
+                        if(child.GetComponent<MeshRenderer>())
+                            child.GetComponent<MeshRenderer>().material.shader = defaultShader;
+                    }
                 }
 
                 raycastedObject = hit.collider.gameObject;
 
                 foreach (Transform child in raycastedObject.transform)
-                    child.GetComponent<MeshRenderer>().material.shader = outlineShader;
+                {
+                    if (child.GetComponent<MeshRenderer>())
+                        child.GetComponent<MeshRenderer>().material.shader = outlineShader;
+                }
 
                 Debug.Log("Interactive object found!");
 
@@ -52,7 +58,8 @@ public class FindInteraction : MonoBehaviour
             selected = false;
             foreach (Transform child in raycastedObject.transform)
             {
-                child.GetComponent<MeshRenderer>().material.shader = defaultShader;
+                if (child.GetComponent<MeshRenderer>())
+                    child.GetComponent<MeshRenderer>().material.shader = defaultShader;
             }
             raycastedObject = null;
 

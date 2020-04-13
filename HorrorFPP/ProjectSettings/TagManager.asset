@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Object
+  - DropArea
   layers:
   - Default
   - TransparentFX
@@ -16,9 +17,9 @@ TagManager:
   - 
   - PostProcessing
   - Interact
-  - 
-  - 
-  - 
+  - Inspect
+  - Focused
+  - Me
   - 
   - 
   - 

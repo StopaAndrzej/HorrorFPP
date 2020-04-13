@@ -95,6 +95,9 @@ public class PlayerMove : MonoBehaviour
     public bool inspectMode = false;
     public Material blurMaterial;
 
+    //canvas dot cursor
+    public GameObject dotCursor;
+
     private void Awake()
     {
         charController = GetComponent<CharacterController>();
@@ -112,6 +115,8 @@ public class PlayerMove : MonoBehaviour
 
         blurMaterial.SetVector("_Color", new Vector4(1, 1, 1, 1));
         blurMaterial.SetFloat("_Size", 0.0f);
+
+        dotCursor.SetActive(true);
     }
 
     private void Update()
@@ -121,6 +126,7 @@ public class PlayerMove : MonoBehaviour
         {
             PlayerMovement();
 
+            dotCursor.SetActive(true);
             //blur
             blurMaterial.SetFloat("_Size", Mathf.Lerp(blurMaterial.GetFloat("_Size"), 0.0f, Time.deltaTime * 8.0f));
             if (blurMaterial.GetFloat("_Size") < 0.1f)
@@ -132,14 +138,15 @@ public class PlayerMove : MonoBehaviour
         }
         else
         {
+            dotCursor.SetActive(false);
             //blur
-            //blurMaterial.SetFloat("_Size", Mathf.Lerp(blurMaterial.GetFloat("_Size"),20.0f, Time.deltaTime*2.0f));
-            //if (blurMaterial.GetFloat("_Size") > 19.0f)
-            //    blurMaterial.SetFloat("_Size", 20.0f);
+            blurMaterial.SetFloat("_Size", Mathf.Lerp(blurMaterial.GetFloat("_Size"), 20.0f, Time.deltaTime * 2.0f));
+            if (blurMaterial.GetFloat("_Size") > 19.0f)
+                blurMaterial.SetFloat("_Size", 20.0f);
 
-            //blurMaterial.SetVector("_Color", new Vector4(Mathf.Lerp(blurMaterial.GetVector("_Color").x,0, Time.deltaTime), Mathf.Lerp(blurMaterial.GetVector("_Color").y, 0, Time.deltaTime), Mathf.Lerp(blurMaterial.GetVector("_Color").z, 0, Time.deltaTime), 1));
-            //if (blurMaterial.GetVector("_Color").x < 0.01f)
-            //    blurMaterial.SetVector("_Color", new Vector4(0, 0, 0, 1));
+            blurMaterial.SetVector("_Color", new Vector4(Mathf.Lerp(blurMaterial.GetVector("_Color").x, 0, Time.deltaTime), Mathf.Lerp(blurMaterial.GetVector("_Color").y, 0, Time.deltaTime), Mathf.Lerp(blurMaterial.GetVector("_Color").z, 0, Time.deltaTime), 1));
+            if (blurMaterial.GetVector("_Color").x < 0.01f)
+                blurMaterial.SetVector("_Color", new Vector4(0, 0, 0, 1));
 
             Inspect();
         }
