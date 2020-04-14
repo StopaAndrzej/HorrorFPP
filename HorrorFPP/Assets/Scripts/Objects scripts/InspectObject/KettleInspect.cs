@@ -7,6 +7,7 @@ using UnityEngine.Rendering.PostProcessing;
 public class KettleInspect : MonoBehaviour
 {
     [SerializeField] private PlayerMove playerComponent;
+    [SerializeField] private KettleDoor kettleDoor;
 
     [SerializeField] private Text objectName;
     [SerializeField] private Text press;
@@ -102,9 +103,10 @@ public class KettleInspect : MonoBehaviour
                             pickUpScript.stopFlag = true;
                             press.enabled = false;
                             inspectModeFlag = true;
-                            describtion.text = description;
-                            describtion.enabled = true;
-                            StartCoroutine(ShowText());
+                            kettleDoor.Interact();
+                           // describtion.text = description;
+                            //describtion.enabled = true;
+                            //StartCoroutine(ShowText());
                         }
                     }
                 }
@@ -118,7 +120,9 @@ public class KettleInspect : MonoBehaviour
 
                     if (Input.GetKeyDown(interactionKey))
                     {
-                        //unpacked = true;
+                        describtion.text = description;
+                        describtion.enabled = true;
+                        StartCoroutine(ShowText());
                     }
                 }
             }

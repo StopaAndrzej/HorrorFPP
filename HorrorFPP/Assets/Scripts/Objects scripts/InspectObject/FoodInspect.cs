@@ -46,16 +46,32 @@ public class FoodInspect : MonoBehaviour
     [SerializeField] private PostProcessVolume cameraPostProcVolume;
     private bool unpacked = false;
     bool backFromBlackToScreenFlag = false;
-    private Animator animator;
 
     //diff food states
-    public bool isSpoiled = false;
-    [SerializeField] private GameObject[] spoiledTextures;
+    //public bool isSpoiled = false;
+    public int foodCondition = 0; // 0 -raw 1 - cooked 2 - spoiled
+
+    public Material meatRaw;
+    public Material meatSpoiled;
+
+    public Material potatoesRaw;
+    public Material potatoesSpoiled;
+
+    public Material saladRaw;
+    public Material saladSpoiled;
+
+
+    public MeshRenderer meatTexture;
+    public MeshRenderer potatoTexture;
+    public MeshRenderer saladTexture;
 
     private void Awake()
     {
         objectName.text = "LUNCH";
-        animator = inProgressBar.GetComponent<Animator>();
+
+        meatTexture = transform.Find("Meat").GetComponent< MeshRenderer >();
+        potatoTexture = transform.Find("Potatoes").GetComponent<MeshRenderer>();
+        saladTexture = transform.Find("Salad").GetComponent<MeshRenderer>();
     }
 
     private void Start()
@@ -76,13 +92,33 @@ public class FoodInspect : MonoBehaviour
         pressPos1 = -182.0f;
         pressPos2 = 182.0f;
 
-        //hide spoiled food textures
-        foreach (GameObject element in spoiledTextures)
-            element.SetActive(false);
     }
 
     private void Update()
     {
+        switch(foodCondition)
+        {
+            case 0:
+                meatTexture.material = meatRaw;
+                potatoTexture.material = potatoesRaw;
+                saladTexture.material = saladRaw;
+                break;
+            case 1:
+                break;
+            case 2:
+                meatTexture.material = meatSpoiled;
+                potatoTexture.material = potatoesSpoiled;
+                saladTexture.material = saladSpoiled;
+                break;
+            default:
+                meatTexture.material = meatSpoiled;
+                potatoTexture.material = potatoesSpoiled;
+                saladTexture.material = saladSpoiled;
+                break;
+             
+        }
+
+
         if (unpacked)
             Unpack();
 
@@ -93,6 +129,7 @@ public class FoodInspect : MonoBehaviour
                 press.GetComponent<RectTransform>().localPosition = new Vector3(press.GetComponent<RectTransform>().localPosition.x, pressPos1, press.GetComponent<RectTransform>().localPosition.z);
             }
 
+            objectName.text = objectNameTitle;
             objectName.enabled = true;
 
             RaycastHit hit;
@@ -136,6 +173,7 @@ public class FoodInspect : MonoBehaviour
 
                     if (Input.GetKeyDown(interactionKey))
                     {
+                        inProgressBar.text = inProgressInfo;
                         unpacked = true;
                     }
                 }
@@ -194,7 +232,6 @@ public class FoodInspect : MonoBehaviour
             if (colorGradingLayer.postExposure.value < -20.0f)
             {
                 inProgressBar.enabled = true;
-                animator.SetBool("isActive", true);
             }
                 
 
@@ -213,7 +250,6 @@ public class FoodInspect : MonoBehaviour
 
             if (colorGradingLayer.postExposure.value > -0.15f)
             {
-                animator.SetBool("isActive", false);
                 inProgressBar.enabled = false;
             }
 

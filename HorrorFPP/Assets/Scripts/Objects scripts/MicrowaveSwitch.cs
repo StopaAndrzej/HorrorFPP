@@ -23,13 +23,26 @@ public class MicrowaveSwitch : InteractableObjectBase
                 animator.SetBool("isActive", true);
                 manager.stwichOn = true;
                 isActive = true;
-            }
+
+                manager.door.material = manager.doorActive;
+                manager.backDoor.material = manager.backDoorActive;
+                manager.inside.material = manager.insideActive;
+                manager.plate.material = manager.plateActive;
+                manager.console.material = manager.consoleActive;
+            }                    
         }
     }
 
     void DeactivateMicrowave()
     {
         animator.SetBool("isActive", false);
+        isActive = false;
+        manager.Cook();
+        manager.door.material = manager.doorNoActive;
+        manager.backDoor.material = manager.backDoorNoActive;
+        manager.inside.material = manager.insideNoActive;
+        manager.plate.material = manager.plateNoActive;
+        manager.console.material = manager.consoleNoActive;
     }
 }
 

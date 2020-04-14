@@ -23,7 +23,7 @@ public class PickUp : InteractableObjectBase
     public bool isGrabbed = false;
 
     //additinal list of children's colliders to switch on/off
-    [SerializeField] List<GameObject> additionalColliders;
+    public List<GameObject> additionalColliders;
 
     private void Start()
     {

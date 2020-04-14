@@ -9,28 +9,7 @@ public class MicrowaveDoor : InteractableObjectBase
 
     [SerializeField] private MicrowaveManager manager;
 
-    //
-    public Material turnOffMat;
-    public Material turnOnMat;
-    public Material turnOffMatBlood;
-    public Material turnOnMatBlood;
-
-    public Material turnOffMatBack;
-    public Material turnOffMatBackBlood;
-
-    public Material plate;
-    public Material plateBlood;
-
-    public Material inside;
-    public Material insideBlood;
-
-    //
-    public MeshRenderer doorFrontMesh;
-    public MeshRenderer doorBackMesh;
-    public MeshRenderer insideMesh;
-    public MeshRenderer plateMesh;
-
-
+    
     private void Start()
     {
         animator = GetComponent<Animator>();
