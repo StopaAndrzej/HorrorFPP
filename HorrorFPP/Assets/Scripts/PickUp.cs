@@ -33,13 +33,13 @@ public class PickUp : InteractableObjectBase
 
     void Grab()
     {
-        GetComponent<BoxCollider>().enabled = false;
         GetComponent<Rigidbody>().useGravity = false;
         this.transform.position = destinationPos.position;
         this.transform.localRotation = new Quaternion(0, 0, 0, 0);
-       // this.transform.localScale = objScale;
         this.transform.parent = GameObject.Find("Destination").transform;
 
+        GetComponent<Rigidbody>().useGravity = false;
+        GetComponent<BoxCollider>().enabled = false;
         foreach (GameObject element in additionalColliders)
             element.GetComponent<BoxCollider>().enabled = false;
     }
@@ -88,7 +88,7 @@ public class PickUp : InteractableObjectBase
             //show drop points
             foreach(GameObject element in playerEquipment.kitchenDrops)
             {
-                element.SetActive(true);
+                element.GetComponent<MeshRenderer>().enabled = true;
             }
 
             RaycastHit hit;
@@ -120,7 +120,7 @@ public class PickUp : InteractableObjectBase
         {
             foreach (GameObject element in playerEquipment.kitchenDrops)
             {
-                element.SetActive(false);
+                element.GetComponent<MeshRenderer>().enabled = false;
             }
 
         }

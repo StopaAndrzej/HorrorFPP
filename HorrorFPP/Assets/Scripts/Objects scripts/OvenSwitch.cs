@@ -6,23 +6,40 @@ public class OvenSwitch : InteractableObjectBase
 {
     private bool isActive = false;
     [SerializeField] private Animator animator;
+    [SerializeField] private OvenManager manager;
+
     private void Start()
     {
         animator = GetComponent<Animator>();
     }
+
     public override void Interact()
     {
-        if (isActive)
+        if (!manager.doorOpen)
         {
-            interactText = "NotActive";
-            animator.SetBool("isActive", false);
+            if (!isActive)
+            {
+                interactText = "Active";
+                animator.SetBool("isActive", true);
+                manager.stwichOn = true;
+                isActive = true;
+            }
         }
-        else
-        {
-            interactText = "Active";
-            animator.SetBool("isActive", true);
-        }
+    }
+    void ActivateOven()
+    {
+        manager.door.material = manager.doorActive;
+        manager.plate.material = manager.inside;
+    }
 
-        isActive = !isActive;
+    void DeactivateOven()
+    {
+        animator.SetBool("isActive", false);
+        isActive = false;
+        manager.stwichOn = false;
+        manager.Cook();
+        manager.door.material = manager.doorNoActive;
+        manager.plate.material = manager.inside;
     }
 }
+

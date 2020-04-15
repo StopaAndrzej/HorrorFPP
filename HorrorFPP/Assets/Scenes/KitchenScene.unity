@@ -894,8 +894,9 @@ GameObject:
   - component: {fileID: 210173427}
   - component: {fileID: 210173426}
   - component: {fileID: 210173425}
+  - component: {fileID: 210173428}
   m_Layer: 9
-  m_Name: interactiveDrop (2)
+  m_Name: InteractiveDropTap
   m_TagString: DropArea
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -909,11 +910,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 210173423}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.461, y: -0.509, z: 5.841}
-  m_LocalScale: {x: 0.106249996, y: 0.106249996, z: 0.106249996}
+  m_LocalPosition: {x: 0.4606907, y: 1.7261536, z: -0.19615215}
+  m_LocalScale: {x: 0.1539855, y: 0.1539855, z: 0.1539855}
   m_Children: []
-  m_Father: {fileID: 1251980689}
-  m_RootOrder: 6
+  m_Father: {fileID: 5006512736296341598}
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &210173425
 BoxCollider:
@@ -974,6 +975,20 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 210173423}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &210173428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 210173423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73b9d4d4ee139ce4b94c70fc32ef9dea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collider: {fileID: 0}
+  tapWaterFall: {fileID: 0}
 --- !u!1 &214120813
 GameObject:
   m_ObjectHideFlags: 0
@@ -1130,6 +1145,7 @@ MonoBehaviour:
   name: 
   interactText: Do it!
   animator: {fileID: 218274626}
+  manager: {fileID: 2019787553808650645}
 --- !u!95 &218274626
 Animator:
   serializedVersion: 3
@@ -2004,8 +2020,9 @@ GameObject:
   - component: {fileID: 379660770}
   - component: {fileID: 379660769}
   - component: {fileID: 379660768}
+  - component: {fileID: 379660771}
   m_Layer: 9
-  m_Name: interactiveDrop (1)
+  m_Name: interactiveDropOven
   m_TagString: DropArea
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2018,12 +2035,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 379660766}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.225, y: -0.998, z: 4.827}
-  m_LocalScale: {x: 0.106249996, y: 0.106249996, z: 0.106249996}
+  m_LocalRotation: {x: -0, y: 0.70710576, z: -0, w: 0.7071079}
+  m_LocalPosition: {x: -0.110070355, y: 1.1143587, z: -0.61821693}
+  m_LocalScale: {x: 0.16865076, y: 0.1686508, z: 0.16865076}
   m_Children: []
-  m_Father: {fileID: 1251980689}
-  m_RootOrder: 5
+  m_Father: {fileID: 3052565116472255385}
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &379660768
 BoxCollider:
@@ -2084,6 +2101,20 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 379660766}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &379660771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379660766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 086ff50c768ae76448c9b8c0a9289064, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  oven: {fileID: 0}
+  collider: {fileID: 0}
 --- !u!1 &386692966
 GameObject:
   m_ObjectHideFlags: 0
@@ -3282,6 +3313,7 @@ MonoBehaviour:
   - {fileID: 592432555}
   - {fileID: 379660766}
   - {fileID: 210173423}
+  - {fileID: 1965223804}
 --- !u!1 &677924865
 GameObject:
   m_ObjectHideFlags: 0
@@ -3813,7 +3845,10 @@ MonoBehaviour:
     m_Bits: 4096
   pressText1: PRESS (F) TO EXAMINE
   pressText2: PRESS (F) TO UNPACK
-  objectNameTitle: LUNCH
+  objectNameTitle: PACKED LUNCH
+  objectNameTitle1: COLD LUNCH
+  objectNameTitle2: LUNCH
+  objectNameTitle3: SPOILED LUNCH
   description: A PLATE OF COLD FOOD WRAPPED IN FOIL. A PAPER NOTE ATTACHED TO IT..
   inProgressInfo: 'UNPACKING... '
   delayNormal: 0.05
@@ -4016,7 +4051,8 @@ MonoBehaviour:
   describtion: {fileID: 1378898778}
   inProgressBar: {fileID: 376957930}
   pressText1: PRESS (F) TO OPEN
-  pressText2: PRESS (F) TO EXAMINE
+  pressText2: PRESS (F) TO CLOSE
+  pressText3: PRESS (F) TO EXAMINE
   objectNameTitle: KETTLE
   description: IT MUST STAND ON A STABLE TO BE ABLE TO BE ON..
   inProgressInfo: USELESS...
@@ -4044,8 +4080,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: 
   interactText: Do it!
-  parent: {fileID: 1629631409117932272}
-  additionalColliders: []
+  isOnStand: 1
 --- !u!54 &772081573
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -6115,8 +6150,6 @@ Transform:
   - {fileID: 1772151222}
   - {fileID: 1471979918}
   - {fileID: 1291225247}
-  - {fileID: 379660767}
-  - {fileID: 210173424}
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -8408,6 +8441,7 @@ MonoBehaviour:
   name: 
   interactText: Do it!
   animator: {fileID: 0}
+  manager: {fileID: 2019787553808650645}
 --- !u!95 &1579931885
 Animator:
   serializedVersion: 3
@@ -10324,6 +10358,113 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   priority: 0
+--- !u!1 &1965223804
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1965223805}
+  - component: {fileID: 1965223809}
+  - component: {fileID: 1965223808}
+  - component: {fileID: 1965223807}
+  - component: {fileID: 1965223806}
+  m_Layer: 9
+  m_Name: KettleDrop
+  m_TagString: DropArea
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1965223805
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1965223804}
+  m_LocalRotation: {x: -0, y: -0.99996203, z: -0, w: 0.008723323}
+  m_LocalPosition: {x: -0.331, y: 0.95358014, z: 0.403}
+  m_LocalScale: {x: 1.0625007, y: 1.0625, z: 1.0625007}
+  m_Children: []
+  m_Father: {fileID: 2361791628477061347}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1965223806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1965223804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 139f50e081f0be24bbb3d60828db4e04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  manager: {fileID: 772081570}
+  collider: {fileID: 0}
+--- !u!65 &1965223807
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1965223804}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &1965223808
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1965223804}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 0009c98fc015ae44e9b7e799b173bc1c, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!33 &1965223809
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1965223804}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1966998102
 GameObject:
   m_ObjectHideFlags: 0
@@ -12056,6 +12197,7 @@ MonoBehaviour:
   name: 
   interactText: Do it!
   animator: {fileID: 0}
+  isActive: 0
 --- !u!33 &589445370555011481
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -13694,6 +13836,7 @@ GameObject:
   - component: {fileID: 2019787553808650642}
   - component: {fileID: 2019787553808650641}
   - component: {fileID: 2019787553808650640}
+  - component: {fileID: 2019787553808650645}
   m_Layer: 0
   m_Name: oven1
   m_TagString: Untagged
@@ -13831,6 +13974,30 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.25290358, y: 1.6294444, z: 1.6412082}
   m_Center: {x: 0.6382653, y: 0.8147479, z: -0.20883371}
+--- !u!114 &2019787553808650645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2019787553808650634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cf498f56a8025048bbf2374c29fd156, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  doorOpen: 0
+  stwichOn: 0
+  itemInside: 0
+  ovenDrop: {fileID: 379660771}
+  door: {fileID: 2462259954567032134}
+  plate: {fileID: 1752667706531309447}
+  doorNoActive: {fileID: 2100000, guid: 40835cc307a042d4799f4ef844fe4c15, type: 2}
+  doorActive: {fileID: 2100000, guid: 8297e673050088646995c47c7326d9c1, type: 2}
+  doorNoActiveBlood: {fileID: 2100000, guid: 4aef7650b7828554bbdfd7c57a474d4d, type: 2}
+  doorActiveBlood: {fileID: 2100000, guid: 6c43dac63f695ea4e92b88a56da7824f, type: 2}
+  inside: {fileID: 2100000, guid: 3400fedacda6a9d44a66e7ce09f70aec, type: 2}
+  insideBlood: {fileID: 2100000, guid: 7c9ae86cf8cb2cf4992eae5f441209e8, type: 2}
 --- !u!1 &2032744733442190665
 GameObject:
   m_ObjectHideFlags: 0
@@ -14226,6 +14393,7 @@ Transform:
   m_Children:
   - {fileID: 5460887226241777050}
   - {fileID: 772081565}
+  - {fileID: 1965223805}
   m_Father: {fileID: 995022687}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 179.00002, z: 0}
@@ -14364,7 +14532,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a73eae655cb9e0d4c937340211015792, type: 2}
+  - {fileID: 2100000, guid: 40835cc307a042d4799f4ef844fe4c15, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -15039,6 +15207,7 @@ Transform:
   - {fileID: 7284631650584491417}
   - {fileID: 218274622}
   - {fileID: 1579931882}
+  - {fileID: 379660767}
   m_Father: {fileID: 995022687}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: -90.00001, z: 0}
@@ -16178,10 +16347,9 @@ GameObject:
   - component: {fileID: 4152054132856933170}
   - component: {fileID: 4641639862018368937}
   - component: {fileID: 4133183411436851294}
-  - component: {fileID: 4133183411436851295}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Object001
-  m_TagString: Object
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -16199,22 +16367,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.9910984, y: 1.9910955, z: 0.3857274}
   m_Center: {x: 0.0000022649765, y: 0.0000009536743, z: 0.19286367}
---- !u!54 &4133183411436851295
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4133183411436851293}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!33 &4144804336916668444
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -17355,6 +17507,7 @@ Transform:
   - {fileID: 1825458299887440117}
   - {fileID: 3580294507542827875}
   - {fileID: 3347438219356956060}
+  - {fileID: 210173424}
   m_Father: {fileID: 995022687}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -21150,6 +21303,7 @@ GameObject:
   - component: {fileID: 8296172668244157008}
   - component: {fileID: 8296172668244157007}
   - component: {fileID: 8296172668244157006}
+  - component: {fileID: 8296172668244157020}
   m_Layer: 0
   m_Name: tap1
   m_TagString: Object
@@ -21339,6 +21493,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.15191065, y: 1.9112998, z: 2.2715805}
   m_Center: {x: -0.25971317, y: 0.94836295, z: 0.2538302}
+--- !u!65 &8296172668244157020
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8296172668244157005}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.9950206, y: 0.028451629, z: 1.0908633}
+  m_Center: {x: 0.47301123, y: 1.6275066, z: -0.28497973}
 --- !u!1 &8296172668343841341
 GameObject:
   m_ObjectHideFlags: 0

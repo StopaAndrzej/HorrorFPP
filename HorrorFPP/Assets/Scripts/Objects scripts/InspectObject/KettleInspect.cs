@@ -16,6 +16,7 @@ public class KettleInspect : MonoBehaviour
 
     public string pressText1;
     public string pressText2;
+    public string pressText3;
 
     public string objectNameTitle;
     public string description;
@@ -45,6 +46,8 @@ public class KettleInspect : MonoBehaviour
     bool backFromBlackToScreenFlag = false;
     private Animator animator;
 
+    private bool doorOpen = false;
+
     //package meshes
     [SerializeField] private GameObject[] packageMeshes;
 
@@ -57,6 +60,9 @@ public class KettleInspect : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        delay = delayNormal;
+        fullText = describtion.text;
+
         objectName.text = objectNameTitle;
         describtion.text = description;
         inProgressBar.text = inProgressInfo;
@@ -82,6 +88,9 @@ public class KettleInspect : MonoBehaviour
                 press.GetComponent<RectTransform>().localPosition = new Vector3(press.GetComponent<RectTransform>().localPosition.x, pressPos1, press.GetComponent<RectTransform>().localPosition.z);
             }
 
+            objectName.text = objectNameTitle;
+            objectName.enabled = true;
+
             RaycastHit hit;
             Vector3 up = transform.up;
             Vector3 down = -transform.up;
@@ -89,25 +98,34 @@ public class KettleInspect : MonoBehaviour
             Debug.DrawRay(transform.position, up, Color.green);
             Debug.DrawRay(transform.position, down, Color.red);
 
+            if (descriptionShowed)
+            {
+                describtion.enabled = true;
+            }
+
             if (Physics.Raycast(transform.position, up, out hit, rayLength, layerMaskInteract.value))
             {
                 if (hit.collider.CompareTag("Player") && inspectModeFlag == false)
                 {
-                    if(!descriptionShowed)
-                    {
+                    if(!doorOpen)
                         press.text = pressText1;
-                        press.enabled = true;
+                    else
+                        press.text = pressText2;
 
-                        if (Input.GetKeyDown(interactionKey))
-                        {
-                            pickUpScript.stopFlag = true;
-                            press.enabled = false;
-                            inspectModeFlag = true;
-                            kettleDoor.Interact();
-                           // describtion.text = description;
-                            //describtion.enabled = true;
-                            //StartCoroutine(ShowText());
-                        }
+                    press.enabled = true;
+
+                    if (Input.GetKeyDown(interactionKey))
+                    {
+                        //pickUpScript.stopFlag = true;
+                        press.enabled = false;
+                        inspectModeFlag = true;
+                        kettleDoor.Interact();
+
+                        if (!doorOpen)
+                            doorOpen = true;
+                        else
+                            doorOpen = false;
+                        
                     }
                 }
             }
@@ -115,14 +133,20 @@ public class KettleInspect : MonoBehaviour
             {
                 if (hit.collider.CompareTag("Player") && inspectModeFlag == false)
                 {
-                    press.text = pressText2;
-                    press.enabled = true;
-
-                    if (Input.GetKeyDown(interactionKey))
+                    if(!descriptionShowed)
                     {
-                        describtion.text = description;
-                        describtion.enabled = true;
-                        StartCoroutine(ShowText());
+                        press.text = pressText3;
+                        press.enabled = true;
+
+                        if (Input.GetKeyDown(interactionKey))
+                        {
+                            pickUpScript.stopFlag = true;
+                            inspectModeFlag = true;
+                            press.enabled = false;
+                            describtion.text = description;
+                            describtion.enabled = true;
+                            StartCoroutine(ShowText());
+                        }
                     }
                 }
             }

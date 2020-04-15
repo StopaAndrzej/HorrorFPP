@@ -14,7 +14,7 @@ public class PlayerEquipment : MonoBehaviour
     {
         foreach(GameObject element in kitchenDrops)
         {
-            element.SetActive(false);
+            element.GetComponent<MeshRenderer>().enabled = false;
         }
     }
 }

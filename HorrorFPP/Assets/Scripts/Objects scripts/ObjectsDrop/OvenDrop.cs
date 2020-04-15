@@ -2,26 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MicrowaveDrop : MonoBehaviour
+public class OvenDrop : MonoBehaviour
 {
-    [SerializeField] private MicrowaveManager microwave;
+    [SerializeField] private OvenManager oven;
     public Collider collider = null;
 
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Object" )
+        if (other.tag == "Object")
         {
-            microwave.itemInside = true;
+            oven.itemInside = true;
             collider = other;
         }
     }
+
+
 
     private void OnTriggerExit(Collider other)
     {
         if (other.tag == "Object")
         {
-            microwave.itemInside = false;
+            oven.itemInside = false;
             collider = null;
         }
     }

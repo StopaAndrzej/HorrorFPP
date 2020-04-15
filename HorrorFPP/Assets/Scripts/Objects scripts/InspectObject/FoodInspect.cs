@@ -25,6 +25,10 @@ public class FoodInspect : MonoBehaviour
     public string pressText2;
 
     public string objectNameTitle;
+    public string objectNameTitle1;
+    public string objectNameTitle2;
+    public string objectNameTitle3;
+
     public string description;
     public string inProgressInfo;
 
@@ -45,6 +49,9 @@ public class FoodInspect : MonoBehaviour
     //variables use to fade out camera
     [SerializeField] private PostProcessVolume cameraPostProcVolume;
     private bool unpacked = false;
+    private bool unpacked1 = false; //flag use to display right name of object
+    private bool unpacked2 = false;
+
     bool backFromBlackToScreenFlag = false;
 
     //diff food states
@@ -67,7 +74,7 @@ public class FoodInspect : MonoBehaviour
 
     private void Awake()
     {
-        objectName.text = "LUNCH";
+        objectName.text = objectNameTitle;
 
         meatTexture = transform.Find("Meat").GetComponent< MeshRenderer >();
         potatoTexture = transform.Find("Potatoes").GetComponent<MeshRenderer>();
@@ -104,13 +111,17 @@ public class FoodInspect : MonoBehaviour
                 saladTexture.material = saladRaw;
                 break;
             case 1:
+                objectName.text = objectNameTitle2;
+                unpacked2 = true;
                 break;
             case 2:
+                objectName.text = objectNameTitle3;
                 meatTexture.material = meatSpoiled;
                 potatoTexture.material = potatoesSpoiled;
                 saladTexture.material = saladSpoiled;
                 break;
             default:
+                objectName.text = objectNameTitle3;
                 meatTexture.material = meatSpoiled;
                 potatoTexture.material = potatoesSpoiled;
                 saladTexture.material = saladSpoiled;
@@ -129,7 +140,14 @@ public class FoodInspect : MonoBehaviour
                 press.GetComponent<RectTransform>().localPosition = new Vector3(press.GetComponent<RectTransform>().localPosition.x, pressPos1, press.GetComponent<RectTransform>().localPosition.z);
             }
 
-            objectName.text = objectNameTitle;
+            if(!unpacked2)
+            {
+                if (unpacked1)
+                    objectName.text = objectNameTitle1;
+                else
+                    objectName.text = objectNameTitle;
+            }
+
             objectName.enabled = true;
 
             RaycastHit hit;
@@ -246,6 +264,7 @@ public class FoodInspect : MonoBehaviour
         }
         else
         {
+            unpacked1 = true;
             colorGradingLayer.postExposure.value = Mathf.Lerp(colorGradingLayer.postExposure.value, 0.0f, Time.deltaTime*4.0f);
 
             if (colorGradingLayer.postExposure.value > -0.15f)

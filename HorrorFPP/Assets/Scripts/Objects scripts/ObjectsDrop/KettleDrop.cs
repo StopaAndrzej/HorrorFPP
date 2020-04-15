@@ -2,26 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MicrowaveDrop : MonoBehaviour
+public class KettleDrop : MonoBehaviour
 {
-    [SerializeField] private MicrowaveManager microwave;
+    [SerializeField] private KettleManager manager;
     public Collider collider = null;
-
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Object" )
+        if (other.tag == "Object")
         {
-            microwave.itemInside = true;
             collider = other;
+            if(collider.GetComponent<KettleInspect>())
+            {
+                manager.isOnStand = true;
+            }
         }
     }
+
 
     private void OnTriggerExit(Collider other)
     {
         if (other.tag == "Object")
         {
-            microwave.itemInside = false;
+            if (collider.GetComponent<KettleInspect>())
+            {
+                manager.isOnStand = false;
+            }
             collider = null;
         }
     }

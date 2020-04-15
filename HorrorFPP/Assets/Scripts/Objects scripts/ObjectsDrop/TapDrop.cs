@@ -2,18 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MicrowaveDrop : MonoBehaviour
+public class TapDrop : MonoBehaviour
 {
-    [SerializeField] private MicrowaveManager microwave;
     public Collider collider = null;
+    [SerializeField] TapWaterFall tapWaterFall;
 
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Object" )
+        if (other.tag == "Object")
         {
-            microwave.itemInside = true;
             collider = other;
+            if(collider.GetComponent<KettleInspect>())
+            {
+
+            }
         }
     }
 
@@ -21,7 +24,7 @@ public class MicrowaveDrop : MonoBehaviour
     {
         if (other.tag == "Object")
         {
-            microwave.itemInside = false;
+
             collider = null;
         }
     }
