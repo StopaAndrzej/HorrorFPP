@@ -10,7 +10,7 @@ public class KettleButton : InteractableObjectBase
     private float timer;
 
     [SerializeField] private KettleDoor door;
-   
+    [SerializeField] private KettleManager manager;
 
     private void Start()
     {
@@ -19,7 +19,7 @@ public class KettleButton : InteractableObjectBase
 
     public override void Interact()
     {
-        if(!door.isOpen)
+        if(!door.isOpen && manager.readyToFillCup)
         {
             if (isActive)
             {
@@ -46,6 +46,7 @@ public class KettleButton : InteractableObjectBase
         timer -= Time.deltaTime;
         if(timer<=0)
         {
+            manager.boiledWater = true;
             Interact();
         }
     }

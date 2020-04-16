@@ -103,7 +103,7 @@ public class PickUp : InteractableObjectBase
                         playerEquipment.grabInHand = false;
                         isGrabbed = false;
                         this.transform.position = hit.transform.position;
-                        this.transform.rotation = new Quaternion(0, 0, 0, 0);
+                        this.transform.rotation = hit.transform.localRotation;
                         this.transform.parent = hit.transform;
                        // this.transform.localScale = objScale;
                         GetComponent<BoxCollider>().enabled = true;

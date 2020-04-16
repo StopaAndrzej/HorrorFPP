@@ -4,10 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Rendering.PostProcessing;
 
-public class KettleInspect : MonoBehaviour
+public class JugInspect : MonoBehaviour
 {
     [SerializeField] private PlayerMove playerComponent;
-    [SerializeField] private KettleDoor kettleDoor;
+    [SerializeField] private JugDoor jugDoor;
 
     [SerializeField] private Text objectName;
     [SerializeField] private Text press;
@@ -38,22 +38,17 @@ public class KettleInspect : MonoBehaviour
 
     private PickUp pickUpScript;
 
+
     private bool inspectModeFlag = false;
     private bool descriptionShowed = false;
 
-
     private bool doorOpen = false;
-
-    //package meshes
-    [SerializeField] private GameObject[] packageMeshes;
-
 
     private void Awake()
     {
-        objectName.text = "KETTLE";
+        objectName.text = "JUG";
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         delay = delayNormal;
@@ -74,8 +69,7 @@ public class KettleInspect : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (playerComponent.inspectMode && pickUpScript.isGrabbed)
         {
@@ -89,10 +83,10 @@ public class KettleInspect : MonoBehaviour
 
             RaycastHit hit;
             Vector3 up = transform.up;
-            Vector3 down = -transform.up;
+            Vector3 forward = -transform.forward;
 
             Debug.DrawRay(transform.position, up, Color.green);
-            Debug.DrawRay(transform.position, down, Color.red);
+            Debug.DrawRay(transform.position, forward, Color.red);
 
             if (descriptionShowed)
             {
@@ -103,7 +97,7 @@ public class KettleInspect : MonoBehaviour
             {
                 if (hit.collider.CompareTag("Player") && inspectModeFlag == false)
                 {
-                    if(!doorOpen)
+                    if (!doorOpen)
                         press.text = pressText1;
                     else
                         press.text = pressText2;
@@ -115,21 +109,21 @@ public class KettleInspect : MonoBehaviour
                         //pickUpScript.stopFlag = true;
                         press.enabled = false;
                         inspectModeFlag = true;
-                        kettleDoor.Interact();
+                        jugDoor.Interact();
 
                         if (!doorOpen)
                             doorOpen = true;
                         else
                             doorOpen = false;
-                        
+
                     }
                 }
             }
-            else if(Physics.Raycast(transform.position, down, out hit, rayLength, layerMaskInteract.value))
+            else if (Physics.Raycast(transform.position, forward, out hit, rayLength, layerMaskInteract.value))
             {
                 if (hit.collider.CompareTag("Player") && inspectModeFlag == false)
                 {
-                    if(!descriptionShowed)
+                    if (!descriptionShowed)
                     {
                         press.text = pressText3;
                         press.enabled = true;

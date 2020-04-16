@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b3c9ae430a88aed40b58b2825a80e201
+guid: 4acb875c0d4f3824cb696aa4ff92e3ba
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable: []
@@ -7,13 +7,23 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: 20 - Default
-    second: {fileID: 2100000, guid: 64c37e36ff0d44e48a591e269897b7ee, type: 2}
+      name: 01 - Default
+    second: {fileID: 2100000, guid: a8bdaec9e198afe4cbe3ebe3769c67bf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 02 - Default
+    second: {fileID: 2100000, guid: 61ef7d7dc1cc8f8489e2c626247c2ad4, type: 2}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: fondo-textura-mesa-madera-vieja_9693-1022
-    second: {fileID: 2800000, guid: 9e5970db2b7c4c641af368716c6c1437, type: 3}
+      name: old-sandstone-background-tecture-260nw-1031488948
+    second: {fileID: 2800000, guid: b84ad83e767de1e4f99b5d9fa837cb4a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: old-sandstone-background-tecture-260nw-103148894811
+    second: {fileID: 2800000, guid: 8e32649d658168146a88576deed871c1, type: 3}
   materials:
     importMaterials: 1
     materialName: 0

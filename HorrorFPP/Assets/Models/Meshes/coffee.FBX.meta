@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b3c9ae430a88aed40b58b2825a80e201
+guid: 068e4fddd8b18c14cbcfb86cc23d71c4
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable: []
@@ -7,13 +7,43 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: 20 - Default
-    second: {fileID: 2100000, guid: 64c37e36ff0d44e48a591e269897b7ee, type: 2}
+      name: 01 - Default
+    second: {fileID: 2100000, guid: 2cf4d424f646b3c4fb549fddd46a62e0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 08 - Default
+    second: {fileID: 2100000, guid: ec71677a21d651c479301f4247973f70, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 09 - Default
+    second: {fileID: 2100000, guid: 04feae04d34b55e4db6a7f23238d713f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 13 - Default
+    second: {fileID: 2100000, guid: 199fc34739824c9468f12d1013453ea4, type: 2}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: fondo-textura-mesa-madera-vieja_9693-1022
-    second: {fileID: 2800000, guid: 9e5970db2b7c4c641af368716c6c1437, type: 3}
+      name: 1079
+    second: {fileID: 2800000, guid: e5a9fe4b199b73045b5cbb82525a8760, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: jacobs-cappuccino-choco-milka-rozpuszczalny-napoj-kawowy-z-dodatkiem-czekolady-18-g
+    second: {fileID: 2800000, guid: 891fe2195ee5b7d4690bfac45b72b234, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: kawa
+    second: {fileID: 2800000, guid: 777623892d77a164fbf6c11b77d7005f, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: old-sandstone-background-tecture-260nw-1031488948
+    second: {fileID: 2800000, guid: e64cb67ec1723304693e00d4aa6057fa, type: 3}
   materials:
     importMaterials: 1
     materialName: 0

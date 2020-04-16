@@ -5,7 +5,7 @@ using UnityEngine;
 public class TapDrop : MonoBehaviour
 {
     public Collider collider = null;
-    [SerializeField] TapWaterFall tapWaterFall;
+    [SerializeField] TapManager manager;
 
 
     private void OnTriggerEnter(Collider other)
@@ -15,7 +15,9 @@ public class TapDrop : MonoBehaviour
             collider = other;
             if(collider.GetComponent<KettleInspect>())
             {
-
+                manager.kettleInTap = true;
+                collider.GetComponent<Rigidbody>().freezeRotation = true;
+      
             }
         }
     }

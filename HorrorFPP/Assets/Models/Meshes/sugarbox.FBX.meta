@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b3c9ae430a88aed40b58b2825a80e201
+guid: 7fe013cc4ed30b44e95f41561e6a9dc1
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable: []
@@ -7,13 +7,33 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: 20 - Default
-    second: {fileID: 2100000, guid: 64c37e36ff0d44e48a591e269897b7ee, type: 2}
+      name: 01 - Default
+    second: {fileID: 2100000, guid: 0f783a3e9718e0348b989bbc8ca16bb5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 14 - Default
+    second: {fileID: 2100000, guid: 3f93ac486666d1e4088704c3ff2d20b1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 15 - Default
+    second: {fileID: 2100000, guid: 4b94abbe30f700648ab7b6d8ba3aa8f9, type: 2}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
-      name: fondo-textura-mesa-madera-vieja_9693-1022
-    second: {fileID: 2800000, guid: 9e5970db2b7c4c641af368716c6c1437, type: 3}
+      name: diamant-cukier-bialy-paczka-1kg
+    second: {fileID: 2800000, guid: 218fb08cfbb44e64795500e8e4cb155b, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: istockphoto-598702998-1024x1024
+    second: {fileID: 2800000, guid: 50f753e4a43316342b9353743f44b2a1, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: old-sandstone-background-tecture-260nw-1031488948
+    second: {fileID: 2800000, guid: 8b302db6545cc534ca0f040e53d9a37c, type: 3}
   materials:
     importMaterials: 1
     materialName: 0
