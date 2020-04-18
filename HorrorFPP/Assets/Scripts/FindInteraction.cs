@@ -15,55 +15,72 @@ public class FindInteraction : MonoBehaviour
     [SerializeField] private Shader outlineShader;
 
     private bool selected = false;
+    public bool dropMode = false;
 
     private void Update()
     {
-        RaycastHit hit;
-        Vector3 fwd = transform.TransformDirection(Vector3.forward);
-
-        if(Physics.Raycast(transform.position, fwd, out hit, rayLength, layerMaskInteract.value))
+        //disable when drop mode is use
+        if(!dropMode)
         {
-            if(hit.collider.CompareTag("Object"))
+            RaycastHit hit;
+            Vector3 fwd = transform.TransformDirection(Vector3.forward);
+
+            if (Physics.Raycast(transform.position, fwd, out hit, rayLength, layerMaskInteract.value))
             {
-                if(raycastedObject!=null && raycastedObject!= hit.collider.gameObject)
+                if (hit.collider.CompareTag("Object"))
                 {
+                    if (raycastedObject != null && raycastedObject != hit.collider.gameObject)
+                    {
+                        foreach (Transform child in raycastedObject.transform)
+                        {
+                            if (child.GetComponent<MeshRenderer>())
+                                child.GetComponent<MeshRenderer>().material.shader = defaultShader;
+                        }
+                    }
+
+                    raycastedObject = hit.collider.gameObject;
+
                     foreach (Transform child in raycastedObject.transform)
                     {
-                        if(child.GetComponent<MeshRenderer>())
-                            child.GetComponent<MeshRenderer>().material.shader = defaultShader;
+                        if (child.GetComponent<MeshRenderer>())
+                            child.GetComponent<MeshRenderer>().material.shader = outlineShader;
+                    }
+
+                    Debug.Log("Interactive object found!");
+
+                    if (Input.GetKeyDown(interactButton))
+                    {
+                        Debug.Log("DO IT!");
+                        raycastedObject.GetComponent<InteractableObjectBase>().Interact();
                     }
                 }
 
-                raycastedObject = hit.collider.gameObject;
-
+                selected = true;
+            }
+            else if (selected)
+            {
+                selected = false;
                 foreach (Transform child in raycastedObject.transform)
                 {
                     if (child.GetComponent<MeshRenderer>())
-                        child.GetComponent<MeshRenderer>().material.shader = outlineShader;
+                        child.GetComponent<MeshRenderer>().material.shader = defaultShader;
                 }
+                raycastedObject = null;
 
-                Debug.Log("Interactive object found!");
 
-                if(Input.GetKeyDown(interactButton))
-                {
-                    Debug.Log("DO IT!");
-                    raycastedObject.GetComponent<InteractableObjectBase>().Interact();
-                }
             }
-
-            selected = true;
         }
-        else if(selected)
+        else
         {
-            selected = false;
-            foreach (Transform child in raycastedObject.transform)
+            //disable selection in drop mode if something was selected before
+            if (raycastedObject != null)
             {
-                if (child.GetComponent<MeshRenderer>())
-                    child.GetComponent<MeshRenderer>().material.shader = defaultShader;
+                foreach (Transform child in raycastedObject.transform)
+                {
+                    if (child.GetComponent<MeshRenderer>())
+                        child.GetComponent<MeshRenderer>().material.shader = defaultShader;
+                }
             }
-            raycastedObject = null;
-
-
         }
     }
 }

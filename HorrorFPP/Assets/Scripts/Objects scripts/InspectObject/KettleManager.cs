@@ -17,15 +17,21 @@ public class KettleManager : InteractableObjectBase
     private float topDownPos = -1.71f;
     private float topUpPos = -0.32f;
 
+    [SerializeField] private Vector3 localStandPos;
+
     [SerializeField] private KettleDoor door;
     [SerializeField] private TapManager tapManager;
+    [SerializeField] private PickUp pickUp;
 
     //button
     [SerializeField] private GameObject button;
     [SerializeField] private GameObject buttonOnStandParent;
 
+    [SerializeField] List<GameObject> specialDropAreas;
+
     private void Start()
     {
+        localStandPos = button.GetComponent<Transform>().localPosition;
         kettleWaterLevel.SetActive(false);
     }
 
@@ -54,6 +60,7 @@ public class KettleManager : InteractableObjectBase
         if(isOnStand)
         {
             button.GetComponent<Transform>().parent = this.transform;
+            button.GetComponent<Transform>().localPosition = localStandPos;
         }
         else
         {

@@ -18,12 +18,12 @@ ModelImporter:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: glenmorangie_logo
-    second: {fileID: 2800000, guid: 1d3a7e52e8e27574e9647d0fc5c72b77, type: 3}
+    second: {fileID: 2800000, guid: 9cca75920c76edb409142eeb85d06186, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: glenmorangie_logo1
-    second: {fileID: 2800000, guid: 6a24661bdfcc43e43ab9e8d6ab9e7382, type: 3}
+    second: {fileID: 2800000, guid: 411dc3a17552c7e4da4d8c2c3693b3d6, type: 3}
   materials:
     importMaterials: 1
     materialName: 0

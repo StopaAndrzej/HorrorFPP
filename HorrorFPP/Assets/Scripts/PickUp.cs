@@ -13,6 +13,8 @@ public class PickUp : InteractableObjectBase
     [SerializeField] private KeyCode dropKey;
 
     [SerializeField] public PlayerMove playerController;
+    [SerializeField] private FindInteraction interaction;
+
     [SerializeField] private FocusSwitcher focus;
     [SerializeField] private PlayerEquipment playerEquipment;
     [SerializeField] private Transform camera;
@@ -25,10 +27,23 @@ public class PickUp : InteractableObjectBase
     //additinal list of children's colliders to switch on/off
     public List<GameObject> additionalColliders;
 
+    public List<GameObject> dropAreas;
+    public List<GameObject> specialDropAreasForItem;
+
     private void Start()
     {
         //objScale = transform.localScale;
         playerEquipment = GameObject.Find("Player").GetComponent<PlayerEquipment>();
+        interaction = GameObject.Find("PlayerCamera").GetComponent<FindInteraction>();
+
+        foreach (GameObject element in dropAreas)
+        {
+            element.GetComponent<MeshRenderer>().enabled = false;
+        }
+        foreach (GameObject element in specialDropAreasForItem)
+        {
+            element.GetComponent<MeshRenderer>().enabled = false;
+        }
     }
 
     void Grab()
@@ -39,6 +54,7 @@ public class PickUp : InteractableObjectBase
         this.transform.parent = GameObject.Find("Destination").transform;
 
         GetComponent<Rigidbody>().useGravity = false;
+        GetComponent<Rigidbody>().isKinematic = false;
         GetComponent<BoxCollider>().enabled = false;
         foreach (GameObject element in additionalColliders)
             element.GetComponent<BoxCollider>().enabled = false;
@@ -85,11 +101,20 @@ public class PickUp : InteractableObjectBase
         //drop item
         if (Input.GetKey(dropKey) && playerEquipment.grabInHand && !Input.GetKey(inspectKey) && isGrabbed)
         {
-            //show drop points
-            foreach(GameObject element in playerEquipment.kitchenDrops)
+
+            //disable select items
+            interaction.dropMode = true;
+
+            //show drop areas
+            foreach (GameObject element in dropAreas)
             {
                 element.GetComponent<MeshRenderer>().enabled = true;
             }
+            foreach (GameObject element in specialDropAreasForItem)
+            {
+                element.GetComponent<MeshRenderer>().enabled = true;
+            }
+
 
             RaycastHit hit;
             Vector3 fwd = camera.TransformDirection(Vector3.forward);
@@ -105,9 +130,29 @@ public class PickUp : InteractableObjectBase
                         this.transform.position = hit.transform.position;
                         this.transform.rotation = hit.transform.localRotation;
                         this.transform.parent = hit.transform;
-                       // this.transform.localScale = objScale;
+                        // this.transform.localScale = objScale;
                         GetComponent<BoxCollider>().enabled = true;
                         GetComponent<Rigidbody>().useGravity = true;
+
+                        foreach (GameObject element in additionalColliders)
+                            element.GetComponent<BoxCollider>().enabled = true;
+                    }
+
+                }
+
+                if (hit.collider.CompareTag("SpecialDropArea"))
+                {
+                    if (Input.GetKeyDown(KeyCode.Mouse0))
+                    {
+                        playerEquipment.grabInHand = false;
+                        isGrabbed = false;
+                        this.transform.position = hit.transform.position;
+                        this.transform.rotation = hit.transform.localRotation;
+                        this.transform.parent = hit.transform;
+                        // this.transform.localScale = objScale;
+                        GetComponent<BoxCollider>().enabled = true;
+                        GetComponent<Rigidbody>().useGravity = true;
+                        GetComponent<Rigidbody>().isKinematic = true;
 
                         foreach (GameObject element in additionalColliders)
                             element.GetComponent<BoxCollider>().enabled = true;
@@ -118,7 +163,15 @@ public class PickUp : InteractableObjectBase
         }
         else if(!Input.GetKey(dropKey) && playerEquipment.grabInHand && isGrabbed)
         {
-            foreach (GameObject element in playerEquipment.kitchenDrops)
+            //activate select items
+            interaction.dropMode = false;
+
+            //hide drop areas
+            foreach (GameObject element in dropAreas)
+            {
+                element.GetComponent<MeshRenderer>().enabled = false;
+            }
+            foreach (GameObject element in specialDropAreasForItem)
             {
                 element.GetComponent<MeshRenderer>().enabled = false;
             }

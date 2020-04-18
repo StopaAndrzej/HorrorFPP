@@ -133,6 +133,7 @@ public class JugInspect : MonoBehaviour
                             pickUpScript.stopFlag = true;
                             inspectModeFlag = true;
                             press.enabled = false;
+                            fullText = describtion.text;
                             describtion.text = description;
                             describtion.enabled = true;
                             StartCoroutine(ShowText());

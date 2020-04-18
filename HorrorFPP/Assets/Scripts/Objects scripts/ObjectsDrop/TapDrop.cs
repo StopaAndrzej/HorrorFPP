@@ -16,8 +16,6 @@ public class TapDrop : MonoBehaviour
             if(collider.GetComponent<KettleInspect>())
             {
                 manager.kettleInTap = true;
-                collider.GetComponent<Rigidbody>().freezeRotation = true;
-      
             }
         }
     }
