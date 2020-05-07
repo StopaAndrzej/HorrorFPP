@@ -13,6 +13,7 @@ public class FindInteraction : MonoBehaviour
 
     [SerializeField] private Shader defaultShader;
     [SerializeField] private Shader outlineShader;
+    [SerializeField] private Shader ignoreShader;       //that material is ignore and doesnt change
 
     private bool selected = false;
     public bool dropMode = false;
@@ -33,7 +34,7 @@ public class FindInteraction : MonoBehaviour
                     {
                         foreach (Transform child in raycastedObject.transform)
                         {
-                            if (child.GetComponent<MeshRenderer>())
+                            if (child.GetComponent<MeshRenderer>() && child.GetComponent<MeshRenderer>().material.shader != ignoreShader)
                                 child.GetComponent<MeshRenderer>().material.shader = defaultShader;
                         }
                     }
@@ -42,7 +43,7 @@ public class FindInteraction : MonoBehaviour
 
                     foreach (Transform child in raycastedObject.transform)
                     {
-                        if (child.GetComponent<MeshRenderer>())
+                        if (child.GetComponent<MeshRenderer>() && child.GetComponent<MeshRenderer>().material.shader != ignoreShader)
                             child.GetComponent<MeshRenderer>().material.shader = outlineShader;
                     }
 
@@ -62,7 +63,7 @@ public class FindInteraction : MonoBehaviour
                 selected = false;
                 foreach (Transform child in raycastedObject.transform)
                 {
-                    if (child.GetComponent<MeshRenderer>())
+                    if (child.GetComponent<MeshRenderer>() && child.GetComponent<MeshRenderer>().material.shader != ignoreShader)
                         child.GetComponent<MeshRenderer>().material.shader = defaultShader;
                 }
                 raycastedObject = null;

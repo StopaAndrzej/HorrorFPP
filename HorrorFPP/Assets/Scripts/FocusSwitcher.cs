@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 
 public class FocusSwitcher : MonoBehaviour
 {
@@ -9,10 +10,16 @@ public class FocusSwitcher : MonoBehaviour
     private GameObject currentlyFocused;
     private int previousLayer;
 
+    //display fx to on/off for diff modes
+    [SerializeField] private PostProcessVolume defaultCameraEffect;
+    [SerializeField] private PostProcessVolume inspectCameraEffect;
+
     public void SetFocused(GameObject obj)
     {
         // enables this camera and the postProcessingVolume which is the child
-        gameObject.SetActive(true);
+        //gameObject.SetActive(true);
+        inspectCameraEffect.enabled = true;
+        defaultCameraEffect.enabled = false;
 
         // if something else was focused before reset it
         if (currentlyFocused) currentlyFocused.layer = previousLayer;
@@ -29,7 +36,9 @@ public class FocusSwitcher : MonoBehaviour
         {
             // if no object is focused disable the FocusCamera
             // and PostProcessingVolume for not wasting rendering resources
-            gameObject.SetActive(false);
+            //gameObject.SetActive(false);
+            inspectCameraEffect.enabled = false;
+            defaultCameraEffect.enabled = true;
         }
     }
 

@@ -83,19 +83,15 @@ public class PickUp : InteractableObjectBase
             this.transform.position = new Vector3(Mathf.Lerp(this.transform.position.x, inspectPos.position.x, Time.deltaTime * 5.0f), Mathf.Lerp(this.transform.position.y, inspectPos.position.y, Time.deltaTime * 5.0f), Mathf.Lerp(this.transform.position.z, inspectPos.position.z, Time.deltaTime * 5.0f));
             Inspect();
         }
-        else if(isGrabbed)
+        else if (isGrabbed)
         {
             //turn a blur off
             focus.SetFocused(null);
 
             playerController.inspectMode = false;
 
-          //  if (isGrabbed)
-         //   {
-                this.transform.position = new Vector3(Mathf.Lerp(this.transform.position.x, destinationPos.position.x, Time.deltaTime * 5.0f), Mathf.Lerp(this.transform.position.y, destinationPos.position.y, Time.deltaTime * 5.0f), Mathf.Lerp(this.transform.position.z, destinationPos.position.z, Time.deltaTime * 5.0f));
-                //this.transform.localRotation = new Quaternion(Mathf.Lerp(this.transform.localRotation.x, 0.0f, Time.deltaTime), Mathf.Lerp(this.transform.localRotation.y, 0.0f, Time.deltaTime), Mathf.Lerp(this.transform.localRotation.z, 0.0f, Time.deltaTime), Mathf.Lerp(this.transform.localRotation.w, 0.0f, Time.deltaTime));
-                this.transform.localRotation = new Quaternion(0, 0, 0, 0);
-           // }
+            this.transform.position = new Vector3(Mathf.Lerp(this.transform.position.x, destinationPos.position.x, Time.deltaTime * 5.0f), Mathf.Lerp(this.transform.position.y, destinationPos.position.y, Time.deltaTime * 5.0f), Mathf.Lerp(this.transform.position.z, destinationPos.position.z, Time.deltaTime * 5.0f));
+            this.transform.localRotation = new Quaternion(0, 0, 0, 0);
         }
 
         //drop item
@@ -136,6 +132,19 @@ public class PickUp : InteractableObjectBase
 
                         foreach (GameObject element in additionalColliders)
                             element.GetComponent<BoxCollider>().enabled = true;
+
+                        //activate select items
+                        interaction.dropMode = false;
+
+                        //hide drop areas
+                        foreach (GameObject element in dropAreas)
+                        {
+                            element.GetComponent<MeshRenderer>().enabled = false;
+                        }
+                        foreach (GameObject element in specialDropAreasForItem)
+                        {
+                            element.GetComponent<MeshRenderer>().enabled = false;
+                        }
                     }
 
                 }
@@ -156,12 +165,26 @@ public class PickUp : InteractableObjectBase
 
                         foreach (GameObject element in additionalColliders)
                             element.GetComponent<BoxCollider>().enabled = true;
+
+                        //activate select items
+                        interaction.dropMode = false;
+
+                        //hide drop areas
+                        foreach (GameObject element in dropAreas)
+                        {
+                            element.GetComponent<MeshRenderer>().enabled = false;
+                        }
+                        foreach (GameObject element in specialDropAreasForItem)
+                        {
+                            element.GetComponent<MeshRenderer>().enabled = false;
+                        }
+
                     }
 
                 }
             }
         }
-        else if(!Input.GetKey(dropKey) && playerEquipment.grabInHand && isGrabbed)
+        else if (!Input.GetKey(dropKey) && playerEquipment.grabInHand && isGrabbed)
         {
             //activate select items
             interaction.dropMode = false;

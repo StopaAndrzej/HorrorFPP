@@ -35,7 +35,7 @@ public class PlayerMove : MonoBehaviour
 
     //crouching params
     private float standingHight;
-    private bool isCrouching = false;
+    [SerializeField] private bool isCrouching = false;
     [SerializeField] private float crouchHeight = 0.0f;
     [SerializeField] private float crouchPosSpeed;
     [SerializeField] private float crouchAboveRayLength;
@@ -122,7 +122,7 @@ public class PlayerMove : MonoBehaviour
     private void Update()
     {
         //disable player movement if inspection mode is active
-        if(!inspectMode)
+        if (!inspectMode)
         {
             PlayerMovement();
 
@@ -238,7 +238,7 @@ public class PlayerMove : MonoBehaviour
     private bool CheckIfCanStand()
     {
         RaycastHit hit;
-        if(Physics.Raycast(transform.position, Vector3.up, out hit, crouchAboveRayLength))
+        if(Physics.Raycast(camera.transform.position, Vector3.up, out hit, crouchAboveRayLength))
         {
             return false;
         }
