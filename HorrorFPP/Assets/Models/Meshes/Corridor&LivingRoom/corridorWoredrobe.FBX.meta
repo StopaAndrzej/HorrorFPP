@@ -7,13 +7,68 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: 02 - Default
+    second: {fileID: 2100000, guid: 9341ab1d75eda5043a152f6fe377f149, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 03 - Default
+    second: {fileID: 2100000, guid: 8c45428dcfafd2e4eb6e11e11dace079, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 04 - Default
+    second: {fileID: 2100000, guid: 3f3642cf267ed8749a7ac2c257201f1e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 05 - Default
+    second: {fileID: 2100000, guid: 3e02997dfb74dd748a7333fd454cd32e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 06 - Default
+    second: {fileID: 2100000, guid: 2b6cbf5646bfaeb49bf3a32b1a9aec17, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 07 - Default
+    second: {fileID: 2100000, guid: ee90188bce5585e49afb8cee23d692c3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 08 - Default
+    second: {fileID: 2100000, guid: 2b38f8bf0157f2146b7dadb532c787d4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 10 - Default
+    second: {fileID: 2100000, guid: 45f9ac57330b9df40bcf787d5ea05911, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: 16 - Default
     second: {fileID: 2100000, guid: bf10b88030c27d442855885ea432e784, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: 17 - Default
+    second: {fileID: 2100000, guid: b0104580ad9833c44a6f192d6f00bec5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: 18 - Default
     second: {fileID: 2100000, guid: 626eba067e906b34b921c4ad22a6256f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 19 - Default
+    second: {fileID: 2100000, guid: 2fc56b703b1d4c14e804a3214d736fcf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 21 - Default
+    second: {fileID: 2100000, guid: 1af60b70cfc63aa438bb8124cb364e1d, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -25,30 +80,95 @@ ModelImporter:
       name: 23 - Default
     second: {fileID: 2100000, guid: c37f88e5c20b743479136f619b7ce08a, type: 2}
   - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 24 - Default
+    second: {fileID: 2100000, guid: 866c921913e1b55489e5e6ab9134c9c0, type: 2}
+  - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: 35099
-    second: {fileID: 2800000, guid: 021349040507188439687c5642217af5, type: 3}
+    second: {fileID: 2800000, guid: c1dd1d68092a6b14082623d36ae63ace, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: back-of-frame2_19_1_1
-    second: {fileID: 2800000, guid: 0f8a21a911a48fd4091146f1ca90b7e0, type: 3}
+    second: {fileID: 2800000, guid: 3c7fcf1da02f3cd46abe2d1b6981d2d6, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: cl1
+    second: {fileID: 2800000, guid: 829e560d14aa8824bb7e3889af868dec, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: cl2
+    second: {fileID: 2800000, guid: c38591b66f62f29488ef732d2e1761e5, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: clo1
+    second: {fileID: 2800000, guid: ff1222795d73a814f94bf35b42b345f3, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: clo12
+    second: {fileID: 2800000, guid: ad539472136b45a42830675b51c29860, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: f228b3027c5738624a3e4651a6f48ae5
-    second: {fileID: 2800000, guid: df21536d21fedc44c982a712f8d36dbe, type: 3}
+    second: {fileID: 2800000, guid: db59b780db16c6a4e96515a981c0064a, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: images (222)
-    second: {fileID: 2800000, guid: 77bff0a26beb1a74f86202680bed24cb, type: 3}
+    second: {fileID: 2800000, guid: da7cdfe08adec3741a3c18c8ab8973e3, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: jeans
+    second: {fileID: 2800000, guid: 5a91c13bdc000a049a18ac95a96cdbe7, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: orange-yellow-old-grunge-background-260nw-1552755941
-    second: {fileID: 2800000, guid: fbd82e8808d0d2448b6c29ad108e7433, type: 3}
+    second: {fileID: 2800000, guid: f134a4b9210d65541a039a2c71f5a01e, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: shirt2
+    second: {fileID: 2800000, guid: 2d2a37875e534d3419acb41218e16c96, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: shirt4
+    second: {fileID: 2800000, guid: 0c584b51c7d41ef448e5d248a6bf8f99, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: shirts1
+    second: {fileID: 2800000, guid: beac8ff5a9707294cb6aa1f1a6a9d62d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: tovel
+    second: {fileID: 2800000, guid: 58965a1edbe539246814645dde48ed68, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: towel
+    second: {fileID: 2800000, guid: f3ff96e15fad51b44b9235835a1f040d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: w2i
+    second: {fileID: 2800000, guid: bb733d3572046b74aa6f80dad80bf58d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: wi
+    second: {fileID: 2800000, guid: 969abe0df14f9344786b9d3e0b8334d3, type: 3}
   materials:
     importMaterials: 1
     materialName: 0

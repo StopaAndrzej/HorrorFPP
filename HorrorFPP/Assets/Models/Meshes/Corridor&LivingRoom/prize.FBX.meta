@@ -28,22 +28,22 @@ ModelImporter:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: blue
-    second: {fileID: 2800000, guid: 1cb55d01af2e5ed4cb7178943bc5b917, type: 3}
+    second: {fileID: 2800000, guid: fd8cb22902d4ad547897c3055d68b575, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: gold
-    second: {fileID: 2800000, guid: ba09733b396bcc3449fb46b7349cad6d, type: 3}
+    second: {fileID: 2800000, guid: 294bdb73f1cad4644b06e6451dea90d2, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: lux-textures-plain-wallpaper-silver-shadow-p6413-19832_image
-    second: {fileID: 2800000, guid: 0a63113345904e34aaeee3d04f285023, type: 3}
+    second: {fileID: 2800000, guid: b9a5357407b7caf4d9854288bbc72dde, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: wood2
-    second: {fileID: 2800000, guid: b4056e7ad043c284b9cb438cd8ed415c, type: 3}
+    second: {fileID: 2800000, guid: 53deec3647e1219448e40cf13c4047c7, type: 3}
   materials:
     importMaterials: 1
     materialName: 0

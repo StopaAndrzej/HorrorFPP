@@ -28,22 +28,22 @@ ModelImporter:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: 1-sztuka-Czarny-Plastik-ABS-Arkusze-300x300x0-5mm-Czarny-ABS-Arkusz-Z-Tworzywa-Sztucznego-Elastyczny-Smooth
-    second: {fileID: 2800000, guid: ce7a369b90db090449d1901696e08bcb, type: 3}
+    second: {fileID: 2800000, guid: f38afb96a8bc0b84899cee95b619243c, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: f228b3027c5738624a3e4651a6f48ae5
-    second: {fileID: 2800000, guid: 06bb34a8b469c5344abb7be9b862b5e1, type: 3}
+    second: {fileID: 2800000, guid: 7bb2c82415e7fe544bd8f6dbe4f057bd, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: holz_0003_c
-    second: {fileID: 2800000, guid: ace1f79c9c7071b4e8b28d9b0dc9a5fd, type: 3}
+    second: {fileID: 2800000, guid: 6fe49af1db95c6b43a521d7e06b6c61d, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: wood_0002_c
-    second: {fileID: 2800000, guid: e21ddf8cb8aa4c5449ffde9d2cba3e5c, type: 3}
+    second: {fileID: 2800000, guid: 58402cde382c9384e907a4443a9a169b, type: 3}
   materials:
     importMaterials: 1
     materialName: 0
