@@ -3,7 +3,47 @@ guid: 8f142dd0729418648aca1a646fabd896
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 01 - Default
+    second: {fileID: 2100000, guid: c60524387b522e243a497b468177d79d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 02 - Default
+    second: {fileID: 2100000, guid: 878c370923dea384f873d5357937c564, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 07 - Default
+    second: {fileID: 2100000, guid: 59d25e89cad31b348860e5a3f6a3e145, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 09 - Default
+    second: {fileID: 2100000, guid: aff1eb11b24633f4f84d521ac2c53424, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: 1-sztuka-Czarny-Plastik-ABS-Arkusze-300x300x0-5mm-Czarny-ABS-Arkusz-Z-Tworzywa-Sztucznego-Elastyczny-Smooth
+    second: {fileID: 2800000, guid: 5b5978bde8fd3b244b27f5c1d0538434, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: 9G_-_Light_Gold_BlondeTT_Hair_Texture
+    second: {fileID: 2800000, guid: 05d72509fcc52b24ea2f11edb41d238f, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Blue_(film)
+    second: {fileID: 2800000, guid: dacfc29bee88f0545aa9633b83540cc6, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: istockphoto-856342300-170667a
+    second: {fileID: 2800000, guid: f2de143d401409149988e083ea591056, type: 3}
   materials:
     importMaterials: 1
     materialName: 0

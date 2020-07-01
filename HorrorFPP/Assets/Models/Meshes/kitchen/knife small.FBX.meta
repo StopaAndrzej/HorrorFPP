@@ -18,12 +18,12 @@ ModelImporter:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: Bola-Artstone-Plant-Pot-Rust-Small_900x
-    second: {fileID: 2800000, guid: 92bcb50f34debbc46b33f1ed193169af, type: 3}
+    second: {fileID: 2800000, guid: 25cf4b416b268684891e39a504230f3e, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: istockphoto-636123406-170667a
-    second: {fileID: 2800000, guid: 2a4228043dcb7ac40bbe5a74ec0d69ba, type: 3}
+    second: {fileID: 2800000, guid: a5c4e859da89be44ea98105f232af7a5, type: 3}
   materials:
     importMaterials: 1
     materialName: 0

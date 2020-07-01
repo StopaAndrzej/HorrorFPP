@@ -7,6 +7,7 @@ TagManager:
   - Object
   - DropArea
   - SpecialDropArea
+  - ObjectMultiInteractions
   layers:
   - Default
   - TransparentFX

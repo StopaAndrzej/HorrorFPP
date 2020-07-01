@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FindInteraction : MonoBehaviour
 {
@@ -16,19 +17,30 @@ public class FindInteraction : MonoBehaviour
     [SerializeField] private Shader ignoreShader;       //that material is ignore and doesnt change
 
     private bool selected = false;
+    private bool multiInteractionSelected = false;
     public bool dropMode = false;
+
+    //canvas obj
+    [SerializeField] private GameObject actionText;
+    [SerializeField] private GameObject dot;
+
+    private void Start()
+    {
+        actionText.active = false;
+        dot.active = true;
+    }
 
     private void Update()
     {
         //disable when drop mode is use
-        if(!dropMode)
+        if (!dropMode)
         {
             RaycastHit hit;
             Vector3 fwd = transform.TransformDirection(Vector3.forward);
 
             if (Physics.Raycast(transform.position, fwd, out hit, rayLength, layerMaskInteract.value))
             {
-                if (hit.collider.CompareTag("Object"))
+                if (hit.collider.CompareTag("Object") || hit.collider.CompareTag("ObjectMultiInteractions"))
                 {
                     if (raycastedObject != null && raycastedObject != hit.collider.gameObject)
                     {
@@ -47,12 +59,22 @@ public class FindInteraction : MonoBehaviour
                             child.GetComponent<MeshRenderer>().material.shader = outlineShader;
                     }
 
-                    Debug.Log("Interactive object found!");
-
-                    if (Input.GetKeyDown(interactButton))
+                    if (hit.collider.CompareTag("Object"))
                     {
-                        Debug.Log("DO IT!");
+                        actionText.GetComponent<Text>().text = raycastedObject.GetComponent<InteractableObjectBase>().interactText;
+                        dot.active = false;
+                        actionText.active = true;
+                    }
+
+                    if (Input.GetKeyDown(interactButton) && hit.collider.CompareTag("Object"))
+                    {
                         raycastedObject.GetComponent<InteractableObjectBase>().Interact();
+                    }
+
+                    if ( hit.collider.CompareTag("ObjectMultiInteractions"))
+                    {
+                        raycastedObject.GetComponent<InteractableObjectBase>().InteractMulti();
+                        multiInteractionSelected = true;
                     }
                 }
 
@@ -61,14 +83,24 @@ public class FindInteraction : MonoBehaviour
             else if (selected)
             {
                 selected = false;
+
+                actionText.active = false;
+                dot.active = true;
+
                 foreach (Transform child in raycastedObject.transform)
                 {
                     if (child.GetComponent<MeshRenderer>() && child.GetComponent<MeshRenderer>().material.shader != ignoreShader)
                         child.GetComponent<MeshRenderer>().material.shader = defaultShader;
                 }
+                
+
+                if(multiInteractionSelected)
+                {
+                    multiInteractionSelected = false;
+                    raycastedObject.GetComponent<InteractableObjectBase>().DeInteractMulti();
+                }
+
                 raycastedObject = null;
-
-
             }
         }
         else

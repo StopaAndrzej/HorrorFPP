@@ -1,100 +1,142 @@
-﻿Shader "squidzoo/Outline"
+﻿Shader "Outlined/UltimateOutline"
 {
 	Properties
 	{
+		_Color("Main Color", Color) = (0.0,0.0,0.0,1)
 		_MainTex("Texture", 2D) = "white" {}
-		_OutlineColor("Outline color", Color) = (0,0,0,1)
-		_OutlineWidth("Outline width", Range(1.0,5.0)) = 1.05
+
+		_FirstOutlineColor("Outline color", Color) = (0,0,0,0.5)
+		_FirstOutlineWidth("Outlines width", Range(0.0, 2.0)) = 0.15
+
+		_SecondOutlineColor("Outline color", Color) = (0,0,0,1)
+		_SecondOutlineWidth("Outlines width", Range(0.0, 2.0)) = 0.025
+
+		_Angle("Switch shader on angle", Range(0.0, 180.0)) = 20
 	}
 
 		CGINCLUDE
 #include "UnityCG.cginc"
 
-			struct appdata
-		{
+			struct appdata {
 			float4 vertex : POSITION;
-			float3 normal : NORMAL;
+			float4 normal : NORMAL;
 		};
 
-		struct v2f
-		{
-			float4 pos : POSITION;
-			float3 normal : NORMAL;
-		};
+		uniform float4 _FirstOutlineColor;
+		uniform float _FirstOutlineWidth;
 
-		float _OutlineWidth;
-		float4 _OutlineColor;
+		uniform float4 _SecondOutlineColor;
+		uniform float _SecondOutlineWidth;
+
+		uniform sampler2D _MainTex;
+		uniform float4 _Color;
+		uniform float _Angle;
 
 		ENDCG
 
-			SubShader
-		{
-
-			Pass
-			{
-				Zwrite Off
-
+			SubShader{
+			//First outline
+			Pass{
+				Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+				Blend SrcAlpha OneMinusSrcAlpha
+				ZWrite Off
+				Cull Back
 				CGPROGRAM
+
+				struct v2f {
+					float4 pos : SV_POSITION;
+				};
+
 				#pragma vertex vert
 				#pragma fragment frag
 
-				v2f vert(appdata v)
-				{
-					v.vertex.xyz *= _OutlineWidth;
-					v2f o;
-					o.pos = UnityObjectToClipPos(v.vertex);
-					return o;
-				}
+				v2f vert(appdata v) {
+					appdata original = v;
 
-				half4 frag(v2f i) : COLOR
-				{
-					return _OutlineColor;
-				}
+					float3 scaleDir = normalize(v.vertex.xyz - float4(0,0,0,1));
+					//This shader consists of 2 ways of generating outline that are dynamically switched based on demiliter angle
+					//If vertex normal is pointed away from object origin then custom outline generation is used (based on scaling along the origin-vertex vector)
+					//Otherwise the old-school normal vector scaling is used
+					//This way prevents weird artifacts from being created when using either of the methods
+					if (degrees(acos(dot(scaleDir.xyz, v.normal.xyz))) > _Angle) {
+						v.vertex.xyz += normalize(v.normal.xyz) * _FirstOutlineWidth;
+					}
+	else {
+	   v.vertex.xyz += scaleDir * _FirstOutlineWidth;
+   }
 
-				ENDCG
-			}
+   v2f o;
+   o.pos = UnityObjectToClipPos(v.vertex);
+   return o;
+}
 
-			Pass
-			{
-				CGPROGRAM
-				#pragma vertex vertPassTwo
-				#pragma fragment fragPassTwo
-				#pragma multi_compile_fog
+half4 frag(v2f i) : COLOR{
+	return _FirstOutlineColor;
+}
 
-				#include "UnityCG.cginc"
+ENDCG
+}
 
-				struct appdataPassTwo
-				{
-					float4 vertex : POSITION;
-					float2 uv : TEXCOORD0;
-				};
 
-				struct v2fPassTwo
-				{
-					float2 uv : TEXCOORD0;
-					UNITY_FOG_COORDS(1)
-					float4 vertex : SV_POSITION;
-				};
+//Second outline
+Pass{
+	Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+	Blend SrcAlpha OneMinusSrcAlpha
+	ZWrite Off
+	Cull Back
+	CGPROGRAM
 
-				sampler2D _MainTex;
-				float4 _MainTex_ST;
+	struct v2f {
+		float4 pos : SV_POSITION;
+	};
 
-				v2fPassTwo vertPassTwo(appdataPassTwo v)
-				{
-					v2fPassTwo o;
-					o.vertex = UnityObjectToClipPos(v.vertex);
-					o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-					UNITY_TRANSFER_FOG(o,o.vertex);
-					return o;
-				}
+	#pragma vertex vert
+	#pragma fragment frag
 
-				fixed4 fragPassTwo(v2fPassTwo i) : SV_Target
-				{
-					fixed4 col = tex2D(_MainTex, i.uv);
-					UNITY_APPLY_FOG(i.fogCoord, col);
-					return col;
-				}
-				ENDCG
-			}
+	v2f vert(appdata v) {
+		appdata original = v;
+
+		float3 scaleDir = normalize(v.vertex.xyz - float4(0,0,0,1));
+		//This shader consists of 2 ways of generating outline that are dynamically switched based on demiliter angle
+		//If vertex normal is pointed away from object origin then custom outline generation is used (based on scaling along the origin-vertex vector)
+		//Otherwise the old-school normal vector scaling is used
+		//This way prevents weird artifacts from being created when using either of the methods
+		if (degrees(acos(dot(scaleDir.xyz, v.normal.xyz))) > _Angle) {
+			v.vertex.xyz += normalize(v.normal.xyz) * _SecondOutlineWidth;
 		}
+	else {
+		v.vertex.xyz += scaleDir * _SecondOutlineWidth;
+	}
+
+	v2f o;
+	o.pos = UnityObjectToClipPos(v.vertex);
+	return o;
+	}
+
+	half4 frag(v2f i) : COLOR{
+		return _SecondOutlineColor;
+	}
+
+	ENDCG
+}
+
+//Surface shader
+Tags{ "Queue" = "Transparent" }
+
+CGPROGRAM
+#pragma surface surf Lambert noshadow
+
+struct Input {
+	float2 uv_MainTex;
+	float4 color : COLOR;
+};
+
+void surf(Input IN, inout SurfaceOutput  o) {
+	fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
+	o.Albedo = c.rgb;
+	o.Alpha = c.a;
+}
+ENDCG
+		}
+			Fallback "Diffuse"
 }

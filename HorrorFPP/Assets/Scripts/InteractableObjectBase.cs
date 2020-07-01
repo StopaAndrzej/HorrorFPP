@@ -6,7 +6,19 @@ public class InteractableObjectBase : MonoBehaviour
 {
     public string name;
     public string interactText = "Do it!";
+
     public virtual void Interact()
+    {
+
+    }
+
+    //for multiObject tag
+    public virtual void InteractMulti()
+    {
+
+    }
+
+    public virtual void DeInteractMulti()
     {
 
     }

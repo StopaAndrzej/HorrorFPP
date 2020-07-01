@@ -93,6 +93,7 @@ public class PlayerMove : MonoBehaviour
 
     //rotation-inspection flag. disable player movement
     public bool inspectMode = false;
+    public bool seatMode = false;
     public Material blurMaterial;
 
     //canvas dot cursor
@@ -122,7 +123,8 @@ public class PlayerMove : MonoBehaviour
     private void Update()
     {
         //disable player movement if inspection mode is active
-        if (!inspectMode)
+        //or sit
+        if (!inspectMode && !seatMode)
         {
             PlayerMovement();
 
@@ -136,7 +138,7 @@ public class PlayerMove : MonoBehaviour
             if (blurMaterial.GetVector("_Color").x > 0.99f)
                 blurMaterial.SetVector("_Color", new Vector4(1, 1, 1, 1));
         }
-        else
+        else if(inspectMode)
         {
             dotCursor.SetActive(false);
             //blur
