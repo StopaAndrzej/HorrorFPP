@@ -27,6 +27,7 @@ public class PlayerMove : MonoBehaviour
     private bool isJumping = false;
  
     [SerializeField] private Transform camera;
+    public bool disablePlayerController = false;
 
     //leaning params
     [SerializeField] private float leanAngle = 35.0f;
@@ -122,36 +123,40 @@ public class PlayerMove : MonoBehaviour
 
     private void Update()
     {
-        //disable player movement if inspection mode is active
-        //or sit
-        if (!inspectMode && !seatMode)
+        if(!disablePlayerController)
         {
-            PlayerMovement();
+            //disable player movement if inspection mode is active
+            //or sit
+            if (!inspectMode && !seatMode)
+            {
+                PlayerMovement();
 
-            dotCursor.SetActive(true);
-            //blur
-            blurMaterial.SetFloat("_Size", Mathf.Lerp(blurMaterial.GetFloat("_Size"), 0.0f, Time.deltaTime * 8.0f));
-            if (blurMaterial.GetFloat("_Size") < 0.1f)
-                blurMaterial.SetFloat("_Size", 0.0f);
+                dotCursor.SetActive(true);
+                //blur
+                blurMaterial.SetFloat("_Size", Mathf.Lerp(blurMaterial.GetFloat("_Size"), 0.0f, Time.deltaTime * 8.0f));
+                if (blurMaterial.GetFloat("_Size") < 0.1f)
+                    blurMaterial.SetFloat("_Size", 0.0f);
 
-            blurMaterial.SetVector("_Color", new Vector4(Mathf.Lerp(blurMaterial.GetVector("_Color").x, 1, Time.deltaTime*4.0f), Mathf.Lerp(blurMaterial.GetVector("_Color").y, 1, Time.deltaTime * 4.0f), Mathf.Lerp(blurMaterial.GetVector("_Color").z, 1, Time.deltaTime * 4.0f), 1));
-            if (blurMaterial.GetVector("_Color").x > 0.99f)
-                blurMaterial.SetVector("_Color", new Vector4(1, 1, 1, 1));
+                blurMaterial.SetVector("_Color", new Vector4(Mathf.Lerp(blurMaterial.GetVector("_Color").x, 1, Time.deltaTime * 4.0f), Mathf.Lerp(blurMaterial.GetVector("_Color").y, 1, Time.deltaTime * 4.0f), Mathf.Lerp(blurMaterial.GetVector("_Color").z, 1, Time.deltaTime * 4.0f), 1));
+                if (blurMaterial.GetVector("_Color").x > 0.99f)
+                    blurMaterial.SetVector("_Color", new Vector4(1, 1, 1, 1));
+            }
+            else if (inspectMode)
+            {
+                dotCursor.SetActive(false);
+                //blur
+                blurMaterial.SetFloat("_Size", Mathf.Lerp(blurMaterial.GetFloat("_Size"), 20.0f, Time.deltaTime * 2.0f));
+                if (blurMaterial.GetFloat("_Size") > 19.0f)
+                    blurMaterial.SetFloat("_Size", 20.0f);
+
+                blurMaterial.SetVector("_Color", new Vector4(Mathf.Lerp(blurMaterial.GetVector("_Color").x, 0, Time.deltaTime), Mathf.Lerp(blurMaterial.GetVector("_Color").y, 0, Time.deltaTime), Mathf.Lerp(blurMaterial.GetVector("_Color").z, 0, Time.deltaTime), 1));
+                if (blurMaterial.GetVector("_Color").x < 0.01f)
+                    blurMaterial.SetVector("_Color", new Vector4(0, 0, 0, 1));
+
+                Inspect();
+            }
         }
-        else if(inspectMode)
-        {
-            dotCursor.SetActive(false);
-            //blur
-            blurMaterial.SetFloat("_Size", Mathf.Lerp(blurMaterial.GetFloat("_Size"), 20.0f, Time.deltaTime * 2.0f));
-            if (blurMaterial.GetFloat("_Size") > 19.0f)
-                blurMaterial.SetFloat("_Size", 20.0f);
-
-            blurMaterial.SetVector("_Color", new Vector4(Mathf.Lerp(blurMaterial.GetVector("_Color").x, 0, Time.deltaTime), Mathf.Lerp(blurMaterial.GetVector("_Color").y, 0, Time.deltaTime), Mathf.Lerp(blurMaterial.GetVector("_Color").z, 0, Time.deltaTime), 1));
-            if (blurMaterial.GetVector("_Color").x < 0.01f)
-                blurMaterial.SetVector("_Color", new Vector4(0, 0, 0, 1));
-
-            Inspect();
-        }
+        
     }
 
     private void Inspect()

@@ -3,7 +3,37 @@ guid: b5cb1775782042c42aaf166d1374eb9f
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 07 - Default
+    second: {fileID: 2100000, guid: af080574b3d80e74abeba59778e923a0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 08 - Default
+    second: {fileID: 2100000, guid: 63315c400414adb44a7f264aa287947a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 13 - Default
+    second: {fileID: 2100000, guid: 7dd5361447665564d9a32a63f8c0458c, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: black-plastic-texture-background-see-my-other-works-portfolio-35882058
+    second: {fileID: 2800000, guid: 2ba1ae729ee5367459043927311a8c6a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: dirty-red-rag-texture-abstract-background-design-92589174
+    second: {fileID: 2800000, guid: 4ad91965d4765564dbad992587b9fb12, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: yellowplastic_g
+    second: {fileID: 2800000, guid: 2325e6b8e9700b94190060c1bb42cf6c, type: 3}
   materials:
     importMaterials: 1
     materialName: 0

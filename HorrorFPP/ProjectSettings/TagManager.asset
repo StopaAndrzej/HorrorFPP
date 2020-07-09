@@ -8,6 +8,8 @@ TagManager:
   - DropArea
   - SpecialDropArea
   - ObjectMultiInteractions
+  - ObjectMultiChild
+  - Rope
   layers:
   - Default
   - TransparentFX

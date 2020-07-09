@@ -3,7 +3,57 @@ guid: f1a9b79c0e2a46348bbad570dcc13284
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 01 - Default
+    second: {fileID: 2100000, guid: 269cc59615f70cb4d906183391e4473a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 02 - Default
+    second: {fileID: 2100000, guid: 4906cd8cdefa8f94cb2377feccc1421e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 07 - Default
+    second: {fileID: 2100000, guid: 3ce26ae09e38c734e97de74a744cc1bb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 08 - Default
+    second: {fileID: 2100000, guid: 5e5e5d5ce23846147b28ca58a4718dca, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 11 - Default
+    second: {fileID: 2100000, guid: 219db42ce0128904681450e57f71700b, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: 1-sztuka-Czarny-Plastik-ABS-Arkusze-300x300x0-5mm-Czarny-ABS-Arkusz-Z-Tworzywa-Sztucznego-Elastyczny-Smooth
+    second: {fileID: 2800000, guid: 180b700036118b6458246678c6094f36, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: HTB1XpwAKVXXXXcjXXXXq6xXFXXXG.jpg_350x350
+    second: {fileID: 2800000, guid: 4087efce1eb775e46aea80f5195caabf, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: HTB1XpwAKVXXXXcjXXXXq6xXFXXXG.jpg_350x35044
+    second: {fileID: 2800000, guid: 5817af5044fac3448ba9cc3518f3fbef, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: czerw
+    second: {fileID: 2800000, guid: 076d06a33cdc4904ab7ec19f05b67cf8, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: sza
+    second: {fileID: 2800000, guid: 51ba1245fbc324d4f86393842823b9ca, type: 3}
   materials:
     importMaterials: 1
     materialName: 0

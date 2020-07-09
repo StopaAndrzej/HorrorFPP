@@ -18,6 +18,11 @@ public class FindInteraction : MonoBehaviour
 
     private bool selected = false;
     private bool multiInteractionSelected = false;
+
+    //values to increase text aplha for multi interaction objects when selected by mouse or not
+    //essential for proper work
+    private bool multiInteractionSelectedChild = false;
+    private bool multiInteractionSelectedChild2 = false;
     public bool dropMode = false;
 
     //canvas obj
@@ -40,14 +45,23 @@ public class FindInteraction : MonoBehaviour
 
             if (Physics.Raycast(transform.position, fwd, out hit, rayLength, layerMaskInteract.value))
             {
-                if (hit.collider.CompareTag("Object") || hit.collider.CompareTag("ObjectMultiInteractions"))
+                //object to recognize items with single interaction
+                //multi for objects that contains more interactable objects like doors(handle, lock...)/and objectMultiCild for one of this child object
+                if (hit.collider.CompareTag("Object") || hit.collider.CompareTag("ObjectMultiInteractions") || hit.collider.CompareTag("ObjectMultiChild"))
                 {
-                    if (raycastedObject != null && raycastedObject != hit.collider.gameObject)
+
+                    if (raycastedObject != null && raycastedObject != hit.collider.gameObject && !hit.collider.CompareTag("ObjectMultiChild"))
                     {
                         foreach (Transform child in raycastedObject.transform)
                         {
                             if (child.GetComponent<MeshRenderer>() && child.GetComponent<MeshRenderer>().material.shader != ignoreShader)
                                 child.GetComponent<MeshRenderer>().material.shader = defaultShader;
+                        }
+
+                        if (multiInteractionSelectedChild)
+                        {
+                            raycastedObject.GetComponent<InteractableObjectBase>().DeInteractMulti();
+                            multiInteractionSelectedChild = false;
                         }
                     }
 
@@ -62,7 +76,7 @@ public class FindInteraction : MonoBehaviour
                     if (hit.collider.CompareTag("Object"))
                     {
                         actionText.GetComponent<Text>().text = raycastedObject.GetComponent<InteractableObjectBase>().interactText;
-                        dot.active = false;
+                        dot.active = true;
                         actionText.active = true;
                     }
 
@@ -71,10 +85,36 @@ public class FindInteraction : MonoBehaviour
                         raycastedObject.GetComponent<InteractableObjectBase>().Interact();
                     }
 
-                    if ( hit.collider.CompareTag("ObjectMultiInteractions"))
+                    else if (hit.collider.CompareTag("ObjectMultiChild"))
                     {
                         raycastedObject.GetComponent<InteractableObjectBase>().InteractMulti();
+
+                        //switch correct parent interaction by click on kid's interactive field
+                        if (Input.GetKeyDown(interactButton))
+                        {
+                            int tmpValue = raycastedObject.GetComponent<InteractableObjectBase>().kidID;
+                            raycastedObject.transform.parent.GetComponent<InteractableObjectBase>().kidID = tmpValue;
+                        }
+                        raycastedObject.transform.parent.GetComponent<InteractableObjectBase>().InteractMulti();
+
+                        dot.active = true;
+                        actionText.active = false;
+
                         multiInteractionSelected = true;
+                        multiInteractionSelectedChild = true;
+                        multiInteractionSelectedChild2 = true;
+                    }
+
+                    else if ( hit.collider.CompareTag("ObjectMultiInteractions"))
+                    {
+                        actionText.GetComponent<Text>().text = raycastedObject.GetComponent<InteractableObjectBase>().interactText;
+                        dot.active = false;
+                        actionText.active = true;
+
+                        raycastedObject.GetComponent<InteractableObjectBase>().InteractMulti();
+                        multiInteractionSelected = true;
+                        multiInteractionSelectedChild2 = false;
+
                     }
                 }
 
@@ -92,9 +132,15 @@ public class FindInteraction : MonoBehaviour
                     if (child.GetComponent<MeshRenderer>() && child.GetComponent<MeshRenderer>().material.shader != ignoreShader)
                         child.GetComponent<MeshRenderer>().material.shader = defaultShader;
                 }
-                
 
-                if(multiInteractionSelected)
+
+                
+                if (multiInteractionSelectedChild2)
+                {
+                    raycastedObject = raycastedObject.transform.parent.gameObject;
+                }
+
+                if (multiInteractionSelected)
                 {
                     multiInteractionSelected = false;
                     raycastedObject.GetComponent<InteractableObjectBase>().DeInteractMulti();

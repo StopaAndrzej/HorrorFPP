@@ -3,7 +3,47 @@ guid: 8814b97a1c0754b4082bfaea2729a810
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 01 - Default
+    second: {fileID: 2100000, guid: 53461a7acdf22c24a832cb1d1bdd7c63, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 02 - Default
+    second: {fileID: 2100000, guid: 242b9428facb8444692f971cc9a8d084, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 08 - Default
+    second: {fileID: 2100000, guid: 68385502b5ca91b4092d8cf109560add, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 11 - Default
+    second: {fileID: 2100000, guid: 10904ae90c5480043ae41d9111a5d38f, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: 1-sztuka-Czarny-Plastik-ABS-Arkusze-300x300x0-5mm-Czarny-ABS-Arkusz-Z-Tworzywa-Sztucznego-Elastyczny-Smooth
+    second: {fileID: 2800000, guid: e0bf6515d21ea7d4d963b6248682e321, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: HTB1XpwAKVXXXXcjXXXXq6xXFXXXG.jpg_350x350
+    second: {fileID: 2800000, guid: 4a7557a6330507643862ae34e5fd485d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: HTB1XpwAKVXXXXcjXXXXq6xXFXXXG.jpg_350x35044
+    second: {fileID: 2800000, guid: 3245ca1814fa60e4baf264f70643a274, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: sza
+    second: {fileID: 2800000, guid: 0ff880502e0e7c14fb27f742303841c6, type: 3}
   materials:
     importMaterials: 1
     materialName: 0

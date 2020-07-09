@@ -3,7 +3,27 @@ guid: dc3a5f75e66977645a9841598998bf4b
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 01 - Default
+    second: {fileID: 2100000, guid: c22afe1bd4f39b4489313866f9f4a74f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 02 - Default
+    second: {fileID: 2100000, guid: 36b442225b9eca44598e3f82d98fa58e, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: 1
+    second: {fileID: 2800000, guid: 62659540afd3eb64ab4f50d424e05e3d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: szklo
+    second: {fileID: 2800000, guid: 87cf2d5c1b0cfac49bcab120d2db8e75, type: 3}
   materials:
     importMaterials: 1
     materialName: 0

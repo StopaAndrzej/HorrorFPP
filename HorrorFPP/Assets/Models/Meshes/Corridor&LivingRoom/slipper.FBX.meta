@@ -28,22 +28,22 @@ ModelImporter:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: 1-sztuka-Czarny-Plastik-ABS-Arkusze-300x300x0-5mm-Czarny-ABS-Arkusz-Z-Tworzywa-Sztucznego-Elastyczny-Smooth
-    second: {fileID: 2800000, guid: 375ce4d12b4cdb44e86eee664f9e5975, type: 3}
+    second: {fileID: 2800000, guid: fee1384855126334395628f862f9921d, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: ba8b414ccd818e803472f5e3a50ff3ef
-    second: {fileID: 2800000, guid: 26911f68b8762ae4daf47da11fdd80c2, type: 3}
+    second: {fileID: 2800000, guid: 0c96dca0ac47e894c8c72e84a451ca91, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: depositphotos_54055869-stock-photo-rattan-seamless-texture-tile
-    second: {fileID: 2800000, guid: 67b88a25bf3b1b54a9b8df7f6bc277d2, type: 3}
+    second: {fileID: 2800000, guid: 03d5aea3f38f6fb4784b814c16096ebf, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: depositphotos_69087233-stock-photo-old-brown-suede-background-texture
-    second: {fileID: 2800000, guid: 384ceb91576a1a84e8c7f8be16a632d6, type: 3}
+    second: {fileID: 2800000, guid: 1130ea0084454194ea8c922a268d81e9, type: 3}
   materials:
     importMaterials: 1
     materialName: 0

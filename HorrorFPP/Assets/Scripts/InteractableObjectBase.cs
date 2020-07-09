@@ -6,6 +6,8 @@ public class InteractableObjectBase : MonoBehaviour
 {
     public string name;
     public string interactText = "Do it!";
+    //0 if its not one of another interactive object interaction
+    public int kidID = 0;
 
     public virtual void Interact()
     {
