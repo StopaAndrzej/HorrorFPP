@@ -156,6 +156,10 @@ public class PlayerMove : MonoBehaviour
                 Inspect();
             }
         }
+        else
+        {
+            camera.GetComponent<PlayerLook>().disableCamera = true;
+        }
         
     }
 

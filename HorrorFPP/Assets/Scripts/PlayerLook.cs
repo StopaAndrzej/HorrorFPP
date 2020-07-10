@@ -17,6 +17,7 @@ public class PlayerLook : MonoBehaviour
     private Vector3 followVelocity;
 
     public float dampingTime = 0.2f;
+    public bool disableCamera=false;
 
     private void Awake()
     {
@@ -33,7 +34,7 @@ public class PlayerLook : MonoBehaviour
     private void Update()
     {
         //disable player movement if inspection mode is active
-        if (!playerBody.GetComponent<PlayerMove>().inspectMode)
+        if (!playerBody.GetComponent<PlayerMove>().inspectMode && !disableCamera)
             CameraRotation();
     }
 

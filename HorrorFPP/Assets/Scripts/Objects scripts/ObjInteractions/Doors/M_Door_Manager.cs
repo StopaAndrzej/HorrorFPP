@@ -24,9 +24,16 @@ public class M_Door_Manager : InteractableObjectBase
     public bool animationInProgress = false;
 
     [SerializeField] private Animator animator;
+
     [SerializeField] private Transform cameraJudasPos;
+    private Transform  originalPlayerCameraPos;
+
     [SerializeField] private GameObject playerCamera;
     [SerializeField] private PlayerMove playerMove;
+
+    private bool lerpCameraMovement = false;
+    public float smoothMoveSpeed = 0.125f;
+    public float smoothRotationSpeed = 0.125f;
 
     void Start()
     {
@@ -36,6 +43,25 @@ public class M_Door_Manager : InteractableObjectBase
         foreach (Canvas element in canvases)
         {
             element.gameObject.SetActive(false);
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if(lerpCameraMovement)
+        {
+            Vector3 smoothedPos = Vector3.Lerp(playerCamera.GetComponent<Transform>().position, cameraJudasPos.position, smoothMoveSpeed);
+            Quaternion smoothedRot = Quaternion.Lerp(playerCamera.GetComponent<Transform>().rotation, cameraJudasPos.rotation, smoothRotationSpeed);
+
+            if (cameraJudasPos.position == playerCamera.GetComponent<Transform>().position)
+            {
+                lerpCameraMovement = false;
+            }
+            else
+            {
+                playerCamera.GetComponent<Transform>().position = smoothedPos;
+                playerCamera.GetComponent<Transform>().rotation = smoothedRot;
+            }
         }
     }
 
@@ -89,8 +115,8 @@ public class M_Door_Manager : InteractableObjectBase
             else if (Input.GetKeyDown(judasButton) || kidID == 2)
             {
                 playerMove.disablePlayerController = true;
-                playerCamera.GetComponent<Transform>().position = cameraJudasPos.position;
-                playerCamera.GetComponent<Transform>().rotation = cameraJudasPos.rotation;
+                lerpCameraMovement = true;
+                originalPlayerCameraPos = playerCamera.GetComponent<Transform>();
 
                 kidID = 0;
             }

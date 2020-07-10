@@ -50,15 +50,10 @@ public class FindInteraction : MonoBehaviour
                 if (hit.collider.CompareTag("Object") || hit.collider.CompareTag("ObjectMultiInteractions") || hit.collider.CompareTag("ObjectMultiChild"))
                 {
 
-                    if (raycastedObject != null && raycastedObject != hit.collider.gameObject && !hit.collider.CompareTag("ObjectMultiChild"))
+                    if (raycastedObject != null && raycastedObject != hit.collider.gameObject)
                     {
-                        foreach (Transform child in raycastedObject.transform)
-                        {
-                            if (child.GetComponent<MeshRenderer>() && child.GetComponent<MeshRenderer>().material.shader != ignoreShader)
-                                child.GetComponent<MeshRenderer>().material.shader = defaultShader;
-                        }
-
-                        if (multiInteractionSelectedChild)
+                        if ((multiInteractionSelectedChild && !hit.collider.CompareTag("ObjectMultiChild")) || 
+                            (multiInteractionSelectedChild && hit.collider.CompareTag("ObjectMultiChild")) && raycastedObject.GetComponent<InteractableObjectBase>().kidID != hit.collider.gameObject.GetComponent<InteractableObjectBase>().kidID)
                         {
                             raycastedObject.GetComponent<InteractableObjectBase>().DeInteractMulti();
                             multiInteractionSelectedChild = false;
@@ -67,22 +62,36 @@ public class FindInteraction : MonoBehaviour
 
                     raycastedObject = hit.collider.gameObject;
 
-                    foreach (Transform child in raycastedObject.transform)
+                    if (hit.collider.CompareTag("ObjectMultiChild"))
                     {
-                        if (child.GetComponent<MeshRenderer>() && child.GetComponent<MeshRenderer>().material.shader != ignoreShader)
-                            child.GetComponent<MeshRenderer>().material.shader = outlineShader;
+                        foreach (GameObject element in raycastedObject.transform.parent.GetComponent<InteractableObjectBase>().outlineObjects)
+                        {
+                            element.GetComponent<MeshRenderer>().enabled = true;
+                        }
                     }
+                    else
+                    {
+                        foreach (GameObject element in raycastedObject.GetComponent<InteractableObjectBase>().outlineObjects)
+                        {
+                            element.GetComponent<MeshRenderer>().enabled = true;
+                        }
+                    }
+                   
 
                     if (hit.collider.CompareTag("Object"))
                     {
                         actionText.GetComponent<Text>().text = raycastedObject.GetComponent<InteractableObjectBase>().interactText;
                         dot.active = true;
                         actionText.active = true;
-                    }
 
-                    if (Input.GetKeyDown(interactButton) && hit.collider.CompareTag("Object"))
-                    {
-                        raycastedObject.GetComponent<InteractableObjectBase>().Interact();
+                        multiInteractionSelected = false;
+                        multiInteractionSelectedChild = false;
+                        multiInteractionSelectedChild2 = false;
+
+                        if (Input.GetKeyDown(interactButton))
+                        {
+                            raycastedObject.GetComponent<InteractableObjectBase>().Interact();
+                        }
                     }
 
                     else if (hit.collider.CompareTag("ObjectMultiChild"))
@@ -127,18 +136,15 @@ public class FindInteraction : MonoBehaviour
                 actionText.active = false;
                 dot.active = true;
 
-                foreach (Transform child in raycastedObject.transform)
-                {
-                    if (child.GetComponent<MeshRenderer>() && child.GetComponent<MeshRenderer>().material.shader != ignoreShader)
-                        child.GetComponent<MeshRenderer>().material.shader = defaultShader;
-                }
 
-
-                
                 if (multiInteractionSelectedChild2)
-                {
                     raycastedObject = raycastedObject.transform.parent.gameObject;
+
+                foreach (GameObject element in raycastedObject.GetComponent<InteractableObjectBase>().outlineObjects)
+                {
+                    element.GetComponent<MeshRenderer>().enabled = false;
                 }
+ 
 
                 if (multiInteractionSelected)
                 {
@@ -154,10 +160,12 @@ public class FindInteraction : MonoBehaviour
             //disable selection in drop mode if something was selected before
             if (raycastedObject != null)
             {
-                foreach (Transform child in raycastedObject.transform)
+                if (multiInteractionSelectedChild2)
+                    raycastedObject = raycastedObject.transform.parent.gameObject;
+
+                foreach (GameObject element in raycastedObject.GetComponent<InteractableObjectBase>().outlineObjects)
                 {
-                    if (child.GetComponent<MeshRenderer>())
-                        child.GetComponent<MeshRenderer>().material.shader = defaultShader;
+                    element.GetComponent<MeshRenderer>().enabled = false;
                 }
             }
         }

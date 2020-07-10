@@ -9,6 +9,8 @@ public class InteractableObjectBase : MonoBehaviour
     //0 if its not one of another interactive object interaction
     public int kidID = 0;
 
+    public List<GameObject> outlineObjects;
+
     public virtual void Interact()
     {
 
