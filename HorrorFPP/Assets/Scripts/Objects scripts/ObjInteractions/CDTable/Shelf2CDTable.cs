@@ -15,19 +15,5 @@ public class Shelf2CDTable : InteractableObjectBase
         attachedToScriptObjectTransform = this.GetComponent<Transform>();
     }
 
-    public override void Interact()
-    {
-        if (!isOpen)
-        {
-            attachedToScriptObjectTransform.position = openedTransform.position;
-            attachedToScriptObjectTransform.rotation = openedTransform.rotation;
-        }
-        else
-        {
-            attachedToScriptObjectTransform.position = closedTransform.position;
-            attachedToScriptObjectTransform.rotation = closedTransform.rotation;
-        }
 
-        isOpen = !isOpen;
-    }
 }

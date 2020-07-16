@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using UnityEngine.UI;
+using UnityEngine.Rendering.PostProcessing;
 
 public class M_Door_Manager : InteractableObjectBase
 {
@@ -11,6 +12,7 @@ public class M_Door_Manager : InteractableObjectBase
     public KeyCode handleButton;
     public KeyCode judasButton;
     public KeyCode lockButton;
+    public KeyCode exitButton;
 
     [SerializeField] private Text handleTxt;
     [SerializeField] private Text judasTxt;
@@ -26,14 +28,24 @@ public class M_Door_Manager : InteractableObjectBase
     [SerializeField] private Animator animator;
 
     [SerializeField] private Transform cameraJudasPos;
-    private Transform  originalPlayerCameraPos;
+    private Vector3 destinationPos;
+    private Quaternion destinationRot;
+
+    private Vector3  originalPlayerCameraPos;
+    private Quaternion originalPlayerCameraRot;
 
     [SerializeField] private GameObject playerCamera;
     [SerializeField] private PlayerMove playerMove;
 
     private bool lerpCameraMovement = false;
+    private bool cameraMovementMotionReverse = false;
+
     public float smoothMoveSpeed = 0.125f;
     public float smoothRotationSpeed = 0.125f;
+    public float fadeSpeed = 0.2f;
+
+    [SerializeField] private PostProcessVolume cameraPostProcVolume;
+    [SerializeField] private PostProcessVolume peepHolePostProcVolume;
 
     void Start()
     {
@@ -50,12 +62,46 @@ public class M_Door_Manager : InteractableObjectBase
     {
         if(lerpCameraMovement)
         {
-            Vector3 smoothedPos = Vector3.Lerp(playerCamera.GetComponent<Transform>().position, cameraJudasPos.position, smoothMoveSpeed);
-            Quaternion smoothedRot = Quaternion.Lerp(playerCamera.GetComponent<Transform>().rotation, cameraJudasPos.rotation, smoothRotationSpeed);
+            cameraPostProcVolume.profile.TryGetSettings(out ColorGrading colorGradingLayer);
 
-            if (cameraJudasPos.position == playerCamera.GetComponent<Transform>().position)
+            if (!cameraMovementMotionReverse)
+            {
+                destinationPos = cameraJudasPos.position;
+                destinationRot = cameraJudasPos.rotation;
+
+                colorGradingLayer.postExposure.value = Mathf.Lerp(colorGradingLayer.postExposure.value, -50.0f, Time.deltaTime * fadeSpeed);
+            }
+            else
+            {
+                destinationPos = originalPlayerCameraPos;
+                destinationRot = originalPlayerCameraRot;
+
+                cameraPostProcVolume.enabled = true;
+                peepHolePostProcVolume.enabled = false;
+
+                colorGradingLayer.postExposure.value = 0;
+            }
+
+
+            Vector3 smoothedPos = Vector3.Lerp(playerCamera.GetComponent<Transform>().position, destinationPos, smoothMoveSpeed);
+            Quaternion smoothedRot = Quaternion.Lerp(playerCamera.GetComponent<Transform>().rotation, destinationRot, smoothRotationSpeed);
+
+            if (destinationPos == playerCamera.GetComponent<Transform>().position)
             {
                 lerpCameraMovement = false;
+               // animationInProgress = false;
+
+                if(cameraMovementMotionReverse)
+                {
+                    playerMove.disablePlayerController = false;
+                }
+                else
+                {
+                    colorGradingLayer.postExposure.value = -50.0f;
+                    playerCamera.GetComponent<Camera>().cullingMask &= ~(1 << LayerMask.NameToLayer("IgnoreLights"));
+                    cameraPostProcVolume.enabled = false;
+                    peepHolePostProcVolume.enabled = true;
+                }
             }
             else
             {
@@ -75,7 +121,7 @@ public class M_Door_Manager : InteractableObjectBase
         if(!animationInProgress)
         {
             //check statements
-            if (Input.GetKeyDown(handleButton) || kidID==1)
+            if ((Input.GetKeyDown(handleButton) || kidID==1) && !isJudas)
             {
                 if (isHandle)
                 {
@@ -112,15 +158,21 @@ public class M_Door_Manager : InteractableObjectBase
                 isHandle = !isHandle;
                 kidID = 0;
             }
-            else if (Input.GetKeyDown(judasButton) || kidID == 2)
+            else if ((Input.GetKeyDown(judasButton) || kidID == 2) && !isJudas)
             {
                 playerMove.disablePlayerController = true;
                 lerpCameraMovement = true;
-                originalPlayerCameraPos = playerCamera.GetComponent<Transform>();
+
+                isJudas = true;
+                //animationInProgress = true;
+                cameraMovementMotionReverse = false; 
+
+                originalPlayerCameraPos = playerCamera.GetComponent<Transform>().position;
+                originalPlayerCameraRot = playerCamera.GetComponent<Transform>().rotation;
 
                 kidID = 0;
             }
-            else if (Input.GetKeyDown(lockButton) || kidID == 3)
+            else if ((Input.GetKeyDown(lockButton) || kidID == 3)  && !isJudas)
             {
                 if (!isHandle)
                 {
@@ -138,6 +190,13 @@ public class M_Door_Manager : InteractableObjectBase
 
                 isLock = !isLock;
                 kidID = 0;
+            }
+            else if(Input.GetKeyDown(exitButton) && isJudas)
+            {
+                isJudas = false;
+                cameraMovementMotionReverse = true;
+                lerpCameraMovement = true;
+                //animationInProgress = true;
             }
         }
         

@@ -55,10 +55,10 @@ public class MicrowaveManager : MonoBehaviour
     {
         if(itemInside)
         {
-            if (microwaveDrop.collider.GetComponent<FoodInspect>())
-            {
-                microwaveDrop.collider.GetComponent<FoodInspect>().foodCondition += 1;
-            }
+            //if (microwaveDrop.collider.GetComponent<FoodInspect>())
+            //{
+            //    microwaveDrop.collider.GetComponent<FoodInspect>().foodCondition += 1;
+            //}
         }
     }
 }

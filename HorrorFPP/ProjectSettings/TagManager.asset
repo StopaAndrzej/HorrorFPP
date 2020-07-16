@@ -10,6 +10,7 @@ TagManager:
   - ObjectMultiInteractions
   - ObjectMultiChild
   - Rope
+  - ObjectNoInteraction
   layers:
   - Default
   - TransparentFX

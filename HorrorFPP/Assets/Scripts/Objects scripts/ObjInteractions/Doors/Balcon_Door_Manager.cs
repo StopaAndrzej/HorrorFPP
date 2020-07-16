@@ -41,7 +41,7 @@ public class Balcon_Door_Manager : InteractableObjectBase
 
         if (!animationInProgress)
         {
-            if (Input.GetKeyDown(handleButton))
+            if (Input.GetKeyDown(handleButton) || kidID == 1)
             {
                 if (isOverride)
                 {
@@ -51,19 +51,21 @@ public class Balcon_Door_Manager : InteractableObjectBase
                 {
                     if (isFullOpen)
                     {
-                        this.GetComponent<Transform>().Rotate(new Vector3(0, 90, 0));
-                        handleTxt.text = "OPEN";
+                        animator.SetBool("isFullOpen", false);
+                        StartCoroutine(Opening());
                     }
                     else
                     {
-                        this.GetComponent<Transform>().Rotate(new Vector3(0, -90, 0));
+                        animator.SetBool("isFullOpen", true);
                         handleTxt.text = "CLOSE";
+                        StartCoroutine(Opening());
                     }
 
                     isFullOpen = !isFullOpen;
+                    kidID = 0;
                 }
             }
-            else if(Input.GetKeyDown(overrideButton))
+            else if(Input.GetKeyDown(overrideButton) || kidID == 2)
             {
                 if(!isFullOpen)
                 {
@@ -79,6 +81,7 @@ public class Balcon_Door_Manager : InteractableObjectBase
                     }
 
                     isOverride = !isOverride;
+                    kidID = 0;
                 }
             }
         }
@@ -100,5 +103,20 @@ public class Balcon_Door_Manager : InteractableObjectBase
     public void AnimationWorkOff()
     {
         animationInProgress = false;
+    }
+
+    IEnumerator Opening()
+    {
+        if (!isFullOpen)
+        {
+            yield return new WaitForSeconds(0.6f);
+            this.GetComponent<Transform>().Rotate(new Vector3(0, -90, 0));
+        }
+        else
+        {
+            this.GetComponent<Transform>().Rotate(new Vector3(0, 90, 0));
+            yield return new WaitForSeconds(0.6f);
+            handleTxt.text = "OPEN";
+        }
     }
 }

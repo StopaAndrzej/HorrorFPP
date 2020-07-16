@@ -125,6 +125,7 @@ public class PlayerMove : MonoBehaviour
     {
         if(!disablePlayerController)
         {
+            camera.GetComponent<PlayerLook>().disableCamera = false;
             //disable player movement if inspection mode is active
             //or sit
             if (!inspectMode && !seatMode)

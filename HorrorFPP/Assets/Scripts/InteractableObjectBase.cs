@@ -11,6 +11,7 @@ public class InteractableObjectBase : MonoBehaviour
 
     public List<GameObject> outlineObjects;
 
+
     public virtual void Interact()
     {
 
