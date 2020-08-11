@@ -43,7 +43,7 @@ public class FocusSwitcher : MonoBehaviour
     }
 
     // On disable make sure to reset the current object
-    private void OnDisable()
+    public void OnDisable()
     {
         if (currentlyFocused) currentlyFocused.layer = previousLayer;
 

@@ -10,7 +10,11 @@ public class PlayerLook : MonoBehaviour
     [SerializeField] private Transform playerBody;
     [SerializeField] private Vector2 rotationRange = new Vector2(-70.0f,70.0f);
 
+    [SerializeField] private Vector2 rotationRangePeepHoleX = new Vector2(-5.0f, 5.0f);
+    [SerializeField] private Vector2 rotationRangePeepHoleY = new Vector2(-5.0f, 5.0f);
+
     private float xAxisClamp;
+    private float yAxisClamp;
 
     private Vector3 targetAngles;
     private Vector3 followAngles;
@@ -23,6 +27,7 @@ public class PlayerLook : MonoBehaviour
     {
         LockCursor();
         xAxisClamp = 0.0f;
+        yAxisClamp = 0.0f;
     }
 
     private void LockCursor()
@@ -35,7 +40,10 @@ public class PlayerLook : MonoBehaviour
     {
         //disable player movement if inspection mode is active
         if (!playerBody.GetComponent<PlayerMove>().inspectMode && !disableCamera)
+        {
             CameraRotation();
+        }    
+
     }
 
     private void CameraRotation()
@@ -44,6 +52,7 @@ public class PlayerLook : MonoBehaviour
         float mouseY = Input.GetAxis(mouseYInputName) * mouseSensitivity * Time.deltaTime;
 
         xAxisClamp += mouseY;
+        yAxisClamp += mouseX;
         if(xAxisClamp > rotationRange.y)
         {
             xAxisClamp = rotationRange.y;
@@ -65,8 +74,6 @@ public class PlayerLook : MonoBehaviour
         playerBody.Rotate(Vector3.up * followAngles.x);
         //transform.Rotate(Vector3.forward * playerBody.gameObject.GetComponent<PlayerMove>().zTilt);
     }
-
-    
 
     private void ClampAxisRotationToValue(float value)
     {

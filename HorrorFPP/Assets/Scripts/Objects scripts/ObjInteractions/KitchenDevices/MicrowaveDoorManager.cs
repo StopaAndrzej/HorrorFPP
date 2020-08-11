@@ -20,7 +20,7 @@ public class MicrowaveDoorManager : InteractableObjectBase
     [SerializeField] private Text openIcon;
     [SerializeField] private Text openIcon2;
 
-    private bool isCooking = false;
+    public bool isCooking = false;
     private bool readyToCook = false;
     private bool isOpen = false;
 
@@ -33,8 +33,15 @@ public class MicrowaveDoorManager : InteractableObjectBase
     [SerializeField] private Vector3 offsetText;
     [SerializeField] private Vector3 offsetButtonIcon;
 
-    [SerializeField] private Vector3 offsetText2;
-    [SerializeField] private Vector3 offsetButtonIcon2;
+    [SerializeField] private GameObject openColiderObj;
+    [SerializeField] private Vector3 offsetCanvas;
+
+    //bool check to offset canvace only once when door is closed
+    private bool OpenTextOffsetOne = false;
+
+    [SerializeField] private BoxCollider cookObj;
+    
+
 
     void Start()
     {
@@ -47,22 +54,30 @@ public class MicrowaveDoorManager : InteractableObjectBase
 
             canvases[i].gameObject.SetActive(false);
         }
+        
+        //cook canvas collider deactive;
+        cookObj.enabled = false;
     }
 
     public override void InteractMulti()
     {
-
-        canvases[0].gameObject.SetActive(true);
-
+        if(!isCooking)
+        {
+            canvases[0].gameObject.SetActive(true);
+            canvases[2].gameObject.SetActive(true);
+        }
+        
         if(microwaveManager.itemInside && !isOpen && !isCooking)
         {
             canvases[1].gameObject.SetActive(true);
             readyToCook = true;
+            cookObj.enabled = true;
         }
         else
         {
             canvases[1].gameObject.SetActive(false);
             readyToCook = false;
+            cookObj.enabled = false;
         }
 
         if(!animationInProgress)
@@ -106,9 +121,10 @@ public class MicrowaveDoorManager : InteractableObjectBase
                 isCooking = true;
                 microwaveManager.stwichOn = true;
 
-                openTxt.GetComponent<RectTransform>().localPosition += offsetText2;
-                openIcon.GetComponent<RectTransform>().localPosition += offsetButtonIcon2;
-                openIcon2.GetComponent<RectTransform>().localPosition += offsetButtonIcon2;
+                openColiderObj.GetComponent<Transform>().localPosition += offsetCanvas;
+                OpenTextOffsetOne = false;
+
+                microwaveManager.TurnOnMicrowave();
             }
         }
 
@@ -136,13 +152,16 @@ public class MicrowaveDoorManager : InteractableObjectBase
         animationInProgress = false;
         animator.SetBool("isFullOpen", false);
         openTxt.text = "OPEN";
+
+        if(!OpenTextOffsetOne)
+        {
+            openColiderObj.GetComponent<Transform>().localPosition -= offsetCanvas;
+            OpenTextOffsetOne = true;
+        }
+
         openTxt.GetComponent<RectTransform>().localPosition -= offsetText;
         openIcon.GetComponent<RectTransform>().localPosition -= offsetButtonIcon;
         openIcon2.GetComponent<RectTransform>().localPosition -= offsetButtonIcon;
-
-        openTxt.GetComponent<RectTransform>().localPosition -= offsetText2;
-        openIcon.GetComponent<RectTransform>().localPosition -= offsetButtonIcon2;
-        openIcon2.GetComponent<RectTransform>().localPosition -= offsetButtonIcon2;
     }
 
     IEnumerator Opening()

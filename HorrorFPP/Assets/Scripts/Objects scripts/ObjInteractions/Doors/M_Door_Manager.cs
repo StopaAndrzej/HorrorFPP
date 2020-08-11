@@ -7,6 +7,7 @@ using UnityEngine.Rendering.PostProcessing;
 
 public class M_Door_Manager : InteractableObjectBase
 {
+    [SerializeField] private FindInteraction findInteraction;
     [SerializeField] private List<Canvas> canvases;
 
     public KeyCode handleButton;
@@ -94,6 +95,7 @@ public class M_Door_Manager : InteractableObjectBase
                 if(cameraMovementMotionReverse)
                 {
                     playerMove.disablePlayerController = false;
+                    findInteraction.peepHoleMode = false;
                 }
                 else
                 {
@@ -101,6 +103,7 @@ public class M_Door_Manager : InteractableObjectBase
                     playerCamera.GetComponent<Camera>().cullingMask &= ~(1 << LayerMask.NameToLayer("IgnoreLights"));
                     cameraPostProcVolume.enabled = false;
                     peepHolePostProcVolume.enabled = true;
+                    findInteraction.peepHoleMode = true;
                 }
             }
             else
@@ -164,7 +167,6 @@ public class M_Door_Manager : InteractableObjectBase
                 lerpCameraMovement = true;
 
                 isJudas = true;
-                //animationInProgress = true;
                 cameraMovementMotionReverse = false; 
 
                 originalPlayerCameraPos = playerCamera.GetComponent<Transform>().position;

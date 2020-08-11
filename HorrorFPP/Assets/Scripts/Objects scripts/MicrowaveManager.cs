@@ -10,6 +10,8 @@ public class MicrowaveManager : MonoBehaviour
     public bool itemInside = false;
 
     [SerializeField] private MicrowaveDrop microwaveDrop;
+    [SerializeField] private  MicrowaveSwitch switchMicrowave;
+    [SerializeField] private MicrowaveDoorManager doorManager;
 
     //textures
     [SerializeField] public MeshRenderer door;
@@ -42,6 +44,9 @@ public class MicrowaveManager : MonoBehaviour
     [SerializeField] public Material plateActiveBlood;
     [SerializeField] public Material consoleActiveBlood;
 
+    [SerializeField] private Light microLight;
+    [SerializeField] private Timer clock;
+
     private void Start()
     {
         door.material = doorNoActive;
@@ -49,16 +54,40 @@ public class MicrowaveManager : MonoBehaviour
         inside.material = insideNoActive;
         plate.material = plateNoActive;
         console.material = consoleNoActive;
+
+        microLight.enabled = false;
     }
 
     public void Cook()
     {
         if(itemInside)
         {
-            //if (microwaveDrop.collider.GetComponent<FoodInspect>())
-            //{
-            //    microwaveDrop.collider.GetComponent<FoodInspect>().foodCondition += 1;
-            //}
+            door.material = doorActive;
+            backDoor.material = backDoorActive;
+            inside.material = insideActive;
+            plate.material = plateActive;
+            microLight.enabled = true;
+            clock.isPlaying = true;
         }
+    }
+
+
+    public void TurnOnMicrowave()
+    {
+        console.material = consoleActive;
+        clock.timer = 45.0f;
+        switchMicrowave.TurnOn();
+    }
+
+    public void MealReady()
+    {
+        door.material = doorNoActive;
+        backDoor.material = backDoorNoActive;
+        inside.material = insideNoActive;
+        plate.material = plateNoActive;
+        console.material = consoleNoActive;
+
+        microLight.enabled = false;
+        doorManager.isCooking = false;
     }
 }

@@ -5,12 +5,15 @@ using UnityEngine.UI;
 
 public class FindInteraction : MonoBehaviour
 {
-    private GameObject raycastedObject;
+    [SerializeField] private PickUpManager pickUpManager;
+
+    public GameObject raycastedObject;
+    public GameObject savedrayCastedObject; //for peepholemode to find last used object (door) and interact with it
 
     [SerializeField] private float rayLength = 10.0f;
     [SerializeField] private LayerMask layerMaskInteract;
     [SerializeField] private KeyCode interactButton;
-
+    [SerializeField] private KeyCode interactButton2;
 
     [SerializeField] private Shader defaultShader;
     [SerializeField] private Shader outlineShader;
@@ -24,6 +27,7 @@ public class FindInteraction : MonoBehaviour
     private bool multiInteractionSelectedChild = false;
     private bool multiInteractionSelectedChild2 = false;
     public bool dropMode = false;
+    public bool peepHoleMode = false;
 
     //canvas obj
     [SerializeField] private GameObject actionText;
@@ -38,7 +42,7 @@ public class FindInteraction : MonoBehaviour
     private void Update()
     {
         //disable when drop mode is use
-        if (!dropMode)
+        if (!dropMode && !peepHoleMode)
         {
             RaycastHit hit;
             Vector3 fwd = transform.TransformDirection(Vector3.forward);
@@ -173,7 +177,7 @@ public class FindInteraction : MonoBehaviour
                 raycastedObject = null;
             }
         }
-        else
+        else if(dropMode)
         {
             //disable selection in drop mode if something was selected before
             if (raycastedObject != null)
@@ -185,6 +189,17 @@ public class FindInteraction : MonoBehaviour
                 {
                     element.GetComponent<MeshRenderer>().enabled = false;
                 }
+            }
+        }
+        else if(peepHoleMode)
+        {
+            if (savedrayCastedObject.GetComponent<Collider>().CompareTag("ObjectMultiInteractions"))
+            {
+                savedrayCastedObject.GetComponent<InteractableObjectBase>().InteractMulti();
+            }
+            else if (savedrayCastedObject.GetComponent<Collider>().CompareTag("ObjectMultiChild"))
+            {
+                savedrayCastedObject.transform.parent.GetComponent<InteractableObjectBase>().InteractMulti();
             }
         }
     }

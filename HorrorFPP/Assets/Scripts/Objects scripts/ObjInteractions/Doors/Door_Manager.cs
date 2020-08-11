@@ -30,6 +30,8 @@ public class Door_Manager : InteractableObjectBase
 
     [SerializeField] private Animator animator;
 
+    [SerializeField] private PlayerMove playerMove;
+
 
     void Start()
     {
@@ -51,11 +53,25 @@ public class Door_Manager : InteractableObjectBase
 
         if (!animationInProgress)
         {
-            if (Input.GetKeyDown(handleButton))
+            if ((Input.GetKeyDown(handleButton) || kidID == 1) && !isHole)
             {
                 if(isOverride)
                 {
-
+                    if(!isFullOpen)
+                    {
+                        this.GetComponent<Transform>().Rotate(new Vector3(0, -65, 0));
+                        handleTxt.text = "CLOSE";
+                        handleTxt1.text = "CLOSE";
+                        isFullOpen = true;
+                    }
+                    else
+                    {
+                        this.GetComponent<Transform>().Rotate(new Vector3(0, 90, 0));
+                        handleTxt.text = "OPEN";
+                        handleTxt1.text = "OPEN";
+                        isFullOpen = false;
+                        animator.SetBool("restartPose", true);
+                    }
                 }
                 else
                 {
@@ -74,12 +90,15 @@ public class Door_Manager : InteractableObjectBase
 
                     isFullOpen = !isFullOpen;
                 }
-            }
-            else if(Input.GetKeyDown(holeButton))
-            {
 
+                kidID = 0;
             }
-            else if(Input.GetKeyDown(overrideButton))
+            else if(Input.GetKeyDown(holeButton) || kidID == 2)
+            {
+                playerMove.disablePlayerController = true;
+                kidID = 0;
+            }
+            else if((Input.GetKeyDown(overrideButton) || kidID == 3) && !isHole)
             {
                 if(!isFullOpen)
                 {
@@ -95,8 +114,11 @@ public class Door_Manager : InteractableObjectBase
                         overrideTxt.text = "CLOSE";
                         overrideTxt1.text = "CLOSE";
                         animator.SetBool("isOpen", true);
+                        animator.SetBool("restartPose", false);
                         isOverride = true;
                     }
+
+                    kidID = 0;
                 }
             }
         }

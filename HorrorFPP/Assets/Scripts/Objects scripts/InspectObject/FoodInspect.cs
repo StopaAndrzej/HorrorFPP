@@ -6,6 +6,12 @@ using UnityEngine.Rendering.PostProcessing;
 
 public class FoodInspect : MonoBehaviour
 {
+    [SerializeField] private PickUpManager pickUpManager;
+    public enum enFoodCondition { cold, heated, unapckCold, spoiled };
+    public enFoodCondition itemMode;
+
+    [SerializeField] private float rayLength = 10.0f;
+    [SerializeField] private LayerMask layerMaskInteract;
     [SerializeField] private PlayerMove playerComponent;
 
     [SerializeField] private Text objectName;
@@ -18,8 +24,6 @@ public class FoodInspect : MonoBehaviour
 
     [SerializeField] private KeyCode interactionKey;
 
-    [SerializeField] private float rayLength = 10.0f;
-    [SerializeField] private LayerMask layerMaskInteract;
 
     public string pressText1;
     public string pressText2;
@@ -33,7 +37,7 @@ public class FoodInspect : MonoBehaviour
     public string inProgressInfo;
 
     private float delay;
-    public float delayNormal = 0.1f;
+    public float delayNormal = 0.2f;
     public float delayPause = 0.5f;
     public string fullText;
     private string currentText = "";

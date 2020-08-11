@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MicrowaveSwitch : InteractableObjectBase
+public class MicrowaveSwitch : MonoBehaviour
 {
-    public bool isActive = false;
     [SerializeField] private Animator animator;
 
     [SerializeField] private MicrowaveManager manager;
@@ -13,40 +12,23 @@ public class MicrowaveSwitch : InteractableObjectBase
     {
         animator = GetComponent<Animator>();
     }
-    public override void Interact()
+
+    public void TurnOn()
     {
-        if(!manager.doorOpen)
-        {
-            if(!isActive)
-            {
-                interactText = "Active";
-                animator.SetBool("isActive", true);
-                manager.stwichOn = true;
-                isActive = true;
-            }                    
-        }
+        animator.SetBool("Start", true);
     }
 
-    void ActivateMicrowave()
+    public void TurnOff()
     {
-        manager.door.material = manager.doorActive;
-        manager.backDoor.material = manager.backDoorActive;
-        manager.inside.material = manager.insideActive;
-        manager.plate.material = manager.plateActive;
-        manager.console.material = manager.consoleActive;
+        animator.SetBool("Start", false);
+        manager.MealReady();
     }
 
-    void DeactivateMicrowave()
+    public void AllowToCook()
     {
-        animator.SetBool("isActive", false);
-        isActive = false;
-        manager.stwichOn = false;
         manager.Cook();
-        manager.door.material = manager.doorNoActive;
-        manager.backDoor.material = manager.backDoorNoActive;
-        manager.inside.material = manager.insideNoActive;
-        manager.plate.material = manager.plateNoActive;
-        manager.console.material = manager.consoleNoActive;
     }
+
+
 }
 
