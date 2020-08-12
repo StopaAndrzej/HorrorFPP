@@ -33,7 +33,7 @@ public class PickUpManager : MonoBehaviour
     [SerializeField] private GameObject handHandlePivot;
 
     //make a distinction between interaction stages of selected obj
-    public enum enManagerItemMode { clear ,isGrabbed, returnToPos,stopGrab ,inHand, inspectMode};
+    public enum enManagerItemMode { clear ,isGrabbed, returnToPos,stopGrab ,inHand, inspectMode, dropped};
     public enManagerItemMode itemMode;
 
     [SerializeField] private KeyCode putAwayButton = KeyCode.Tab;
@@ -65,7 +65,7 @@ public class PickUpManager : MonoBehaviour
     private bool anyHitRayInteractionPress = false;                  //disable text when any interactive direction of item is not used during frame lifetime 
     private bool anyHitRayInteractionDescriptions = false;
 
-    private bool[] inspectModeDirInteractionFlags = new bool[4];
+    public bool[] inspectModeDirInteractionFlags = new bool[4];
 
     //item movement in hand
     [SerializeField] private float  intensitySway = 1;
@@ -73,6 +73,7 @@ public class PickUpManager : MonoBehaviour
     private Vector3 targetItemBobPos;
     private float idleCounter = 0;
     private float moveCounter = 0;
+    public float forceValueToDropItem = 3;
 
     private void Start()
     {
@@ -94,6 +95,11 @@ public class PickUpManager : MonoBehaviour
     //pickUp object first time so its inspect mode first
     public void PickUp(GameObject selectedObject)
     {
+        if(lastSelectedObj == null && !selectedObject.GetComponent<ItemBase>().actualStateItemDescriptinShowed)
+        {
+            isGrabbedFirstTime = true;
+        }
+
         if (selectedObject.GetComponent<Rigidbody>())
             selectedObject.GetComponent<Rigidbody>().useGravity = false;
 
@@ -130,7 +136,8 @@ public class PickUpManager : MonoBehaviour
 
     private void PutAway(GameObject selectedObject)
     {
-        selectedObject.GetComponent<Rigidbody>().isKinematic = true;
+        if (selectedObject.GetComponent<Rigidbody>())
+            selectedObject.GetComponent<Rigidbody>().useGravity = false;
 
         selectedObject.GetComponent<BoxCollider>().enabled = true;
         lastSelectedObj = null;
@@ -142,6 +149,26 @@ public class PickUpManager : MonoBehaviour
         controlInfo.enabled = false;
 
         stopCoroutine = false;
+        itemMode = enManagerItemMode.clear;
+    }
+
+    private void Drop(GameObject selectedObject)
+    {
+        selectedObject.GetComponent<BoxCollider>().enabled = true;
+        lastSelectedObj.transform.parent = lastSelectedObj.GetComponent<ItemManager>().parent;
+
+        if (selectedObject.GetComponent<Rigidbody>())
+        {
+            selectedObject.GetComponent<Rigidbody>().useGravity = true;
+            selectedObject.GetComponent<Rigidbody>().isKinematic = false;
+        }
+            
+
+        focus.OnDisable();
+
+        lastSelectedObj = null;
+
+
         itemMode = enManagerItemMode.clear;
     }
 
@@ -161,6 +188,10 @@ public class PickUpManager : MonoBehaviour
                 smallDistanceValueFlag = true;
                 title.color = new Vector4(title.color.r, title.color.g, title.color.b, 0);
                 controlInfo.color = new Vector4(controlInfo.color.r, controlInfo.color.g, controlInfo.color.b, 0);
+                if(freezeDescriptionOnScreen)
+                {
+                    description.color = new Vector4(description.color.r, description.color.g, description.color.b, 0);
+                }
                 fadeInTextFlag = true;
                 itemMode = enManagerItemMode.inspectMode;
             }
@@ -227,11 +258,19 @@ public class PickUpManager : MonoBehaviour
 
             title.enabled = true;
             controlInfo.enabled = true;
+            if (freezeDescriptionOnScreen)
+                description.enabled = true;
 
-            if(fadeInTextFlag)
+            if (fadeInTextFlag && isGrabbedFirstTime)
             {
                 StartCoroutine(FadeInTextLoop(title));
                 StartCoroutine(FadeInTextLoop(controlInfo));
+                fadeInTextFlag = !fadeInTextFlag;
+            }
+            else if(fadeInTextFlag && !isGrabbedFirstTime)
+            {
+                StartCoroutine(FadeInTextLoop(title));
+                StartCoroutine(FadeInTextLoop(description));
                 fadeInTextFlag = !fadeInTextFlag;
             }
 
@@ -278,6 +317,10 @@ public class PickUpManager : MonoBehaviour
             }
                  
         }
+        else if(itemMode == enManagerItemMode.dropped)
+        {
+            Drop(lastSelectedObj);
+        }
     }
 
     public void PutAwayObject()
@@ -287,17 +330,36 @@ public class PickUpManager : MonoBehaviour
 
     public void InspectInteractionFind(GameObject obj)
     {
-        if(Input.GetKeyDown(putAwayButton))
+        if(Input.GetKeyUp(KeyCode.Mouse1) && !isGrabbedFirstTime)
         {
             stopCoroutine = true;
             StartCoroutine(FadeOutTextLoop(title));
+            StartCoroutine(FadeOutTextLoop(press));
+            StartCoroutine(FadeOutTextLoop(description));
+            StartCoroutine(FadeOutTextLoop(controlInfo));
+
+            lastSelectedObj.transform.localEulerAngles = new Vector3(0, 0, 0);
+            currentItemRot = handHandlePivot.transform.localRotation;
+
+            focus.OnDisable();
+            playerMove.inspectMode = false;
+            delivereToHand = false;
+            itemMode = enManagerItemMode.inHand;
+            return;
+        }
+
+        if(Input.GetKeyDown(putAwayButton) && isGrabbedFirstTime)
+        {
+            stopCoroutine = true;
+            StartCoroutine(FadeOutTextLoop(title));
+            StartCoroutine(FadeOutTextLoop(press));
             StartCoroutine(FadeOutTextLoop(description));
             StartCoroutine(FadeOutTextLoop(controlInfo));
 
             itemMode = enManagerItemMode.returnToPos;
             return;
         }
-        else if(Input.GetKeyDown(KeyCode.Mouse1))
+        else if(Input.GetKeyDown(KeyCode.Mouse1) && isGrabbedFirstTime)
         {
             stopCoroutine = true;
             StartCoroutine(FadeOutTextLoop(title));
@@ -438,6 +500,23 @@ public class PickUpManager : MonoBehaviour
 
     public void HoldInHand(GameObject obj)
     {
+        if(Input.GetKey(KeyCode.Mouse1))
+        {
+            stopCoroutine = false;
+            isGrabbedFirstTime = false;
+
+            lastSelectedObj.transform.parent = destinationPosInspect.transform;
+
+            StartCoroutine(FadeOutTextLoop(title));
+            StartCoroutine(FadeOutTextLoop(description));
+
+            focus.SetFocused(lastSelectedObj);
+            playerMove.inspectMode = true;
+
+            itemMode = enManagerItemMode.isGrabbed;
+            return;
+        }
+
         float t_hmove = Input.GetAxisRaw("Horizontal");
         float t_vmove = Input.GetAxisRaw("Vertical");
 
@@ -482,9 +561,16 @@ public class PickUpManager : MonoBehaviour
 
         //rotate towards target rotation
         handHandlePivot.transform.localRotation = Quaternion.Lerp(handHandlePivot.transform.localRotation, target_rotation, Time.deltaTime * smoothSway);
+
+        if(t_x_mouse > forceValueToDropItem || t_x_mouse < -forceValueToDropItem || t_y_mouse > forceValueToDropItem || t_y_mouse < -forceValueToDropItem)
+        {
+            Debug.Log("ITEM DROPPED!");
+            lastSelectedObj.GetComponent<ItemBase>().itemDrop = true;
+            itemMode = enManagerItemMode.dropped;
+        }
     }
 
-    private IEnumerator FadeInTextLoop(Text text)
+    public IEnumerator FadeInTextLoop(Text text)
     {
         float value = 0.05f;
         while(text.color.a < 1 && !stopCoroutine)
@@ -494,14 +580,16 @@ public class PickUpManager : MonoBehaviour
         }
     }
 
-    private IEnumerator FadeOutTextLoop(Text text)
+    public IEnumerator FadeOutTextLoop(Text text)
     {
-        float value = 0.1f;
+        float value = 0.2f;
         while (text.color.a > 0)
         {
             text.color = new Vector4(text.color.r, text.color.g, text.color.b, text.color.a - value);
             yield return new WaitForSeconds(0.01f);
         }
+
+        text.enabled = false;
     }
 
     public  void InProgressShowTextPulseLoop()
@@ -538,59 +626,5 @@ public class PickUpManager : MonoBehaviour
         //inProgressBar.enabled = false;
     }
 
- 
 
-    //public void PutDown(GameObject selectedObject)
-    //{
-    //    isGrabbed = false;
-
-    //    if (selectedObject.GetComponent<Rigidbody>())
-    //        selectedObject.GetComponent<Rigidbody>().useGravity = true;
-
-    //    selectedObject.GetComponent<BoxCollider>().enabled = true;
-
-    //    selectedObject.transform.position = selectedObject.GetComponent<ItemManager>().originPos;
-    //    selectedObject.transform.localRotation = selectedObject.GetComponent<ItemManager>().originRot;
-    //    selectedObject.transform.parent = selectedObject.GetComponent<ItemManager>().parent;
-
-    //    lastSelectedObj = null;
-
-    //}
-
-    //public void Inspect(GameObject selectedObject)
-    //{
-    //    focus.SetFocused(gameObject);
-    //    playerMove.inspectMode = true;
-    //    selectedObject.transform.position = new Vector3(Mathf.Lerp(this.transform.position.x, destinationPosInspect.position.x, Time.deltaTime * 5.0f), Mathf.Lerp(this.transform.position.y, destinationPosInspect.position.y, Time.deltaTime * 5.0f), Mathf.Lerp(this.transform.position.z, destinationPosInspect.position.z, Time.deltaTime * 5.0f));  
-    //    selectedObject.transform.localRotation = new Quaternion(0, 0, 0, 0);
-    //    selectedObject.transform.parent = destinationPosInspect.transform;
-    //}
-
-    //public void ReturnFromInspect(GameObject selectedObject)
-    //{
-    //    focus.SetFocused(null);
-    //    playerMove.inspectMode = false;
-    //    selectedObject.transform.position = new Vector3(Mathf.Lerp(this.transform.position.x, destinationPosPick.position.x, Time.deltaTime * 5.0f), Mathf.Lerp(this.transform.position.y, destinationPosPick.position.y, Time.deltaTime * 5.0f), Mathf.Lerp(this.transform.position.z, destinationPosPick.position.z, Time.deltaTime * 5.0f));
-    //    selectedObject.transform.localRotation = new Quaternion(0, 0, 0, 0);
-    //}
-
-    ////INSPECT MODE
-    //private void Update()
-    //{
-    //    if (isGrabbed &&  lastSelectedObj)
-    //    {
-    //        if(Input.GetKeyDown(inspectKey))
-    //        {
-    //            Inspect(lastSelectedObj);
-    //        }
-    //        else if(Input.GetKeyDown(putDownKey))
-    //        {
-    //            PutDown(lastSelectedObj);
-    //        }
-    //        else
-    //        {
-    //           // ReturnFromInspect(lastSelectedObj);
-    //        }
-    //    }
-    //}
 }

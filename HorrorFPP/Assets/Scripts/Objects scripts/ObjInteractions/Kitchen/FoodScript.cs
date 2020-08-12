@@ -22,7 +22,7 @@ public class FoodScript : ItemBase
     {
         itemMode = enFoodCondition.cold;
 
-        titleTxt = "FOIL-WRAPPED LUNCH";
+        titleTxt = "PACKED LUNCH";
         titleTxt1 = "COLD LUNCH";
         titleTxt2 = "HEATED LUNCH";
         titleTxt2 = "SPOILED LUNCH";
@@ -30,9 +30,9 @@ public class FoodScript : ItemBase
         pressTxt = "PRESS F TO INSPECT";
         pressTxt1 = "PRESS F TO UNPACK";
 
-        descriptionTxt = "COLD DINNER PLATE PACKED IN FOIL PAPER. \nTRHERE IS A STICKY NOTE ON IT. \n- UNPACK AND HEAT ME UP..";
+        descriptionTxt = "COLD DINNER PLATE PACKED IN FOIL PAPER.\nTRHERE IS A STICKY NOTE ON IT.\n- UNPACK AND HEAT ME UP...";
         descriptionTxt1 = "A FOIL BAG TIED WITH A KNOT";
-        descriptionTxt2 = "A PLATE OF POTATOES WITH PORK CHOP AND SALAD.\n READY TO HEAT.";
+        descriptionTxt2 = "A PLATE OF POTATOES WITH PORK CHOP\nAND SALAD. READY TO HEAT...";
         descriptionTxt3 = "A WARM AND WELL-PREPARED MEAL./n TO EAT IT YOU NEED CUTLERY AND A COMFORTABLE SEAT. /n YOU CAN ALSO HAVE A DRINK.";
         descriptionTxt4 = "A SPOILED MEAL. IT SHOULD NOT BE HEATED THAT LONG./n TO EAT IT YOU NEED CUTLERY AND A COMFORTABLE SEAT. /n YOU CAN ALSO HAVE A DRINK.";
 
@@ -67,16 +67,18 @@ public class FoodScript : ItemBase
 
                 return null;
         }
-        else if((itemMode == enFoodCondition.unapckCold))
+        else if(itemMode == enFoodCondition.unapckCold)
         {
             if (!discardUp)
             {
+                if (Input.GetKeyDown(keyboardButton) || Input.GetKeyUp(mouseButton))
+                {
+                    discardUp = true;
+                }
                 return pressTxt;
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
         else if ((itemMode == enFoodCondition.heated))
         {
@@ -184,6 +186,31 @@ public class FoodScript : ItemBase
                 return currentTextToRead;
             }
         }
+        else if(itemMode == enFoodCondition.unapckCold)
+        {
+            if (discardUp)
+            {
+                if (!discardUpFirstTime)
+                {
+                    discardUpFirstTime = true;
+                    discardUpFirstTimeFinished = false;
+                    delay = delayNormal;
+                    fullTextToRead = descriptionTxt2;
+                    pickUpManager.pressOffsetFlag = true;
+                    pickUpManager.freezeInspectRotationFlag = true;
+
+                    StartCoroutine(ShowText(discardUpFirstTimeFinished));
+                }
+
+                if(discardUpFirstTimeFinished)
+                {
+                    return descriptionTxt2;
+                }
+
+                return currentTextToRead;
+            }
+        }
+
         return null;
     }
 
@@ -204,15 +231,27 @@ public class FoodScript : ItemBase
         return null;
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(itemDrop&& itemMode != enFoodCondition.cold && collision.collider.tag == "Surface")
+        {
+            Debug.Log("Crash it!");
+        }
+    }
 
     public IEnumerator OpenFadeOut(bool valueFlag)
     {
-        pickUpManager.inProgressBar.text = inProgressBarTxt;
-        pickUpManager.pulseTextLoopFlag = true;
-        pickUpManager.InProgressShowTextPulseLoop();
-
         if (!valueFlag)
         {
+            pickUpManager.inProgressBar.text = inProgressBarTxt;
+            pickUpManager.inProgressBar.enabled = true;
+            StartCoroutine(pickUpManager.FadeOutTextLoop(pickUpManager.title));
+            StartCoroutine(pickUpManager.FadeOutTextLoop(pickUpManager.description));
+            StartCoroutine(pickUpManager.FadeOutTextLoop(pickUpManager.press));
+            StartCoroutine(pickUpManager.FadeOutTextLoop(pickUpManager.controlInfo));
+            StartCoroutine(pickUpManager.FadeInTextLoop(pickUpManager.inProgressBar));
+
+
             while (fadeValue > -10f)
             {
                 fadeValue -= fadeSpeed;
@@ -228,8 +267,20 @@ public class FoodScript : ItemBase
 
         pickUpManager.pulseTextLoopFlag = false;
 
+        pickUpManager.title.text = titleTxt1;
+        pickUpManager.description.text = descriptionTxt2;
+
         if (valueFlag)
         {
+
+            pickUpManager.title.color = new Vector4(pickUpManager.title.color.r, pickUpManager.title.color.g, pickUpManager.title.color.b, 0);
+            pickUpManager.controlInfo.color = new Vector4(pickUpManager.controlInfo.color.r, pickUpManager.controlInfo.color.g, pickUpManager.controlInfo.color.b, 0);
+            pickUpManager.description.color = new Vector4(pickUpManager.description.color.r, pickUpManager.description.color.g, pickUpManager.description.color.b, 0);
+
+            StartCoroutine(pickUpManager.FadeInTextLoop(pickUpManager.title));
+            StartCoroutine(pickUpManager.FadeInTextLoop(pickUpManager.controlInfo));
+            StartCoroutine(pickUpManager.FadeOutTextLoop(pickUpManager.inProgressBar));
+
             while (fadeValue < 0f)
             {
                 fadeValue += fadeSpeed;
@@ -237,6 +288,24 @@ public class FoodScript : ItemBase
                 colorGradingLayer.postExposure.value = fadeValue;
                 yield return null;
             }
+
+            pickUpManager.press.color = new Vector4(pickUpManager.press.color.r, pickUpManager.press.color.g, pickUpManager.press.color.b, 1);
+            pickUpManager.description.color = new Vector4(pickUpManager.description.color.r, pickUpManager.description.color.g, pickUpManager.description.color.b, 1);
         }
+
+        valueFlag = false;
+
+        //next state
+        itemMode = enFoodCondition.unapckCold;
+        pickUpManager.pressOffsetFlag = false;
+
+        inspectModeDirInteractionFlags[0] = true;
+        inspectModeDirInteractionFlags[1] = false;
+        inspectModeDirInteractionFlags[2] = false;
+        inspectModeDirInteractionFlags[3] = false;
+
+        ResetValues();
+
+
     }
 }

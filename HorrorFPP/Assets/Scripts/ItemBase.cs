@@ -54,6 +54,8 @@ public class ItemBase : MonoBehaviour
     public float delayPause = 0.5f;
     public float delay;
 
+    public bool itemDrop = false;
+    public bool actualStateItemDescriptinShowed = false;
 
     public virtual string InteractionUp()
     {
@@ -105,4 +107,31 @@ public class ItemBase : MonoBehaviour
         }
     }
 
+
+    public void ResetValues()
+    {
+        discardUp = false;
+        discardDown = false;
+        discardFront = false;
+        discardBack = false;
+
+        discardUpFirstTime = false;
+        discardDownFirstTime = false;
+        discardFrontFirstTime = false;
+        discardBackFirstTime = false;
+
+        discardUpFirstTimeFinished = false;
+        discardDownFirstTimeFinished = false;
+        discardFrontFirstTimeFinished = false;
+        discardBackFirstTimeFinished = false;
+
+        pickUpManager.freezeDescriptionOnScreen = false;
+
+        changeToUpPos = false;
+
+        for (int i = 0; i < inspectModeDirInteractionFlags.Length; i++)
+        {
+           pickUpManager.inspectModeDirInteractionFlags[i] = inspectModeDirInteractionFlags[i];
+        }
+    }
 }
