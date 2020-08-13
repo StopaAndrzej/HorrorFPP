@@ -12,6 +12,7 @@ public class FindInteraction : MonoBehaviour
 
     [SerializeField] private float rayLength = 10.0f;
     [SerializeField] private LayerMask layerMaskInteract;
+    [SerializeField] private LayerMask putlayerMask;
     [SerializeField] private KeyCode interactButton;
     [SerializeField] private KeyCode interactButton2;
 
@@ -33,13 +34,15 @@ public class FindInteraction : MonoBehaviour
     [SerializeField] private GameObject actionText;
     [SerializeField] private GameObject dot;
 
+    public bool detectSurfaces = false;
+
     private void Start()
     {
         actionText.active = false;
         dot.active = true;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         //disable when drop mode is use
         if (!dropMode && !peepHoleMode)
@@ -47,7 +50,15 @@ public class FindInteraction : MonoBehaviour
             RaycastHit hit;
             Vector3 fwd = transform.TransformDirection(Vector3.forward);
 
-            if (Physics.Raycast(transform.position, fwd, out hit, rayLength, layerMaskInteract.value))
+            if (Physics.Raycast(transform.position, fwd, out hit, rayLength, putlayerMask.value))
+            {
+                if (hit.collider.CompareTag("Surface") && pickUpManager.itemMode == PickUpManager.enManagerItemMode.inHand)
+                {
+                    pickUpManager.visualObjectPutArea(hit.point, hit.transform.gameObject);
+                }
+
+            }
+            else if (Physics.Raycast(transform.position, fwd, out hit, rayLength, layerMaskInteract.value))
             {
                 //object to recognize items with single interaction
                 //multi for objects that contains more interactable objects like doors(handle, lock...)/and objectMultiCild for one of this child object
@@ -148,8 +159,6 @@ public class FindInteraction : MonoBehaviour
 
                     }
                 }
-
-                selected = true;
             }
             else if (selected)
             {

@@ -18,6 +18,11 @@ public class FoodScript : ItemBase
     [SerializeField] private float fadeSpeed =0.1f;
     [SerializeField] private PostProcessVolume cameraPostProcVolume;
 
+    [SerializeField] private GameObject pork;
+    [SerializeField] private GameObject potato;
+    [SerializeField] private GameObject salad;
+    [SerializeField] private GameObject plate;
+
     private void Start()
     {
         itemMode = enFoodCondition.cold;
@@ -235,7 +240,13 @@ public class FoodScript : ItemBase
     {
         if(itemDrop&& itemMode != enFoodCondition.cold && collision.collider.tag == "Surface")
         {
+            itemDrop = false;
             Debug.Log("Crash it!");
+            this.transform.rotation = new Quaternion(180, 0, 0, 0);
+            pork.transform.localPosition += new Vector3(-0.2f, 0, 0);
+            potato.transform.localPosition += new Vector3(0.3f, 0, 0);
+            salad.transform.localPosition += new Vector3(0, 0, -0.3f);
+            plate.transform.localPosition += new Vector3(0, -0.08f, 0);
         }
     }
 

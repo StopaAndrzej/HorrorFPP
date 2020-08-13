@@ -28,9 +28,14 @@ public class PickUpManager : MonoBehaviour
 
    [SerializeField] private FocusSwitcher focus;
    [SerializeField] private PlayerMove playerMove;
+   [SerializeField] private FindInteraction interaction;
    [SerializeField] private LayerMask layerMaskIgnore;
    [SerializeField] private GameObject handHandleItemAttach;
     [SerializeField] private GameObject handHandlePivot;
+
+    //shaders
+    [SerializeField] private Shader originalShader;
+    [SerializeField] private Shader transparecyShader;
 
     //make a distinction between interaction stages of selected obj
     public enum enManagerItemMode { clear ,isGrabbed, returnToPos,stopGrab ,inHand, inspectMode, dropped};
@@ -75,8 +80,13 @@ public class PickUpManager : MonoBehaviour
     private float moveCounter = 0;
     public float forceValueToDropItem = 3;
 
+    //copy  of selected obj -  for placing item system
+    private GameObject copiedObj;
+    [SerializeField] private GameObject binFolderParent;
+
     private void Start()
     {
+
         //default - no object selected
         itemMode = enManagerItemMode.clear;
 
@@ -112,6 +122,20 @@ public class PickUpManager : MonoBehaviour
         playerMove.inspectMode = true;
 
         selectedObject.transform.parent = destinationPosInspect.transform;
+
+        //clone with no components
+        copiedObj = Instantiate(selectedObject, this.transform);
+
+        foreach(var comp in copiedObj.GetComponents<Component>())
+        {
+            if(!(comp is Transform))
+            {
+                Destroy(comp);
+            }
+        }
+
+        copiedObj.SetActive(false);
+        copiedObj.transform.parent = binFolderParent.transform;
 
         originGrabbedItemPos = selectedObject.GetComponent<ItemManager>().originPos;
         originGrabbedItemRot = selectedObject.GetComponent<ItemManager>().originRot;
@@ -200,6 +224,13 @@ public class PickUpManager : MonoBehaviour
         }
         else if(itemMode == enManagerItemMode.returnToPos)
         {
+            if(copiedObj!=null)
+            {
+                originGrabbedItemPos = copiedObj.transform.position;
+                Destroy(copiedObj);
+                copiedObj = null;
+            }
+
             lastSelectedObj.transform.position = new Vector3(Mathf.Lerp(lastSelectedObj.transform.position.x, originGrabbedItemPos.x, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.position.y, originGrabbedItemPos.y, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.position.z, originGrabbedItemPos.z, Time.deltaTime * 5.0f));
             lastSelectedObj.transform.rotation = originGrabbedItemRot;
 
@@ -286,6 +317,9 @@ public class PickUpManager : MonoBehaviour
             press.enabled = false;
             description.enabled = false;
             inProgressBar.enabled = false;
+
+            if (copiedObj != null)
+                Destroy(copiedObj);
         }
         else if(itemMode == enManagerItemMode.inHand)
         {
@@ -592,38 +626,27 @@ public class PickUpManager : MonoBehaviour
         text.enabled = false;
     }
 
-    public  void InProgressShowTextPulseLoop()
+   public void visualObjectPutArea(Vector3 hitPos, GameObject hitObj)
     {
-        //inProgressBar.enabled = true;
-        //inProgressBar.GetComponent<Text>().color = new Vector4(inProgressBar.GetComponent<Text>().color.r, inProgressBar.GetComponent<Text>().color.g, inProgressBar.GetComponent<Text>().color.b, 0);
+        copiedObj.SetActive(true);
+        copiedObj.transform.position = hitPos;
 
-        //bool increaseValueDirection = true;
-        //int transparentValue;
+        foreach(Transform child in copiedObj.transform)
+        {
+            if(child.GetComponent<MeshRenderer>())
+            {
+                child.GetComponent<MeshRenderer>().material.shader = transparecyShader;
+                child.GetComponent<MeshRenderer>().material.color = new Color(child.GetComponent<MeshRenderer>().material.color.r, child.GetComponent<MeshRenderer>().material.color.g, child.GetComponent<MeshRenderer>().material.color.b, 0.5f);
+            }
+        }
 
-        //while (pulseTextLoopFlag)
-        //{
-        //    if(inProgressBar.GetComponent<Text>().color.a <= 0)
-        //    {
-        //        increaseValueDirection = true;
-        //    }
-        //    else if(inProgressBar.GetComponent<Text>().color.a >= 255)
-        //    {
-        //        increaseValueDirection = false;
-        //    }
-                
-        //    if(increaseValueDirection)
-        //    {
-        //        transparentValue = 1;
-        //    }
-        //    else
-        //    {
-        //        transparentValue = -1;
-        //    }
+        copiedObj.transform.rotation = new Quaternion(0, 0, 0, 0);
 
-        //    inProgressBar.GetComponent<Text>().color = new Vector4(inProgressBar.GetComponent<Text>().color.r, inProgressBar.GetComponent<Text>().color.g, inProgressBar.GetComponent<Text>().color.b, inProgressBar.GetComponent<Text>().color.a + transparentValue);
-        //}
-
-        //inProgressBar.enabled = false;
+        if(Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            itemMode = enManagerItemMode.returnToPos;
+            playerMove.inspectMode = true;
+        }
     }
 
 
