@@ -9,9 +9,10 @@ public class MicrowaveManager : MonoBehaviour
     public bool stwichOn = false;
     public bool itemInside = false;
 
-    [SerializeField] private MicrowaveDrop microwaveDrop;
+    [SerializeField] private GameObject smokeParticle;
     [SerializeField] private  MicrowaveSwitch switchMicrowave;
     [SerializeField] private MicrowaveDoorManager doorManager;
+    public GameObject putObj;
 
     //textures
     [SerializeField] public MeshRenderer door;
@@ -89,5 +90,18 @@ public class MicrowaveManager : MonoBehaviour
 
         microLight.enabled = false;
         doorManager.isCooking = false;
+
+        if (putObj.GetComponent<FoodScript>())
+        {
+            putObj.GetComponent<FoodScript>().ChangeState();
+
+            if(putObj.GetComponent<FoodScript>().itemMode == FoodScript.enFoodCondition.spoiled)
+            {
+                smokeParticle.GetComponent<ParticleSystem>().loop = true;
+                smokeParticle.SetActive(true);
+            }
+        }
     }
+
+
 }

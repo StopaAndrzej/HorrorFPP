@@ -12,6 +12,7 @@ TagManager:
   - Rope
   - ObjectNoInteraction
   - Surface
+  - SurfaceDirectly
   layers:
   - Default
   - TransparentFX

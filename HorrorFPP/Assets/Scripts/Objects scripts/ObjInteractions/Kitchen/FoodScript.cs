@@ -5,13 +5,14 @@ using UnityEngine.Rendering.PostProcessing;
 
 public class FoodScript : ItemBase
 {
-    private enum enFoodCondition { cold, heated, unapckCold, spoiled };
-    private enFoodCondition itemMode;
+    public enum enFoodCondition { cold, heated, unapckCold, spoiled };
+    public enFoodCondition itemMode;
 
     [SerializeField] private KeyCode keyboardButton = KeyCode.F;
     [SerializeField] private KeyCode mouseButton = KeyCode.Mouse0;
 
     [SerializeField] private List<GameObject> foilBag;
+    
 
     private float fadeValue;
     [SerializeField] private float maxFadeValue;
@@ -23,6 +24,17 @@ public class FoodScript : ItemBase
     [SerializeField] private GameObject salad;
     [SerializeField] private GameObject plate;
 
+    [SerializeField] private Texture porkSpoiled;
+    [SerializeField] private Texture porkNoSpoiled;
+    [SerializeField] private Texture potatoSpoiled;
+    [SerializeField] private Texture potatoNoSpoiled;
+    [SerializeField] private Texture saladSpoiled;
+    [SerializeField] private Texture saladNoSpoiled;
+
+    [SerializeField] private Texture plateClear;
+    [SerializeField] private Texture plateDirty;
+
+
     private void Start()
     {
         itemMode = enFoodCondition.cold;
@@ -30,18 +42,28 @@ public class FoodScript : ItemBase
         titleTxt = "PACKED LUNCH";
         titleTxt1 = "COLD LUNCH";
         titleTxt2 = "HEATED LUNCH";
-        titleTxt2 = "SPOILED LUNCH";
+        titleTxt3 = "SPOILED LUNCH";
 
         pressTxt = "PRESS F TO INSPECT";
         pressTxt1 = "PRESS F TO UNPACK";
 
         descriptionTxt = "COLD DINNER PLATE PACKED IN FOIL PAPER.\nTRHERE IS A STICKY NOTE ON IT.\n- UNPACK AND HEAT ME UP...";
-        descriptionTxt1 = "A FOIL BAG TIED WITH A KNOT";
+        descriptionTxt1 = "SPOILED DINNER PLATE PACKED IN FOIL PAPER.\n IT SHOULD NOT BE HEATED WITH FOIL BAG.\nONLY SUITABLE FOR DISPOSAL...";
         descriptionTxt2 = "A PLATE OF POTATOES WITH PORK CHOP\nAND SALAD. READY TO HEAT...";
         descriptionTxt3 = "A WARM AND WELL-PREPARED MEAL./n TO EAT IT YOU NEED CUTLERY AND A COMFORTABLE SEAT. /n YOU CAN ALSO HAVE A DRINK.";
-        descriptionTxt4 = "A SPOILED MEAL. IT SHOULD NOT BE HEATED THAT LONG./n TO EAT IT YOU NEED CUTLERY AND A COMFORTABLE SEAT. /n YOU CAN ALSO HAVE A DRINK.";
+        descriptionTxt4 = "A SPOILED MEAL. IT SHOULD NOT BE HEATED THAT LONG./nONLY SUITABLE FOR DISPOSAL.";
 
         inProgressBarTxt = "...UNPACKING...";
+
+        pickUpManager.title.text = titleTxt;
+        pickUpManager.press.text = pressTxt;
+        pickUpManager.description.text = descriptionTxt;
+        pickUpManager.inProgressBar.text = inProgressBarTxt;
+
+        pork.GetComponent<MeshRenderer>().material.SetTexture(1,porkNoSpoiled);
+        potato.GetComponent<MeshRenderer>().material.SetTexture(1, potatoNoSpoiled);
+        salad.GetComponent<MeshRenderer>().material.SetTexture(1, saladNoSpoiled);
+        plate.GetComponent<MeshRenderer>().material.SetTexture(1, plateClear);
 
         inspectModeDirInteractionFlags[0] = true;
         inspectModeDirInteractionFlags[1] = true;
@@ -59,57 +81,18 @@ public class FoodScript : ItemBase
 
     public override string InteractionUp()
     {
-        if(itemMode == enFoodCondition.cold)
-        {
-            if(!discardUp)
-            {
-                if(Input.GetKeyDown(keyboardButton) || Input.GetKeyUp(mouseButton))
-                {
-                    discardUp = true;
-                }
-                return pressTxt;
-            }
 
-                return null;
-        }
-        else if(itemMode == enFoodCondition.unapckCold)
+        if(!discardUp)
         {
-            if (!discardUp)
+            if(Input.GetKeyDown(keyboardButton) || Input.GetKeyUp(mouseButton))
             {
-                if (Input.GetKeyDown(keyboardButton) || Input.GetKeyUp(mouseButton))
-                {
-                    discardUp = true;
-                }
-                return pressTxt;
-            }
-
-            return null;
-        }
-        else if ((itemMode == enFoodCondition.heated))
-        {
-            if (!discardUp)
-            {
-                return pressTxt;
-            }
-            else
-            {
+                discardUp = true;
                 return null;
             }
+            return pressTxt;
         }
-        else if ((itemMode == enFoodCondition.spoiled))
-        {
-            if (!discardUp)
-            {
-                return pressTxt;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
+     
         return null;
-
     }
 
     public override string InteractionDown()
@@ -319,4 +302,65 @@ public class FoodScript : ItemBase
 
 
     }
+
+    public void ChangeState()
+    {
+        if(itemMode == enFoodCondition.heated)
+        {
+            pickUpManager.title.text = titleTxt3;
+            pickUpManager.description.text = descriptionTxt4;
+
+            pickUpManager.pressOffsetFlag = false;
+
+            pork.GetComponent<MeshRenderer>().material.SetTexture(1, porkSpoiled);
+            potato.GetComponent<MeshRenderer>().material.SetTexture(1, potatoSpoiled);
+            salad.GetComponent<MeshRenderer>().material.SetTexture(1, saladSpoiled);
+            itemMode = enFoodCondition.spoiled;
+
+            inspectModeDirInteractionFlags[0] = true;
+            inspectModeDirInteractionFlags[1] = false;
+            inspectModeDirInteractionFlags[2] = false;
+            inspectModeDirInteractionFlags[3] = false;
+
+            ResetValues();
+
+            itemMode = enFoodCondition.spoiled;
+
+        }
+        else if (itemMode == enFoodCondition.unapckCold)
+        {
+            pickUpManager.title.text = titleTxt2;
+            pickUpManager.description.text = descriptionTxt3;
+
+            pickUpManager.pressOffsetFlag = false;
+
+            inspectModeDirInteractionFlags[0] = true;
+            inspectModeDirInteractionFlags[1] = false;
+            inspectModeDirInteractionFlags[2] = false;
+            inspectModeDirInteractionFlags[3] = false;
+
+            ResetValues();
+
+            itemMode = enFoodCondition.heated;
+        }
+        else if(itemMode == enFoodCondition.cold)
+        {
+            pickUpManager.title.text = titleTxt3;
+            pickUpManager.description.text = descriptionTxt1;
+
+            pork.GetComponent<MeshRenderer>().material.SetTexture(1, porkSpoiled);
+            potato.GetComponent<MeshRenderer>().material.SetTexture(1, potatoSpoiled);
+            salad.GetComponent<MeshRenderer>().material.SetTexture(1, saladSpoiled);
+
+            inspectModeDirInteractionFlags[0] = true;
+            inspectModeDirInteractionFlags[1] = false;
+            inspectModeDirInteractionFlags[2] = false;
+            inspectModeDirInteractionFlags[3] = false;
+
+            ResetValues();
+
+            itemMode = enFoodCondition.spoiled;
+        }
+    }
 }
+//descriptionTxt1

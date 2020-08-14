@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class Window1_Manager : InteractableObjectBase
 {
+    [SerializeField] private KitchenWindowScript windowScript;
     [SerializeField] private List<Canvas> canvases;
 
     public KeyCode overrideButton;
@@ -70,6 +71,10 @@ public class Window1_Manager : InteractableObjectBase
                     {
                         overrideTxt.text = "CLOSE";
                         animator.SetBool("isOpen", true);
+                        if (windowScript != null)
+                        {
+                            windowScript.KillParticles();
+                        }
                     }
                 }
 

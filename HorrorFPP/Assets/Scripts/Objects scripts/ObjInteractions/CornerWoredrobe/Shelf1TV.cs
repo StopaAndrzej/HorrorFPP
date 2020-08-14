@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Shelf1TV : InteractableObjectBase
 {
-    private bool isOpen = false;
+    public bool isOpen = false;
 
     //posses
     public Transform destinationPoint;
@@ -34,6 +34,8 @@ public class Shelf1TV : InteractableObjectBase
     private KeyCode interactionKey = KeyCode.F;
     private KeyCode mouseButton = KeyCode.Mouse0;
 
+    [SerializeField] private List<Light> lights;
+
     private void Start()
     {
         closedPos = this.GetComponent<Transform>().position;
@@ -47,6 +49,11 @@ public class Shelf1TV : InteractableObjectBase
         foreach (Canvas element in canvases)
         {
             element.gameObject.SetActive(false);
+        }
+
+        foreach(Light li in lights)
+        {
+            li.enabled = false;
         }
     }
 
@@ -70,6 +77,11 @@ public class Shelf1TV : InteractableObjectBase
                 buttonIcon1.GetComponent<RectTransform>().localPosition += offsetButtonIcon;
 
                 isOpen = !isOpen;
+
+                foreach (Light li in lights)
+                {
+                    li.enabled = true;
+                }
 
                 //for double doors
                 if (twin != null)
@@ -105,6 +117,11 @@ public class Shelf1TV : InteractableObjectBase
                 buttonIcon1.GetComponent<RectTransform>().localPosition -= offsetButtonIcon;
 
                 isOpen = !isOpen;
+
+                foreach (Light li in lights)
+                {
+                    li.enabled = false;
+                }
 
                 //for double doors
                 if (twin != null)

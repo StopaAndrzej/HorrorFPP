@@ -87,6 +87,7 @@ public class ItemBase : MonoBehaviour
 
     public virtual IEnumerator ShowText(bool value)
     {
+        
         for (int i = 0; i < fullTextToRead.Length; i++)
         {
             currentTextToRead = fullTextToRead.Substring(0, i);

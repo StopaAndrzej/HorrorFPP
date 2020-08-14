@@ -148,11 +148,6 @@ public class PickUpManager : MonoBehaviour
             {
                 inspectModeDirInteractionFlags[i] = selectedObject.GetComponent<ItemBase>().inspectModeDirInteractionFlags[i];
             }
-
-            title.text = selectedObject.GetComponent<ItemBase>().titleTxt;
-            press.text = selectedObject.GetComponent<ItemBase>().pressTxt;
-            description.text = selectedObject.GetComponent<ItemBase>().descriptionTxt;
-            inProgressBar.text = selectedObject.GetComponent<ItemBase>().inProgressBarTxt;
         }
 
         itemMode = enManagerItemMode.isGrabbed;
@@ -161,7 +156,11 @@ public class PickUpManager : MonoBehaviour
     private void PutAway(GameObject selectedObject)
     {
         if (selectedObject.GetComponent<Rigidbody>())
+        {
             selectedObject.GetComponent<Rigidbody>().useGravity = false;
+            selectedObject.GetComponent<Rigidbody>().isKinematic = true;
+        }
+            
 
         selectedObject.GetComponent<BoxCollider>().enabled = true;
         lastSelectedObj = null;
@@ -649,5 +648,32 @@ public class PickUpManager : MonoBehaviour
         }
     }
 
+    public void disableVisualPutAre()
+    {
+        if(copiedObj != null)
+            copiedObj.SetActive(false);
+    }
 
+    public void visualObjectPutArea(GameObject hitObj)
+    {
+        copiedObj.SetActive(true);
+        copiedObj.transform.position = hitObj.transform.position;
+
+        foreach (Transform child in copiedObj.transform)
+        {
+            if (child.GetComponent<MeshRenderer>())
+            {
+                child.GetComponent<MeshRenderer>().material.shader = transparecyShader;
+                child.GetComponent<MeshRenderer>().material.color = new Color(child.GetComponent<MeshRenderer>().material.color.r, child.GetComponent<MeshRenderer>().material.color.g, child.GetComponent<MeshRenderer>().material.color.b, 0.5f);
+            }
+        }
+
+        copiedObj.transform.rotation = new Quaternion(0, 0, 0, 0);
+
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            itemMode = enManagerItemMode.returnToPos;
+            playerMove.inspectMode = true;
+        }
+    }
 }

@@ -21,7 +21,6 @@ public class MicrowaveSwitch : MonoBehaviour
     public void TurnOff()
     {
         animator.SetBool("Start", false);
-        manager.MealReady();
     }
 
     public void AllowToCook()

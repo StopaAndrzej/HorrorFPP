@@ -94,6 +94,7 @@ public class PlayerMove : MonoBehaviour
 
     //rotation-inspection flag. disable player movement
     public bool inspectMode = false;
+    private bool lastFrameInspectMode = false; //if it was then enable dot FOR ONCE!
     public bool seatMode = false;
     public Material blurMaterial;
 
@@ -132,7 +133,8 @@ public class PlayerMove : MonoBehaviour
             {
                 PlayerMovement();
 
-                dotCursor.SetActive(true);
+                if(lastFrameInspectMode)
+                    dotCursor.SetActive(true);
                 //blur
                 blurMaterial.SetFloat("_Size", Mathf.Lerp(blurMaterial.GetFloat("_Size"), 0.0f, Time.deltaTime * 8.0f));
                 if (blurMaterial.GetFloat("_Size") < 0.1f)
@@ -141,6 +143,8 @@ public class PlayerMove : MonoBehaviour
                 blurMaterial.SetVector("_Color", new Vector4(Mathf.Lerp(blurMaterial.GetVector("_Color").x, 1, Time.deltaTime * 4.0f), Mathf.Lerp(blurMaterial.GetVector("_Color").y, 1, Time.deltaTime * 4.0f), Mathf.Lerp(blurMaterial.GetVector("_Color").z, 1, Time.deltaTime * 4.0f), 1));
                 if (blurMaterial.GetVector("_Color").x > 0.99f)
                     blurMaterial.SetVector("_Color", new Vector4(1, 1, 1, 1));
+
+                lastFrameInspectMode = false;
             }
             else if (inspectMode)
             {
@@ -155,6 +159,7 @@ public class PlayerMove : MonoBehaviour
                     blurMaterial.SetVector("_Color", new Vector4(0, 0, 0, 1));
 
                 Inspect();
+                lastFrameInspectMode = true;
             }
         }
         else
