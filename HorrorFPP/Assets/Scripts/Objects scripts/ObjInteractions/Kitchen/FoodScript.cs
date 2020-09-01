@@ -38,6 +38,7 @@ public class FoodScript : ItemBase
     private void Start()
     {
         itemMode = enFoodCondition.cold;
+        isRotationVertical = true;
 
         titleTxt = "PACKED LUNCH";
         titleTxt1 = "COLD LUNCH";
@@ -55,10 +56,13 @@ public class FoodScript : ItemBase
 
         inProgressBarTxt = "...UNPACKING...";
 
+        controlText = "...PRESS (MOUSE1) TO GRAB IT...\n...PRESS(ESC) TO PUT IT BACK.....";
+
         pickUpManager.title.text = titleTxt;
         pickUpManager.press.text = pressTxt;
         pickUpManager.description.text = descriptionTxt;
         pickUpManager.inProgressBar.text = inProgressBarTxt;
+        pickUpManager.controlInfo.text = controlText;
 
         pork.GetComponent<MeshRenderer>().material.SetTexture(1,porkNoSpoiled);
         potato.GetComponent<MeshRenderer>().material.SetTexture(1, potatoNoSpoiled);

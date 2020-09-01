@@ -108,6 +108,12 @@ public class PickUpManager : MonoBehaviour
         if(lastSelectedObj == null && !selectedObject.GetComponent<ItemBase>().actualStateItemDescriptinShowed)
         {
             isGrabbedFirstTime = true;
+            title.text = selectedObject.GetComponent<ItemBase>().titleTxt;
+            description.text = selectedObject.GetComponent<ItemBase>().descriptionTxt;
+            press.text = selectedObject.GetComponent<ItemBase>().pressTxt;
+            controlInfo.text = selectedObject.GetComponent<ItemBase>().controlText;
+            inProgressBar.text = selectedObject.GetComponent<ItemBase>().inProgressBarTxt;
+
         }
 
         if (selectedObject.GetComponent<Rigidbody>())
@@ -306,7 +312,7 @@ public class PickUpManager : MonoBehaviour
 
             if(!freezeInspectRotationFlag)
             {
-                RotateObj(lastSelectedObj);
+                RotateObj(lastSelectedObj, lastSelectedObj.GetComponent<ItemBase>().isRotationVertical);
             }
             InspectInteractionFind(lastSelectedObj);
         }
@@ -496,27 +502,79 @@ public class PickUpManager : MonoBehaviour
             }
         }
 
-        //if (inspectModeDirInteractionFlags[2])
-        //{
-        //    if (Physics.Raycast(obj.transform.position, front, out hit, rayLength))
-        //    {
-        //        if (hit.collider.CompareTag("Player"))
-        //        {
-        //            press.enabled = true;
-        //        }
-        //    }
-        //}
+        if (inspectModeDirInteractionFlags[2])
+        {
+            if (Physics.Raycast(obj.transform.position, front, out hit, rayLength))
+            {
+                if (hit.collider.CompareTag("Player"))
+                {
+                    press.text = obj.GetComponent<ItemBase>().InteractionFront();
+                    ///////////////when botton description is written///////////////////
+                    if (!freezeDescriptionOnScreen)
+                        description.text = obj.GetComponent<ItemBase>().ShowInfoFront();
+                    else
+                        bin.text = obj.GetComponent<ItemBase>().ShowInfoFront();
+                    ///////////////////////////////////////////////////////////////////
+                    if (press.text != "")
+                    {
+                        if (!pressOffsetFlag)
+                        {
+                            press.GetComponent<RectTransform>().localPosition = pressNoOffset;
+                        }
+                        else
+                        {
+                            press.GetComponent<RectTransform>().localPosition = pressOffset;
+                        }
 
-        //if (inspectModeDirInteractionFlags[3])
-        //{
-        //    if (Physics.Raycast(obj.transform.position, back, out hit, rayLength))
-        //    {
-        //        if (hit.collider.CompareTag("Player"))
-        //        {
-        //            press.enabled = true;
-        //        }
-        //    }
-        //}
+                        anyHitRayInteractionPress = true;
+                        press.enabled = true;
+
+                    }
+                    else
+                    {
+                        anyHitRayInteractionDescriptions = true;
+                        description.enabled = true;
+                    }
+                }
+            }
+        }
+
+        if (inspectModeDirInteractionFlags[3])
+        {
+            if (Physics.Raycast(obj.transform.position, back, out hit, rayLength))
+            {
+                if (hit.collider.CompareTag("Player"))
+                {
+                    press.text = obj.GetComponent<ItemBase>().InteractionBack();
+                    ///////////////when botton description is written///////////////////
+                    if (!freezeDescriptionOnScreen)
+                        description.text = obj.GetComponent<ItemBase>().ShowInfoBack();
+                    else
+                        bin.text = obj.GetComponent<ItemBase>().ShowInfoBack();
+                    ///////////////////////////////////////////////////////////////////
+                    if (press.text != "")
+                    {
+                        if (!pressOffsetFlag)
+                        {
+                            press.GetComponent<RectTransform>().localPosition = pressNoOffset;
+                        }
+                        else
+                        {
+                            press.GetComponent<RectTransform>().localPosition = pressOffset;
+                        }
+
+                        anyHitRayInteractionPress = true;
+                        press.enabled = true;
+
+                    }
+                    else
+                    {
+                        anyHitRayInteractionDescriptions = true;
+                        description.enabled = true;
+                    }
+                }
+            }
+        }
 
         if (!anyHitRayInteractionPress)
             press.enabled = false;
@@ -569,11 +627,14 @@ public class PickUpManager : MonoBehaviour
         ItemSway(obj);
     }
 
-    private void RotateObj(GameObject obj)
+    private void RotateObj(GameObject obj, bool isRotationVertical)
     {
         float mouseY = Input.GetAxis("Mouse Y") * 150.0f * Time.deltaTime;
 
-        obj.transform.Rotate(mouseY, 0, 0);
+        if(isRotationVertical)
+            obj.transform.Rotate(mouseY, 0, 0);
+        else
+            obj.transform.Rotate(0, mouseY, 0);
     }
 
     private void ItemBobing(float p_z, float p_x_intensity, float p_y_intensity)

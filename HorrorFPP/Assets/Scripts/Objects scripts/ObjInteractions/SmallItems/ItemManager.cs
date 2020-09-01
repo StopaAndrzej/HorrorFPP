@@ -30,7 +30,25 @@ public class ItemManager : InteractableObjectBase
 
     public override void Interact()
     {
-        if (Input.GetKeyDown(interactionKey) || Input.GetKeyDown(mouseButton))
+
+        if (pickUpManager.itemMode == PickUpManager.enManagerItemMode.clear)
+        {
+            /////////////highlight object//////////////////////
+            foreach (Transform child in transform)
+            {
+                foreach (Transform childChild in child)
+                {
+                    if (childChild.GetComponent<MeshRenderer>())
+                    {
+                        childChild.GetComponent<MeshRenderer>().material.SetColor("_Color", new Vector4(1, 1, 1, 1));
+                        childChild.GetComponent<MeshRenderer>().material.SetColor("_SpecularColor", new Vector4(0.2f, 0.2f, 0.2f, 1));
+                    }
+                }
+
+            }
+        }
+
+            if (Input.GetKeyDown(interactionKey) || Input.GetKeyDown(mouseButton))
         {
             if(pickUpManager.itemMode == PickUpManager.enManagerItemMode.clear)
             {
@@ -38,6 +56,18 @@ public class ItemManager : InteractableObjectBase
                 originPos = this.GetComponent<Transform>().transform.position;
                 originRot = this.GetComponent<Transform>().transform.rotation;
                 pickUpManager.PickUp(this.gameObject);
+
+                foreach (Transform child in transform)
+                {
+                    foreach (Transform childChild in child)
+                    {
+                        if (childChild.GetComponent<MeshRenderer>())
+                        {
+                            childChild.GetComponent<MeshRenderer>().material.SetColor("_Color", new Vector4(0, 0, 0, 1));
+                            childChild.GetComponent<MeshRenderer>().material.SetColor("_SpecularColor", new Vector4(1, 1, 1, 1));
+                        }
+                    }
+                }
             }
         }
     }

@@ -3,7 +3,47 @@ guid: b02d032eac3d0034d83e4f3adac1c04d
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 02 - Default
+    second: {fileID: 2100000, guid: c2009e5f8a43afb4a96ac3ab447e9fd8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 07 - Default
+    second: {fileID: 2100000, guid: 86830cbf880e7a342b3a9034a2774103, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 08 - Default
+    second: {fileID: 2100000, guid: fc3419f7685cd5640a4c3ba7412d9750, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 09 - Default
+    second: {fileID: 2100000, guid: 8b81334cfc5972b4c93a1145dd9b39cd, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: 59-107_01
+    second: {fileID: 2800000, guid: 7ca2f8bc79d0b834db602bf2fc89afdf, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Background_9_C
+    second: {fileID: 2800000, guid: 8db9e69c4279ec14f94a664babfc938e, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: VA525119_Z_1
+    second: {fileID: 2800000, guid: 6bd08887613e5134d80fe426f3a852a3, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: tyl
+    second: {fileID: 2800000, guid: 098eb94c9eaa3f5479f2fd51c7ee4e23, type: 3}
   materials:
     importMaterials: 1
     materialName: 0

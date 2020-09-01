@@ -17,6 +17,11 @@ public class InteractableObjectBase : MonoBehaviour
 
     }
 
+    public virtual void DeInteract()
+    {
+
+    }
+
     //for multiObject tag
     public virtual void InteractMulti()
     {

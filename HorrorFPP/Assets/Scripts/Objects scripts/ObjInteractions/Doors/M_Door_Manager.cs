@@ -29,6 +29,7 @@ public class M_Door_Manager : InteractableObjectBase
     [SerializeField] private Animator animator;
 
     [SerializeField] private Transform cameraJudasPos;
+    [SerializeField] private Transform cameraJudasPos1;             //additional position, camera switch from pos to pos1 when screen fade out to black
     private Vector3 destinationPos;
     private Quaternion destinationRot;
 
@@ -47,6 +48,9 @@ public class M_Door_Manager : InteractableObjectBase
 
     [SerializeField] private PostProcessVolume cameraPostProcVolume;
     [SerializeField] private PostProcessVolume peepHolePostProcVolume;
+
+    [SerializeField] private Text controlInfo;
+    private string controlInfoTxt = "\n...PRESS (ESC) TO EXIT.....";
 
     void Start()
     {
@@ -100,7 +104,12 @@ public class M_Door_Manager : InteractableObjectBase
                 else
                 {
                     colorGradingLayer.postExposure.value = -50.0f;
-                    playerCamera.GetComponent<Camera>().cullingMask &= ~(1 << LayerMask.NameToLayer("IgnoreLights"));
+                    playerCamera.GetComponent<Transform>().position = cameraJudasPos1.position;
+
+                    controlInfo.text = controlInfoTxt;
+                    controlInfo.enabled = true;
+
+                   // playerCamera.GetComponent<Camera>().cullingMask &= ~(1 << LayerMask.NameToLayer("IgnoreLights"));
                     cameraPostProcVolume.enabled = false;
                     peepHolePostProcVolume.enabled = true;
                     findInteraction.peepHoleMode = true;
@@ -198,6 +207,7 @@ public class M_Door_Manager : InteractableObjectBase
                 isJudas = false;
                 cameraMovementMotionReverse = true;
                 lerpCameraMovement = true;
+                controlInfo.enabled = false;
                 //animationInProgress = true;
             }
         }

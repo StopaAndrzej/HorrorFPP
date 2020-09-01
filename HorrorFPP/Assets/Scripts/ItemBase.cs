@@ -22,6 +22,9 @@ public class ItemBase : MonoBehaviour
 
     public string pressTxt;
     public string pressTxt1;
+    public string pressTxt2;
+
+    public string controlText;
 
     public bool[] inspectModeDirInteractionFlags = new bool[4]; //up down front back
 
@@ -56,6 +59,7 @@ public class ItemBase : MonoBehaviour
 
     public bool itemDrop = false;
     public bool actualStateItemDescriptinShowed = false;
+    public bool isRotationVertical;                             //which axis should be used to rotate obj, false -use X true -use Y
 
     public virtual string InteractionUp()
     {
@@ -81,6 +85,16 @@ public class ItemBase : MonoBehaviour
     }
 
     public virtual string ShowInfoDown()
+    {
+        return null;
+    }
+
+    public virtual string ShowInfoFront()
+    {
+        return null;
+    }
+
+    public virtual string ShowInfoBack()
     {
         return null;
     }

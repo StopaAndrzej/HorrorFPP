@@ -21,8 +21,8 @@ public class MicrowaveDoorManager : InteractableObjectBase
     [SerializeField] private Text openIcon2;
 
     public bool isCooking = false;
-    private bool readyToCook = false;
-    private bool isOpen = false;
+    [SerializeField] private bool readyToCook = false;
+    [SerializeField] private bool isOpen = false;
 
     //wait until animation finish to interact again
     public bool animationInProgress = false;

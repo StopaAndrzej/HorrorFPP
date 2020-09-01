@@ -50,21 +50,21 @@ public class FindInteraction : MonoBehaviour
             RaycastHit hit;
             Vector3 fwd = transform.TransformDirection(Vector3.forward);
 
-            if (Physics.Raycast(transform.position, fwd, out hit, rayLength, putlayerMask.value) && pickUpManager.itemMode == PickUpManager.enManagerItemMode.inHand)
-            {
-                if (hit.collider.CompareTag("Surface"))
-                {
-                    pickUpManager.visualObjectPutArea(hit.point, hit.transform.gameObject);
-                    lastFrameRayHitSurface = true;
-                }
-                else if(hit.collider.CompareTag("SurfaceDirectly"))
-                {
-                    pickUpManager.visualObjectPutArea(hit.transform.gameObject);
-                    lastFrameRayHitSurface = true;
-                }
+            //if (Physics.Raycast(transform.position, fwd, out hit, rayLength, putlayerMask.value) && pickUpManager.itemMode == PickUpManager.enManagerItemMode.inHand)
+            //{
+            //    if (hit.collider.CompareTag("Surface"))
+            //    {
+            //        pickUpManager.visualObjectPutArea(hit.point, hit.transform.gameObject);
+            //        lastFrameRayHitSurface = true;
+            //    }
+            //    else if(hit.collider.CompareTag("SurfaceDirectly"))
+            //    {
+            //        pickUpManager.visualObjectPutArea(hit.transform.gameObject);
+            //        lastFrameRayHitSurface = true;
+            //    }
 
-            }
-            else  if (Physics.Raycast(transform.position, fwd, out hit, rayLength, layerMaskInteract.value))
+            //}
+            if (Physics.Raycast(transform.position, fwd, out hit, rayLength, layerMaskInteract.value))
             {
                 //object to recognize items with single interaction
                 //multi for objects that contains more interactable objects like doors(handle, lock...)/and objectMultiCild for one of this child object
@@ -86,6 +86,7 @@ public class FindInteraction : MonoBehaviour
                                 {
                                     element.GetComponent<MeshRenderer>().enabled = false;
                                 }
+
                             }
                         }
                     }
@@ -121,6 +122,21 @@ public class FindInteraction : MonoBehaviour
                     {
 
                         actionText.GetComponent<Text>().text = raycastedObject.GetComponent<InteractableObjectBase>().interactText;
+
+                        /////////////highlight object//////////////////////
+                        //foreach (Transform child in raycastedObject.transform)
+                        //{
+                        //    foreach (Transform childChild in child)
+                        //    {
+                        //        if (childChild.GetComponent<MeshRenderer>())
+                        //        {
+                        //            childChild.GetComponent<MeshRenderer>().material.SetColor("_Color", new Vector4(1, 1, 1, 1));
+                        //            childChild.GetComponent<MeshRenderer>().material.SetColor("_SpecularColor", new Vector4(0.2f, 0.2f, 0.2f, 1));
+                        //        }
+                        //    }
+
+                        //}
+
                         raycastedObject.GetComponent<InteractableObjectBase>().Interact();
 
                         //if(raycastedObject.GetComponent<InteractableObjectBase>())
@@ -138,12 +154,20 @@ public class FindInteraction : MonoBehaviour
                         raycastedObject.GetComponent<InteractableObjectBase>().InteractMulti();
 
                         //switch correct parent interaction by click on kid's interactive field
-                        if (Input.GetKeyDown(interactButton))
+                        if (Input.GetKeyDown(interactButton) || Input.GetKeyDown(interactButton2))
                         {
                             int tmpValue = raycastedObject.GetComponent<InteractableObjectBase>().kidID;
                             raycastedObject.transform.parent.GetComponent<InteractableObjectBase>().kidID = tmpValue;
                         }
-                        raycastedObject.transform.parent.GetComponent<InteractableObjectBase>().InteractMulti();
+
+                        if (raycastedObject.transform.parent.tag == "Object")
+                        {
+                            raycastedObject.transform.parent.GetComponent<InteractableObjectBase>().Interact();
+                        }
+                        else
+                        {
+                            raycastedObject.transform.parent.GetComponent<InteractableObjectBase>().InteractMulti();
+                        }
 
                         dot.SetActive(true);
                         actionText.SetActive(false);
@@ -197,6 +221,22 @@ public class FindInteraction : MonoBehaviour
                 }
 
                 raycastedObject.GetComponent<InteractableObjectBase>().DeInteractMulti();
+                raycastedObject.GetComponent<InteractableObjectBase>().DeInteract();
+
+                /////////////highlight object OFF//////////////////////
+                foreach (Transform child in raycastedObject.transform)
+                {
+                    foreach (Transform childChild in child)
+                    {
+                        if (childChild.GetComponent<MeshRenderer>())
+                        {
+                            childChild.GetComponent<MeshRenderer>().material.SetColor("_Color", new Vector4(0.5882352941176471f, 0.5882352941176471f, 0.5882352941176471f, 1));
+                            childChild.GetComponent<MeshRenderer>().material.SetColor("_SpecularColor", new Vector4(0.0f, 0.0f, 0.0f, 1));
+                        }
+                    }
+
+                }
+
                 raycastedObject = null;
             }
         }
