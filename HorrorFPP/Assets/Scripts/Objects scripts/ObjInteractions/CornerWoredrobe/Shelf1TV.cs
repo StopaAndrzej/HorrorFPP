@@ -23,22 +23,13 @@ public class Shelf1TV : InteractableObjectBase
     [SerializeField] List<Shelf1TV> blockingObj;
     public bool isBlocked = false;
 
-    [SerializeField] private List<Canvas> canvases;
-    [SerializeField] private Text text;
-    [SerializeField] private Text buttonIcon;
-    [SerializeField] private Text buttonIcon1;
-
-    [SerializeField] private Text text11;
-    [SerializeField] private Text buttonIcon11;
-    [SerializeField] private Text buttonIcon111;
-
-    [SerializeField] private Vector3 offsetText;
-    [SerializeField] private Vector3 offsetButtonIcon;
-
     private KeyCode interactionKey = KeyCode.F;
     private KeyCode mouseButton = KeyCode.Mouse0;
 
     [SerializeField] private List<Light> lights;
+
+    public bool valuableToInteract = false;
+    private bool resetText = false;             //reset text when "nothing" text apprears
 
     private void Start()
     {
@@ -50,11 +41,6 @@ public class Shelf1TV : InteractableObjectBase
 
         interactText = "OPEN";
 
-        foreach (Canvas element in canvases)
-        {
-            element.gameObject.SetActive(false);
-        }
-
         foreach(Light li in lights)
         {
             li.enabled = false;
@@ -63,30 +49,14 @@ public class Shelf1TV : InteractableObjectBase
 
     public override void Interact()
     {
-        foreach (Canvas element in canvases)
-        {
-            element.gameObject.SetActive(true);
-        }
 
         if (Input.GetKeyDown(interactionKey) || Input.GetKeyDown(mouseButton))
         {
-            if (!isOpen && !isBlocked)
+            if (!isOpen && !isBlocked && valuableToInteract)
             {
                 this.GetComponent<Transform>().position = openPos;
                 this.GetComponent<Transform>().rotation = openRot;
                 interactText = "CLOSE";
-                text.text = "CLOSE";
-                text.GetComponent<RectTransform>().localPosition += offsetText;
-                buttonIcon.GetComponent<RectTransform>().localPosition += offsetButtonIcon;
-                buttonIcon1.GetComponent<RectTransform>().localPosition += offsetButtonIcon;
-
-                if(text11!=null)
-                {
-                    text11.text = "CLOSE";
-                    text11.GetComponent<RectTransform>().localPosition += offsetText;
-                    buttonIcon11.GetComponent<RectTransform>().localPosition += offsetButtonIcon;
-                    buttonIcon111.GetComponent<RectTransform>().localPosition += offsetButtonIcon;
-                }
 
                 isOpen = !isOpen;
 
@@ -102,19 +72,6 @@ public class Shelf1TV : InteractableObjectBase
                     twin.GetComponent<Transform>().rotation = twin.openRot;
                     twin.interactText = "CLOSE";
 
-                    twin.GetComponent<Shelf1TV>().text.text = "CLOSE";
-                    twin.GetComponent<Shelf1TV>().text.GetComponent<RectTransform>().localPosition += twin.GetComponent<Shelf1TV>().offsetText;
-                    twin.GetComponent<Shelf1TV>().buttonIcon.GetComponent<RectTransform>().localPosition += twin.GetComponent<Shelf1TV>().offsetButtonIcon;
-                    twin.GetComponent<Shelf1TV>().buttonIcon1.GetComponent<RectTransform>().localPosition += twin.GetComponent<Shelf1TV>().offsetButtonIcon;
-
-                    if(text11 != null)
-                    {
-                        twin.GetComponent<Shelf1TV>().text11.text = "CLOSE";
-                        twin.GetComponent<Shelf1TV>().text11.GetComponent<RectTransform>().localPosition += twin.GetComponent<Shelf1TV>().offsetText;
-                        twin.GetComponent<Shelf1TV>().buttonIcon11.GetComponent<RectTransform>().localPosition += twin.GetComponent<Shelf1TV>().offsetButtonIcon;
-                        twin.GetComponent<Shelf1TV>().buttonIcon111.GetComponent<RectTransform>().localPosition += twin.GetComponent<Shelf1TV>().offsetButtonIcon;
-                    }
-
                     twin.GetComponent<Shelf1TV>().isOpen = !twin.GetComponent<Shelf1TV>().isOpen;
                 }
             }
@@ -126,23 +83,22 @@ public class Shelf1TV : InteractableObjectBase
                     twin.interactText = "BLOCKED";
                 }
             }
+            else if(!valuableToInteract && !isOpen)
+            {
+                interactText = "NOTHING";
+                resetText = true;
+
+                if (twin != null)
+                {
+                    twin.interactText = "NOTHING";
+                    twin.resetText = true;
+                }
+            }
             else
             {
                 this.GetComponent<Transform>().position = closedPos;
                 this.GetComponent<Transform>().rotation = closeRot;
                 interactText = "OPEN";
-                text.text = "OPEN";
-                text.GetComponent<RectTransform>().localPosition -= offsetText;
-                buttonIcon.GetComponent<RectTransform>().localPosition -= offsetButtonIcon;
-                buttonIcon1.GetComponent<RectTransform>().localPosition -= offsetButtonIcon;
-
-                if (text11 != null)
-                {
-                    text11.text = "OPEN";
-                    text11.GetComponent<RectTransform>().localPosition -= offsetText;
-                    buttonIcon11.GetComponent<RectTransform>().localPosition -= offsetButtonIcon;
-                    buttonIcon111.GetComponent<RectTransform>().localPosition -= offsetButtonIcon;
-                }
 
                 isOpen = !isOpen;
 
@@ -158,30 +114,23 @@ public class Shelf1TV : InteractableObjectBase
                     twin.GetComponent<Transform>().rotation = twin.closeRot;
                     twin.interactText = "OPEN";
 
-                    twin.GetComponent<Shelf1TV>().text.text = "OPEN";
-                    twin.GetComponent<Shelf1TV>().text.GetComponent<RectTransform>().localPosition -= twin.GetComponent<Shelf1TV>().offsetText;
-                    twin.GetComponent<Shelf1TV>().buttonIcon.GetComponent<RectTransform>().localPosition -= twin.GetComponent<Shelf1TV>().offsetButtonIcon;
-                    twin.GetComponent<Shelf1TV>().buttonIcon1.GetComponent<RectTransform>().localPosition = twin.GetComponent<Shelf1TV>().offsetButtonIcon;
-
-                    if (text11 != null)
-                    {
-                        twin.GetComponent<Shelf1TV>().text11.text = "OPEN";
-                        twin.GetComponent<Shelf1TV>().text11.GetComponent<RectTransform>().localPosition -= twin.GetComponent<Shelf1TV>().offsetText;
-                        twin.GetComponent<Shelf1TV>().buttonIcon11.GetComponent<RectTransform>().localPosition -= twin.GetComponent<Shelf1TV>().offsetButtonIcon;
-                        twin.GetComponent<Shelf1TV>().buttonIcon111.GetComponent<RectTransform>().localPosition -= twin.GetComponent<Shelf1TV>().offsetButtonIcon;
-                    }
-
                     twin.GetComponent<Shelf1TV>().isOpen = !twin.GetComponent<Shelf1TV>().isOpen;
                 }
             }
         } 
     }
 
-    public override void DeInteractMulti()
+    public override void DeInteract()
     {
-        foreach (Canvas element in canvases)
+        if(resetText)
         {
-            element.gameObject.SetActive(false);
+            interactText = "OPEN";
+            resetText = false;
+            if (twin != null)
+            {
+                twin.interactText = "OPEN";
+                twin.resetText = false;
+            }
         }
     }
 

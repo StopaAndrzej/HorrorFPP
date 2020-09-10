@@ -23,7 +23,7 @@ public class PickUpManager : MonoBehaviour
 
     private Vector3 pressOffset = new Vector3(0, 0, 0);
     private Vector3 pressNoOffset;
-
+           
     private bool isGrabbedFirstTime = false;
 
    [SerializeField] private FocusSwitcher focus;
@@ -31,7 +31,7 @@ public class PickUpManager : MonoBehaviour
    [SerializeField] private FindInteraction interaction;
    [SerializeField] private LayerMask layerMaskIgnore;
    [SerializeField] private GameObject handHandleItemAttach;
-    [SerializeField] private GameObject handHandlePivot;
+   [SerializeField] private GameObject handHandlePivot;
 
     //shaders
     [SerializeField] private Shader originalShader;
@@ -53,7 +53,7 @@ public class PickUpManager : MonoBehaviour
 
     private Quaternion currentItemRot;
 
-    private GameObject lastSelectedObj;
+    public GameObject lastSelectedObj;
     private Vector3 lastObjPos;
 
     //values to calculate 3/4 distance between origin item pos and destination point. When the iteam crooss the distance enable player controller
@@ -80,8 +80,11 @@ public class PickUpManager : MonoBehaviour
     private float moveCounter = 0;
     public float forceValueToDropItem = 3;
 
+    private float objOffset;
+
     //copy  of selected obj -  for placing item system
-    private GameObject copiedObj;
+    public GameObject copiedObj;
+
     [SerializeField] private GameObject binFolderParent;
 
     private void Start()
@@ -103,7 +106,7 @@ public class PickUpManager : MonoBehaviour
     }
 
     //pickUp object first time so its inspect mode first
-    public void PickUp(GameObject selectedObject)
+    public void PickUp(GameObject selectedObject, float objInspectModeOffset, float titleOffset)
     {
         if(lastSelectedObj == null && !selectedObject.GetComponent<ItemBase>().actualStateItemDescriptinShowed)
         {
@@ -127,7 +130,10 @@ public class PickUpManager : MonoBehaviour
 
         playerMove.inspectMode = true;
 
+
         selectedObject.transform.parent = destinationPosInspect.transform;
+
+        objOffset = objInspectModeOffset;
 
         //clone with no components
         copiedObj = Instantiate(selectedObject, this.transform);
@@ -146,6 +152,7 @@ public class PickUpManager : MonoBehaviour
         originGrabbedItemPos = selectedObject.GetComponent<ItemManager>().originPos;
         originGrabbedItemRot = selectedObject.GetComponent<ItemManager>().originRot;
 
+        destinationPosInspect.position = new Vector3(destinationPosInspect.position.x, destinationPosInspect.position.y, destinationPosInspect.position.z - objOffset);
         distance = Vector3.Distance(originGrabbedItemPos, destinationPosInspect.position);
 
         if (selectedObject.GetComponent<ItemBase>())
@@ -163,8 +170,8 @@ public class PickUpManager : MonoBehaviour
     {
         if (selectedObject.GetComponent<Rigidbody>())
         {
-            selectedObject.GetComponent<Rigidbody>().useGravity = false;
-            selectedObject.GetComponent<Rigidbody>().isKinematic = true;
+           selectedObject.GetComponent<Rigidbody>().useGravity = true;
+           selectedObject.GetComponent<Rigidbody>().isKinematic = false;
         }
             
 
@@ -438,7 +445,7 @@ public class PickUpManager : MonoBehaviour
                     if(!freezeDescriptionOnScreen)
                         description.text = obj.GetComponent<ItemBase>().ShowInfoUp();
                     else
-                        bin.text = obj.GetComponent<ItemBase>().ShowInfoDown();
+                        bin.text = obj.GetComponent<ItemBase>().ShowInfoUp();
                     ///////////////////////////////////////////////////////////////////
                     if (press.text != "")
                     {
@@ -689,14 +696,19 @@ public class PickUpManager : MonoBehaviour
    public void visualObjectPutArea(Vector3 hitPos, GameObject hitObj)
     {
         copiedObj.SetActive(true);
-        copiedObj.transform.position = hitPos;
 
-        foreach(Transform child in copiedObj.transform)
+
+
+        copiedObj.transform.position = new Vector3(hitObj.transform.position.x, hitObj.transform.position.y, hitPos.z);
+
+        int i = 0;
+        foreach (Transform child in copiedObj.transform)
         {
             if(child.GetComponent<MeshRenderer>())
             {
                 child.GetComponent<MeshRenderer>().material.shader = transparecyShader;
                 child.GetComponent<MeshRenderer>().material.color = new Color(child.GetComponent<MeshRenderer>().material.color.r, child.GetComponent<MeshRenderer>().material.color.g, child.GetComponent<MeshRenderer>().material.color.b, 0.5f);
+                i++;
             }
         }
 
@@ -725,7 +737,7 @@ public class PickUpManager : MonoBehaviour
             if (child.GetComponent<MeshRenderer>())
             {
                 child.GetComponent<MeshRenderer>().material.shader = transparecyShader;
-                child.GetComponent<MeshRenderer>().material.color = new Color(child.GetComponent<MeshRenderer>().material.color.r, child.GetComponent<MeshRenderer>().material.color.g, child.GetComponent<MeshRenderer>().material.color.b, 0.5f);
+                child.GetComponent<MeshRenderer>().material.color = new Color(0.8f, 0.8f,0.1f, 0.5f);
             }
         }
 
@@ -736,5 +748,22 @@ public class PickUpManager : MonoBehaviour
             itemMode = enManagerItemMode.returnToPos;
             playerMove.inspectMode = true;
         }
+    }
+
+    public void UpdateDropObjClone()
+    {
+        if (copiedObj != null)
+            Destroy(copiedObj);
+
+        copiedObj = Instantiate(lastSelectedObj, this.transform);
+
+        foreach (var comp in copiedObj.GetComponents<Component>())
+        {
+            if (!(comp is Transform))
+            {
+                Destroy(comp);
+            }
+        }
+
     }
 }

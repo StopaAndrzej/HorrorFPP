@@ -27,6 +27,7 @@ public class M_Door_Manager : InteractableObjectBase
     public bool animationInProgress = false;
 
     [SerializeField] private Animator animator;
+    [SerializeField] private Animator animatorChain;
 
     [SerializeField] private Transform cameraJudasPos;
     [SerializeField] private Transform cameraJudasPos1;             //additional position, camera switch from pos to pos1 when screen fade out to black
@@ -37,6 +38,10 @@ public class M_Door_Manager : InteractableObjectBase
     private Quaternion originalPlayerCameraRot;
 
     [SerializeField] private GameObject playerCamera;
+
+    [SerializeField] private List<GameObject> chain0;
+    [SerializeField] private List<GameObject> chain1;
+
     [SerializeField] private PlayerMove playerMove;
 
     private bool lerpCameraMovement = false;
@@ -60,6 +65,11 @@ public class M_Door_Manager : InteractableObjectBase
         foreach (Canvas element in canvases)
         {
             element.gameObject.SetActive(false);
+        }
+
+        foreach(GameObject el in chain1)
+        {
+            el.SetActive(false);
         }
     }
 
@@ -194,6 +204,16 @@ public class M_Door_Manager : InteractableObjectBase
                     }
                     else
                     {
+                        foreach (GameObject el in chain0)
+                        {
+                            el.SetActive(false);
+                        }
+
+                        foreach (GameObject el in chain1)
+                        {
+                            el.SetActive(true);
+                        }
+
                         lockTxt.text = "RELEASE\nLOCK";
                         animator.SetBool("isLock", true);
                     }
@@ -233,6 +253,18 @@ public class M_Door_Manager : InteractableObjectBase
         animationInProgress = false;
     }
 
+    public void ChangeChainPosFake()
+    {
+        foreach (GameObject el in chain1)
+        {
+            el.SetActive(false);
+        }
+
+        foreach (GameObject el in chain0)
+        {
+            el.SetActive(true);
+        }
+    }
 
     IEnumerator Opening()
     {

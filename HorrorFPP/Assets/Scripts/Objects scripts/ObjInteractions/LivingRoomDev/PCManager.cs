@@ -32,7 +32,7 @@ public class PCManager : InteractableObjectBase
             {
                 pcBox.material = offMaterial;
                 interactText = "TURN ON";
-                
+                screenManager.KillConnection();
             }
             else
             {

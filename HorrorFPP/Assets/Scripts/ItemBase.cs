@@ -51,6 +51,9 @@ public class ItemBase : MonoBehaviour
 
     public int letterID = 0;
 
+    public int TitleFontSize = 100;
+    public float TitleYOffset = 148.0f;     //default y title pos
+
     public string fullTextToRead;
     public string currentTextToRead;
     public float delayNormal = 0.1f;

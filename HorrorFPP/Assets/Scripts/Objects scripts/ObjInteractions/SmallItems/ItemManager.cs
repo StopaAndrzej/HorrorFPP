@@ -15,6 +15,9 @@ public class ItemManager : InteractableObjectBase
     public Transform parent;
     public Transform originLocation;
 
+    [SerializeField] private float objInspectModeOffset = 0;
+    [SerializeField] private float txtTitleOffset = 0;
+
     private void Start()
     {
         if(pickUpManager==null)
@@ -48,14 +51,14 @@ public class ItemManager : InteractableObjectBase
             }
         }
 
-            if (Input.GetKeyDown(interactionKey) || Input.GetKeyDown(mouseButton))
+        if (Input.GetKeyDown(interactionKey) || Input.GetKeyDown(mouseButton))
         {
             if(pickUpManager.itemMode == PickUpManager.enManagerItemMode.clear)
             {
                 parent = this.transform.parent;
                 originPos = this.GetComponent<Transform>().transform.position;
                 originRot = this.GetComponent<Transform>().transform.rotation;
-                pickUpManager.PickUp(this.gameObject);
+                pickUpManager.PickUp(this.gameObject, objInspectModeOffset, txtTitleOffset);
 
                 foreach (Transform child in transform)
                 {

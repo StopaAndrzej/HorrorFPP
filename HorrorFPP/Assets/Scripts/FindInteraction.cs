@@ -27,8 +27,9 @@ public class FindInteraction : MonoBehaviour
     //essential for proper work
     private bool multiInteractionSelectedChild = false;
     private bool multiInteractionSelectedChild2 = false;
-    public bool dropMode = false;
+   // public bool dropMode = false;
     public bool peepHoleMode = false;
+    public bool showMissionsMode = false;
 
     //canvas obj
     [SerializeField] private GameObject actionText;
@@ -45,42 +46,47 @@ public class FindInteraction : MonoBehaviour
     private void FixedUpdate()
     {
         //disable when drop mode is use
-        if (!dropMode && !peepHoleMode)
+        //before !dropMode &&...
+        if (!peepHoleMode && !showMissionsMode)
         {
             RaycastHit hit;
+            
             Vector3 fwd = transform.TransformDirection(Vector3.forward);
+            Debug.DrawRay(transform.position, fwd * 10000f, Color.blue);
 
-            //if (Physics.Raycast(transform.position, fwd, out hit, rayLength, putlayerMask.value) && pickUpManager.itemMode == PickUpManager.enManagerItemMode.inHand)
-            //{
-            //    if (hit.collider.CompareTag("Surface"))
-            //    {
-            //        pickUpManager.visualObjectPutArea(hit.point, hit.transform.gameObject);
-            //        lastFrameRayHitSurface = true;
-            //    }
-            //    else if(hit.collider.CompareTag("SurfaceDirectly"))
-            //    {
-            //        pickUpManager.visualObjectPutArea(hit.transform.gameObject);
-            //        lastFrameRayHitSurface = true;
-            //    }
+            if (Physics.Raycast(transform.position, fwd, out hit, rayLength, putlayerMask.value) && pickUpManager.itemMode == PickUpManager.enManagerItemMode.inHand)
+            {
+                if (hit.collider.CompareTag("Surface"))
+                {
+                    pickUpManager.visualObjectPutArea(hit.point, hit.transform.gameObject);
+                    lastFrameRayHitSurface = true;
+                }
+                else if (hit.collider.CompareTag("SurfaceDirectly"))
+                {
+                    pickUpManager.visualObjectPutArea(hit.transform.gameObject);
+                    lastFrameRayHitSurface = true;
+                }
 
-            //}
+            }
+
             if (Physics.Raycast(transform.position, fwd, out hit, rayLength, layerMaskInteract.value))
             {
                 //object to recognize items with single interaction
                 //multi for objects that contains more interactable objects like doors(handle, lock...)/and objectMultiCild for one of this child object
-                if (hit.collider.CompareTag("Object") || hit.collider.CompareTag("ObjectMultiInteractions") || hit.collider.CompareTag("ObjectMultiChild") || hit.collider.CompareTag("ObjectNoInteraction"))
+                if (hit.collider.CompareTag("Object") || hit.collider.CompareTag("ObjectMultiInteractions") || hit.collider.CompareTag("ObjectMultiChild") || hit.collider.CompareTag("ObjectNoInteraction") || hit.collider.CompareTag("ObjectInspectOnly"))
                 {
 
                     if (raycastedObject != null && raycastedObject != hit.collider.gameObject)
                     {
                         if ((multiInteractionSelectedChild && !hit.collider.CompareTag("ObjectMultiChild")) ||
                             (multiInteractionSelectedChild && hit.collider.CompareTag("ObjectMultiChild")) && raycastedObject.GetComponent<InteractableObjectBase>().kidID != hit.collider.gameObject.GetComponent<InteractableObjectBase>().kidID
-                            || raycastedObject.CompareTag("Object") && (hit.collider.CompareTag("Object") || hit.collider.CompareTag("ObjectNoInteraction")))
+                            || raycastedObject.CompareTag("Object") && (hit.collider.CompareTag("Object") || hit.collider.CompareTag("ObjectNoInteraction") || hit.collider.CompareTag("ObjectInspectOnly")))
                         {
                             raycastedObject.GetComponent<InteractableObjectBase>().DeInteractMulti();
-                            multiInteractionSelectedChild = false;
+                            raycastedObject.GetComponent<InteractableObjectBase>().DeInteract();
+                           multiInteractionSelectedChild = false;
 
-                            if (raycastedObject.CompareTag("Object"))
+                            if (raycastedObject.CompareTag("Object") || raycastedObject.CompareTag("ObjectInspectOnly"))
                             {
                                 foreach (GameObject element in raycastedObject.GetComponent<InteractableObjectBase>().outlineObjects)
                                 {
@@ -123,23 +129,8 @@ public class FindInteraction : MonoBehaviour
 
                         actionText.GetComponent<Text>().text = raycastedObject.GetComponent<InteractableObjectBase>().interactText;
 
-                        /////////////highlight object//////////////////////
-                        //foreach (Transform child in raycastedObject.transform)
-                        //{
-                        //    foreach (Transform childChild in child)
-                        //    {
-                        //        if (childChild.GetComponent<MeshRenderer>())
-                        //        {
-                        //            childChild.GetComponent<MeshRenderer>().material.SetColor("_Color", new Vector4(1, 1, 1, 1));
-                        //            childChild.GetComponent<MeshRenderer>().material.SetColor("_SpecularColor", new Vector4(0.2f, 0.2f, 0.2f, 1));
-                        //        }
-                        //    }
-
-                        //}
-
                         raycastedObject.GetComponent<InteractableObjectBase>().Interact();
 
-                        //if(raycastedObject.GetComponent<InteractableObjectBase>())
                         dot.SetActive(false);
                         actionText.SetActive(true);
 
@@ -148,7 +139,6 @@ public class FindInteraction : MonoBehaviour
                         multiInteractionSelectedChild2 = false;
 
                     }
-
                     else if (hit.collider.CompareTag("ObjectMultiChild"))
                     {
                         raycastedObject.GetComponent<InteractableObjectBase>().InteractMulti();
@@ -240,20 +230,20 @@ public class FindInteraction : MonoBehaviour
                 raycastedObject = null;
             }
         }
-        else if (dropMode)
-        {
-            //disable selection in drop mode if something was selected before
-            if (raycastedObject != null)
-            {
-                if (multiInteractionSelectedChild2)
-                    raycastedObject = raycastedObject.transform.parent.gameObject;
+        //else if (dropMode)
+        //{
+        //    //disable selection in drop mode if something was selected before
+        //    if (raycastedObject != null)
+        //    {
+        //        if (multiInteractionSelectedChild2)
+        //            raycastedObject = raycastedObject.transform.parent.gameObject;
 
-                foreach (GameObject element in raycastedObject.GetComponent<InteractableObjectBase>().outlineObjects)
-                {
-                    element.GetComponent<MeshRenderer>().enabled = false;
-                }
-            }
-        }
+        //        foreach (GameObject element in raycastedObject.GetComponent<InteractableObjectBase>().outlineObjects)
+        //        {
+        //            element.GetComponent<MeshRenderer>().enabled = false;
+        //        }
+        //    }
+        //}
         else if (peepHoleMode)
         {
             if (savedrayCastedObject.GetComponent<Collider>().CompareTag("ObjectMultiInteractions"))

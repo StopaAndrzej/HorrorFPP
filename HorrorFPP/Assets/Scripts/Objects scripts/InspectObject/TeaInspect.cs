@@ -7,7 +7,7 @@ using UnityEngine.Rendering.PostProcessing;
 public class TeaInspect : MonoBehaviour
 {
     [SerializeField] private PlayerMove playerComponent;
-    [SerializeField] private JugDoor jugDoor;
+    //[SerializeField] private JugDoor jugDoor;
 
     [SerializeField] private Text objectName;
     [SerializeField] private Text press;

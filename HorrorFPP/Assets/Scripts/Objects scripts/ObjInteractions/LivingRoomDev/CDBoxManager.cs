@@ -13,6 +13,8 @@ public class CDBoxManager : ItemBase
     private Animator animator;
     [SerializeField] GameObject CDObj;
 
+    [SerializeField] private PlayerEquipment playerEq;
+    [SerializeField] private Transform playerEqParent;
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -186,6 +188,8 @@ public class CDBoxManager : ItemBase
     public void HideCD()
     {
         CDObj.SetActive(false);
+        playerEq.iteamInventory.Add(CDObj);
+        CDObj.transform.parent = playerEqParent;
         animator.SetBool("isGrabed", false);
         animator.SetBool("isOpen", false);
     }

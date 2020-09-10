@@ -34,6 +34,9 @@ public class FoodScript : ItemBase
     [SerializeField] private Texture plateClear;
     [SerializeField] private Texture plateDirty;
 
+    [SerializeField] private BoxCollider packageCollider;
+    [SerializeField] private BoxCollider foodCollider;
+
 
     private void Start()
     {
@@ -68,6 +71,9 @@ public class FoodScript : ItemBase
         potato.GetComponent<MeshRenderer>().material.SetTexture(1, potatoNoSpoiled);
         salad.GetComponent<MeshRenderer>().material.SetTexture(1, saladNoSpoiled);
         plate.GetComponent<MeshRenderer>().material.SetTexture(1, plateClear);
+
+        packageCollider.enabled = true;
+        foodCollider.enabled = false;
 
         inspectModeDirInteractionFlags[0] = true;
         inspectModeDirInteractionFlags[1] = true;
@@ -267,6 +273,9 @@ public class FoodScript : ItemBase
 
         pickUpManager.title.text = titleTxt1;
         pickUpManager.description.text = descriptionTxt2;
+
+        Destroy(this.GetComponent<FoodScript>().packageCollider);
+        pickUpManager.UpdateDropObjClone();
 
         if (valueFlag)
         {

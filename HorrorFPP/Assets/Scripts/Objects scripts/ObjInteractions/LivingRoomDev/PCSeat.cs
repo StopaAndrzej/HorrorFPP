@@ -6,6 +6,8 @@ public class PCSeat : InteractableObjectBase
 {
     private Quaternion rotOrigin;
     private Quaternion destinationRotation;
+    private Quaternion lastPlayerStandingPosRotationSeat;
+    private Vector3 playerPosBeforeSit;
     [SerializeField] private GameObject player;
 
     private bool pointOnSeat = false;
@@ -47,13 +49,23 @@ public class PCSeat : InteractableObjectBase
             pointOnSeat = !pointOnSeat;
         }
 
-        if (Input.GetKeyDown(interactionKey) || Input.GetKeyDown(mouseButton))
+        if ((Input.GetKeyDown(interactionKey) || Input.GetKeyDown(mouseButton)) && !playerOnSeat)
         {
+            playerPosBeforeSit = player.transform.position;
+            lastPlayerStandingPosRotationSeat = destinationRotation;
             player.transform.position = this.transform.position;
             player.transform.rotation = this.transform.rotation;
             interactText = "GET UP";
             player.GetComponent<PlayerMove>().seatMode = true;
             playerOnSeat = true;
+        }
+        else if((Input.GetKeyDown(interactionKey) || Input.GetKeyDown(mouseButton)) && playerOnSeat)
+        {
+            player.transform.position = playerPosBeforeSit;
+            transform.rotation = lastPlayerStandingPosRotationSeat;
+            interactText = "SIT HERE";
+            player.GetComponent<PlayerMove>().seatMode = false;
+            playerOnSeat = false;
         }
     }
 
