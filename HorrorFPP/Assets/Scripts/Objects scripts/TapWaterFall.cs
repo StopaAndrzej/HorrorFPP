@@ -12,17 +12,4 @@ public class TapWaterFall : InteractableObjectBase
         animator = GetComponent<Animator>();
     }
 
-    public void WaterFallActivate(bool value)
-    {
-        if (value)
-        {
-            animator.SetBool("isActive", true);
-            isActive = true;
-        }
-        else
-        {
-            animator.SetBool("isActive", false);
-            isActive = false;
-        }
-    }
 }

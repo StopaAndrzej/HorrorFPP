@@ -20,12 +20,12 @@ public class ItemManager : InteractableObjectBase
 
     private void Start()
     {
-        if(pickUpManager==null)
+        if (pickUpManager == null)
         {
             Debug.Log("PickUpManager doesn't set!!!");
         }
 
-        
+
         originPos = this.GetComponent<Transform>().position;
         originRot = this.GetComponent<Transform>().rotation;
         parent = this.transform.parent;
@@ -69,6 +69,30 @@ public class ItemManager : InteractableObjectBase
                             childChild.GetComponent<MeshRenderer>().material.SetColor("_Color", new Vector4(0, 0, 0, 1));
                             childChild.GetComponent<MeshRenderer>().material.SetColor("_SpecularColor", new Vector4(1, 1, 1, 1));
                         }
+                    }
+                }
+            }
+            
+        }
+    }
+
+    public void ForceToInteract()           //ex. dirty dishes from tap. wheh object's interaction by some manager
+    {
+        if (pickUpManager.itemMode == PickUpManager.enManagerItemMode.clear)
+        {
+            parent = this.transform.parent;
+            originPos = this.GetComponent<Transform>().transform.position;
+            originRot = this.GetComponent<Transform>().transform.rotation;
+            pickUpManager.PickUp(this.gameObject, objInspectModeOffset, txtTitleOffset);
+
+            foreach (Transform child in transform)
+            {
+                foreach (Transform childChild in child)
+                {
+                    if (childChild.GetComponent<MeshRenderer>())
+                    {
+                        childChild.GetComponent<MeshRenderer>().material.SetColor("_Color", new Vector4(0, 0, 0, 1));
+                        childChild.GetComponent<MeshRenderer>().material.SetColor("_SpecularColor", new Vector4(1, 1, 1, 1));
                     }
                 }
             }

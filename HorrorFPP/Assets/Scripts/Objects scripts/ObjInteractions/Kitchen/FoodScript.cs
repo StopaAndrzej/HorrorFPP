@@ -37,6 +37,8 @@ public class FoodScript : ItemBase
     [SerializeField] private BoxCollider packageCollider;
     [SerializeField] private BoxCollider foodCollider;
 
+    public Transform forkSlot;
+    public Transform knifeSlot;
 
     private void Start()
     {

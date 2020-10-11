@@ -16,6 +16,8 @@ public class MopScript : ItemBase
     [SerializeField] private KeyCode keyboardButton = KeyCode.F;
     [SerializeField] private KeyCode mouseButton = KeyCode.Mouse0;
 
+    private int mopConditon = 0;        //+1 after destroying footprint, 4 - change state to dirty
+
     private void Start()
     {
         itemMode = enItemCondition.clear;
@@ -28,6 +30,7 @@ public class MopScript : ItemBase
         pressTxt = "PRESS F TO INSPECT";
 
         descriptionTxt = "IT CAN BE USED TO WASH DIRTY SURFACES.\nDIRTY SHOULD BE WASHED OFF IN A BUCKET OF WATER...";
+        descriptionTxt1 = "IT SHOULD BE RINSED IN A BUCKET OF WATER TO BE ABLE TO CONTINUE USING IT FOR CLEANING";
 
         inspectModeDirInteractionFlags[0] = false;
         inspectModeDirInteractionFlags[1] = true;
@@ -95,5 +98,18 @@ public class MopScript : ItemBase
     {
         cloth.GetComponent<MeshRenderer>().material = dirtyTexture;
         pickUpManager.title.text = titleTxt1;
+    }
+
+    public bool Use()
+    {
+        mopConditon++;
+
+        if(mopConditon>=4)
+        {
+            GetMopDirty();
+            return false;
+        }
+
+        return true;
     }
 }

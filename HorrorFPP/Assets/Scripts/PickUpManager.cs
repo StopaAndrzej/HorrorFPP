@@ -28,6 +28,7 @@ public class PickUpManager : MonoBehaviour
 
    [SerializeField] private FocusSwitcher focus;
    [SerializeField] private PlayerMove playerMove;
+   [SerializeField] private PlayerLook playerLook;
    [SerializeField] private FindInteraction interaction;
    [SerializeField] private LayerMask layerMaskIgnore;
    [SerializeField] private GameObject handHandleItemAttach;
@@ -38,7 +39,7 @@ public class PickUpManager : MonoBehaviour
     [SerializeField] private Shader transparecyShader;
 
     //make a distinction between interaction stages of selected obj
-    public enum enManagerItemMode { clear ,isGrabbed, returnToPos,stopGrab ,inHand, inspectMode, dropped};
+    public enum enManagerItemMode { clear ,isGrabbed, returnToPos, getToPos,stopGrab ,inHand, inspectMode, dropped};
     public enManagerItemMode itemMode;
 
     [SerializeField] private KeyCode putAwayButton = KeyCode.Tab;
@@ -48,16 +49,19 @@ public class PickUpManager : MonoBehaviour
     public Transform destinationPosPick;
     public Transform destinationPosInspect;
 
-    private Vector3 originGrabbedItemPos;
-    private Quaternion originGrabbedItemRot;
+    public Vector3 originGrabbedItemPos;
+    public Quaternion originGrabbedItemRot;
 
     private Quaternion currentItemRot;
 
     public GameObject lastSelectedObj;
     private Vector3 lastObjPos;
 
+    private Vector3 objectInspectScale;
+    private Vector3 objectDefaultScale;
+
     //values to calculate 3/4 distance between origin item pos and destination point. When the iteam crooss the distance enable player controller
-    private float distance; //whole distance
+    public float distance; //whole distance
     private float actualDistance; // <= distance
     private bool smallDistanceValueFlag = false;        //set true to allow lerp function finished and allow next item mode function set active
 
@@ -79,8 +83,6 @@ public class PickUpManager : MonoBehaviour
     private float idleCounter = 0;
     private float moveCounter = 0;
     public float forceValueToDropItem = 3;
-
-    private float objOffset;
 
     //copy  of selected obj -  for placing item system
     public GameObject copiedObj;
@@ -106,7 +108,7 @@ public class PickUpManager : MonoBehaviour
     }
 
     //pickUp object first time so its inspect mode first
-    public void PickUp(GameObject selectedObject, float objInspectModeOffset, float titleOffset)
+    public void PickUp(GameObject selectedObject, float objInspectModeOffsetScale = 1, float titleOffset = 0)
     {
         if(lastSelectedObj == null && !selectedObject.GetComponent<ItemBase>().actualStateItemDescriptinShowed)
         {
@@ -133,7 +135,8 @@ public class PickUpManager : MonoBehaviour
 
         selectedObject.transform.parent = destinationPosInspect.transform;
 
-        objOffset = objInspectModeOffset;
+        objectInspectScale = new Vector3(objInspectModeOffsetScale, objInspectModeOffsetScale, objInspectModeOffsetScale);
+        objectDefaultScale = new Vector3(selectedObject.transform.localScale.x, selectedObject.transform.localScale.y, selectedObject.transform.localScale.z);
 
         //clone with no components
         copiedObj = Instantiate(selectedObject, this.transform);
@@ -152,7 +155,8 @@ public class PickUpManager : MonoBehaviour
         originGrabbedItemPos = selectedObject.GetComponent<ItemManager>().originPos;
         originGrabbedItemRot = selectedObject.GetComponent<ItemManager>().originRot;
 
-        destinationPosInspect.position = new Vector3(destinationPosInspect.position.x, destinationPosInspect.position.y, destinationPosInspect.position.z - objOffset);
+        destinationPosInspect.position = new Vector3(destinationPosInspect.position.x, destinationPosInspect.position.y, destinationPosInspect.position.z);
+       // destinationPosInspect.localPosition += new Vector3(0, 0, objOffset);
         distance = Vector3.Distance(originGrabbedItemPos, destinationPosInspect.position);
 
         if (selectedObject.GetComponent<ItemBase>())
@@ -164,6 +168,11 @@ public class PickUpManager : MonoBehaviour
         }
 
         itemMode = enManagerItemMode.isGrabbed;
+    }
+
+    public void ActivateSpecialAction(GameObject selectedObject)
+    {
+        //selectedObject.GetComponent<ItemBase>().ActivateSpecialAction();
     }
 
     private void PutAway(GameObject selectedObject)
@@ -208,11 +217,24 @@ public class PickUpManager : MonoBehaviour
         itemMode = enManagerItemMode.clear;
     }
 
+    //if u put away item but not use dedicated functions to do it ex.plate to dryer(dryerManager)
+    public void ForceToClearHandNoGravity(GameObject selectedObject)
+    {
+        selectedObject.GetComponent<BoxCollider>().enabled = true;
+        selectedObject.GetComponent<Rigidbody>().useGravity = false;
+        selectedObject.GetComponent<Rigidbody>().isKinematic = true;
+        focus.OnDisable();
+        lastSelectedObj = null;
+        itemMode = enManagerItemMode.clear;
+    }
+
     private void Update()
     {
         if(itemMode == enManagerItemMode.isGrabbed)
         {
             lastSelectedObj.transform.position = new Vector3(Mathf.Lerp(lastSelectedObj.transform.position.x, destinationPosInspect.position.x, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.position.y, destinationPosInspect.position.y, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.position.z, destinationPosInspect.position.z, Time.deltaTime * 5.0f));
+            lastSelectedObj.transform.localScale = objectInspectScale;
+            //lastSelectedObj.transform.localScale = new Vector3(Mathf.Lerp(lastSelectedObj.transform.localScale.x, objOffsetScale, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.localScale.y, objOffsetScale, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.localScale.z, objOffsetScale, Time.deltaTime * 5.0f));
             lastSelectedObj.transform.localEulerAngles = new Vector3(0, 0, 0);
 
             volume.weight = Mathf.Lerp(volume.weight, 1, Time.deltaTime * 5.0f);
@@ -243,7 +265,9 @@ public class PickUpManager : MonoBehaviour
                 copiedObj = null;
             }
 
+            lastSelectedObj.transform.localScale = objectDefaultScale;
             lastSelectedObj.transform.position = new Vector3(Mathf.Lerp(lastSelectedObj.transform.position.x, originGrabbedItemPos.x, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.position.y, originGrabbedItemPos.y, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.position.z, originGrabbedItemPos.z, Time.deltaTime * 5.0f));
+            //lastSelectedObj.transform.localScale = new Vector3(Mathf.Lerp(lastSelectedObj.transform.localScale.x, 1.0f/ objOffsetScale, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.localScale.y, 1.0f / objOffsetScale, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.localScale.z, 1.0f / objOffsetScale, Time.deltaTime * 5.0f));
             lastSelectedObj.transform.rotation = originGrabbedItemRot;
 
             volume.weight = Mathf.Lerp(volume.weight, 0, Time.deltaTime * 10.0f);
@@ -265,9 +289,36 @@ public class PickUpManager : MonoBehaviour
 
             lastObjPos = lastSelectedObj.transform.position;
         }
+        else if(itemMode == enManagerItemMode.getToPos)
+        {
+            //playerLook.disableCamera = true;
+            //playerMove.disablePlayerController = true;
+
+            lastSelectedObj.transform.localPosition = new Vector3(Mathf.Lerp(lastSelectedObj.transform.localPosition.x, originGrabbedItemPos.x, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.localPosition.y, originGrabbedItemPos.y, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.localPosition.z, originGrabbedItemPos.z, Time.deltaTime * 5.0f));
+            lastSelectedObj.transform.localScale = objectDefaultScale;
+            lastSelectedObj.transform.rotation = originGrabbedItemRot;
+
+            volume.weight = Mathf.Lerp(volume.weight, 0, Time.deltaTime * 10.0f);
+            actualDistance = Vector3.Distance(lastSelectedObj.transform.localPosition, originGrabbedItemPos);
+
+            if (distance / 6.0f >= actualDistance)
+            {
+                volume.weight = 0f;
+                focus.OnDisable();
+            }
+
+            //if (lastSelectedObj.transform.localPosition == lastObjPos)
+            //{
+            //    if (lastSelectedObj.GetComponent<PlateManager>())
+            //        lastSelectedObj.GetComponent<PlateManager>().dishSoap.UseAnim();
+
+            //    return;
+            //}
+        }
         else if(itemMode == enManagerItemMode.stopGrab)
         {
             lastSelectedObj.transform.position = new Vector3(Mathf.Lerp(lastSelectedObj.transform.position.x, destinationPosPick.position.x, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.position.y, destinationPosPick.position.y, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.position.z, destinationPosPick.position.z, Time.deltaTime * 5.0f));
+            lastSelectedObj.transform.localScale = objectInspectScale;
             volume.weight = Mathf.Lerp(volume.weight, 0, Time.deltaTime * 5.0f);
 
             lastSelectedObj.transform.localEulerAngles = new Vector3(Mathf.LerpAngle(lastSelectedObj.transform.localEulerAngles.x, 0, Time.deltaTime), Mathf.Lerp(lastSelectedObj.transform.localEulerAngles.y, 0, Time.deltaTime), Mathf.Lerp(lastSelectedObj.transform.localEulerAngles.z, 0, Time.deltaTime));
@@ -284,6 +335,7 @@ public class PickUpManager : MonoBehaviour
             if(smallDistanceValueFlag)
             {
                 lastSelectedObj.transform.position = new Vector3(Mathf.Lerp(lastSelectedObj.transform.position.x, destinationPosInspect.position.x, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.position.y, destinationPosInspect.position.y, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.position.z, destinationPosInspect.position.z, Time.deltaTime * 5.0f));
+                lastSelectedObj.transform.localScale = objectInspectScale;
                 volume.weight = Mathf.Lerp(volume.weight, 1, Time.deltaTime * 5.0f);
                 actualDistance = Vector3.Distance(lastSelectedObj.transform.position, destinationPosInspect.position);
 
@@ -338,6 +390,7 @@ public class PickUpManager : MonoBehaviour
             if(!delivereToHand)
             {
                 lastSelectedObj.transform.position = new Vector3(Mathf.Lerp(lastSelectedObj.transform.position.x, destinationPosPick.position.x, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.position.y, destinationPosPick.position.y, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.position.z, destinationPosPick.position.z, Time.deltaTime * 5.0f));
+                lastSelectedObj.transform.localScale = objectDefaultScale;
                 volume.weight = Mathf.Lerp(volume.weight, 0, Time.deltaTime * 10.0f);
             }       
 
@@ -765,5 +818,12 @@ public class PickUpManager : MonoBehaviour
             }
         }
 
+    }
+
+    public float UpdateDistance()
+    {
+        float tmp;
+        tmp = Vector3.Distance(originGrabbedItemPos, destinationPosInspect.position);
+        return tmp;
     }
 }

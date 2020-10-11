@@ -108,10 +108,14 @@ public class FindInteraction : MonoBehaviour
                     }
                     else
                     {
-                        foreach (GameObject element in raycastedObject.GetComponent<InteractableObjectBase>().outlineObjects)
+                        if(raycastedObject.GetComponent<InteractableObjectBase>().outlineObjects != null)
                         {
-                            element.GetComponent<MeshRenderer>().enabled = true;
+                            foreach (GameObject element in raycastedObject.GetComponent<InteractableObjectBase>().outlineObjects)
+                            {
+                                element.GetComponent<MeshRenderer>().enabled = true;
+                            }
                         }
+                        
                     }
 
                     if (hit.collider.CompareTag("ObjectNoInteraction"))
@@ -124,8 +128,19 @@ public class FindInteraction : MonoBehaviour
                         multiInteractionSelectedChild = false;
                         multiInteractionSelectedChild2 = false;
                     }
-                    else if (hit.collider.CompareTag("Object"))
+                    else if (hit.collider.CompareTag("Object"))         //attachments
                     {
+                        if(raycastedObject.GetComponent<AttachmentScript>() !=null)
+                        {
+                            if(raycastedObject.GetComponent<AttachmentScript>().Interact())
+                            {
+                                actionText.GetComponent<Text>().text = raycastedObject.GetComponent<InteractableObjectBase>().interactText1;
+                            }
+                            else
+                            {
+
+                            }
+                        }
 
                         actionText.GetComponent<Text>().text = raycastedObject.GetComponent<InteractableObjectBase>().interactText;
 
@@ -188,6 +203,7 @@ public class FindInteraction : MonoBehaviour
 
                 selected = true;
             }
+            //else if(Physics.Raycast(transform.position, fwd, out hit, rayLength, layerMaskInteract.value))
             else if (selected)
             {
                 selected = false;
@@ -199,9 +215,12 @@ public class FindInteraction : MonoBehaviour
                 if (multiInteractionSelectedChild2)
                     raycastedObject = raycastedObject.transform.parent.gameObject;
 
-                foreach (GameObject element in raycastedObject.GetComponent<InteractableObjectBase>().outlineObjects)
+                if (raycastedObject.GetComponent<InteractableObjectBase>().outlineObjects != null)
                 {
-                    element.GetComponent<MeshRenderer>().enabled = false;
+                    foreach (GameObject element in raycastedObject.GetComponent<InteractableObjectBase>().outlineObjects)
+                    {
+                        element.GetComponent<MeshRenderer>().enabled = false;
+                    }
                 }
 
 

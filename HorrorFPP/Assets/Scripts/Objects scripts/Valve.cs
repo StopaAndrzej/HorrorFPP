@@ -4,8 +4,15 @@ using UnityEngine;
 
 public class Valve : InteractableObjectBase
 {
+    [SerializeField] private TapHandle tapHandle;
+
     public bool isOpen { private set;  get; }
     [SerializeField] private Animator animator;
+
+    private KeyCode interactionKey = KeyCode.F;
+    private KeyCode mouseButton = KeyCode.Mouse0;
+
+    public bool animationInProgress = false;
 
     private void Start()
     {
@@ -15,17 +22,44 @@ public class Valve : InteractableObjectBase
 
     public override void Interact()
     {
-        if (isOpen)
+        if ((Input.GetKeyDown(interactionKey) || Input.GetKeyDown(mouseButton)) && !animationInProgress)
         {
-            interactText = "Close";
-            animator.SetBool("isOpen", false);
-        }
-        else
-        {
-            interactText = "Open";
-            animator.SetBool("isOpen", true);
-        }
+            if (isOpen)
+            {
+                interactText = "TURN_ON";
+                animator.SetBool("isOpen", false);
+            }
+            else
+            {
+                interactText = "TURN_OFF";
+                animator.SetBool("isOpen", true);
+            }
 
-        isOpen = !isOpen;
+            isOpen = !isOpen;
+        }
+    }
+
+    public void ActivateWaterInPipe()
+    {
+        tapHandle.isLocked = false;
+        tapHandle.CheckWaterInPipe();
+    }
+
+    public void DeActivateWaterInPipe()
+    {
+        tapHandle.isLocked = true;
+        tapHandle.CheckWaterInPipe();
+    }
+
+    public void AnimationWorkOn()
+    {
+        animationInProgress = true;
+
+    }
+
+    public void AnimationWorkOff()
+    {
+        animationInProgress = false;
+
     }
 }

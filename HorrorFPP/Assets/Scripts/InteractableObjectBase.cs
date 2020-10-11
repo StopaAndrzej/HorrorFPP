@@ -6,6 +6,7 @@ public class InteractableObjectBase : MonoBehaviour
 {
     public string name;
     public string interactText = "Do it!";
+    public string interactText1 = "Do it NOW!";
     //0 if its not one of another interactive object interaction
     public int kidID = 0;
 

@@ -9,6 +9,8 @@ public class PlayerFootprint : MonoBehaviour
 
     [SerializeField] private GameObject footPrint;
     [SerializeField] private Transform parent;
+    [SerializeField] private Transform parentFootprints;
+
     private float timer;
 
     private bool leftFootprint = false;
@@ -18,6 +20,8 @@ public class PlayerFootprint : MonoBehaviour
     private float opacityStepValue;
     private int countPair;
     private int pairId ;
+
+    public bool stopFlag = false;
 
     void SetFootPrints(int howManyFootprints1)
     {
@@ -53,13 +57,13 @@ public class PlayerFootprint : MonoBehaviour
         float verticalMove = Input.GetAxisRaw("Horizontal");
         float horizontalMove = Input.GetAxisRaw("Vertical");
 
-        if (verticalMove != 0 || horizontalMove != 0)
+        if ((verticalMove != 0 || horizontalMove != 0) && !stopFlag)
         {
             if (timer > 0.1f)
             {
                 timer = 0;
                 countPair++;
-                GameObject newFootPring = Instantiate(footPrint);
+                GameObject newFootPring = Instantiate(footPrint, parentFootprints);
 
                 opacityValue = 1 - opacityStepValue * pairId;
                 newFootPring.GetComponent<SpriteRenderer>().color = new Vector4(1, 1, 1, opacityValue);
@@ -76,7 +80,14 @@ public class PlayerFootprint : MonoBehaviour
                     newFootPring.transform.Rotate(0, 0, this.transform.eulerAngles.y);
                 }
 
-                if(countPair>=2)
+                newFootPring.AddComponent<BoxCollider>();
+                newFootPring.GetComponent<BoxCollider>().isTrigger = true;        
+                newFootPring.AddComponent<FootprintManager>();
+
+                newFootPring.tag = "ObjectNoInteraction";
+                newFootPring.layer = 9;     //Interac layer
+
+                if (countPair>=2)
                 {
                     countPair = 0;
                     pairId++;

@@ -14,6 +14,9 @@ TagManager:
   - Surface
   - SurfaceDirectly
   - ObjectInspectOnly
+  - Object1
+  - Object2
+  - ObjectQuest
   layers:
   - Default
   - TransparentFX
