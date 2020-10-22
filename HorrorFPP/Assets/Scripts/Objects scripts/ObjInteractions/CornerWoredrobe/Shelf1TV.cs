@@ -49,6 +49,18 @@ public class Shelf1TV : InteractableObjectBase
 
     public override void Interact()
     {
+        foreach (Transform child in transform)
+        {
+            foreach (Transform childChild in child)
+            {
+                if (childChild.GetComponent<MeshRenderer>())
+                {
+                    childChild.GetComponent<MeshRenderer>().material.SetColor("_Color", new Vector4(1, 1, 1, 1));
+                    childChild.GetComponent<MeshRenderer>().material.SetColor("_SpecularColor", new Vector4(0.2f, 0.2f, 0.2f, 1));
+                }
+            }
+
+        }
 
         if (Input.GetKeyDown(interactionKey) || Input.GetKeyDown(mouseButton))
         {
@@ -132,6 +144,20 @@ public class Shelf1TV : InteractableObjectBase
                 twin.resetText = false;
             }
         }
+
+        foreach (Transform child in transform)
+        {
+            foreach (Transform childChild in child)
+            {
+                if (childChild.GetComponent<MeshRenderer>())
+                {
+                    childChild.GetComponent<MeshRenderer>().material.SetColor("_Color", new Vector4(0.5882352941176471f, 0.5882352941176471f, 0.5882352941176471f, 1));
+                    childChild.GetComponent<MeshRenderer>().material.SetColor("_SpecularColor", new Vector4(0.0f, 0.0f, 0.0f, 1));
+                }
+            }
+
+        }
     }
+
 
 }

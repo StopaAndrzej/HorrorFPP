@@ -13,6 +13,9 @@ public class PickUpManager : MonoBehaviour
     public Text controlInfo;
     public Text bin;                        //additional Text to collect non readable data
 
+    [SerializeField] private GameObject invButton;
+    [SerializeField] private Text invButtonText;
+
     public bool freezeInspectRotationFlag = false;
     public bool freezeDescriptionOnScreen = false;
     public bool pressOffsetFlag = false;
@@ -39,10 +42,10 @@ public class PickUpManager : MonoBehaviour
     [SerializeField] private Shader transparecyShader;
 
     //make a distinction between interaction stages of selected obj
-    public enum enManagerItemMode { clear ,isGrabbed, returnToPos, getToPos,stopGrab ,inHand, inspectMode, dropped};
+    public enum enManagerItemMode { clear ,isGrabbed, returnToPos, getToPos ,inHand, inspectMode, dropped, moveToHand};
     public enManagerItemMode itemMode;
 
-    [SerializeField] private KeyCode putAwayButton = KeyCode.Tab;
+    [SerializeField] private KeyCode putAwayButton = KeyCode.Y;
 
     [SerializeField] private KeyCode returnToHandMouseButton = KeyCode.Mouse1;
 
@@ -86,8 +89,16 @@ public class PickUpManager : MonoBehaviour
 
     //copy  of selected obj -  for placing item system
     public GameObject copiedObj;
+    private bool objDestructible;
+    private bool stopBlinkText = false;
+    private bool inspectObjOnly = false;
 
     [SerializeField] private GameObject binFolderParent;
+    [SerializeField] private PlayerRHand playerRHand;
+
+    public InventoryScript inventory;
+    public Transform invParent;
+
 
     private void Start()
     {
@@ -101,16 +112,32 @@ public class PickUpManager : MonoBehaviour
         inProgressBar.enabled = false;
         controlInfo.enabled = false;
 
+        invButton.SetActive(false);
+        invButtonText.enabled = false;
+
         for (int i = 0; i < inspectModeDirInteractionFlags.Length; i++)
             inspectModeDirInteractionFlags[i] = false;
 
         pressNoOffset = press.GetComponent<RectTransform>().localPosition;
+
+        
     }
 
-    //pickUp object first time so its inspect mode first
-    public void PickUp(GameObject selectedObject, float objInspectModeOffsetScale = 1, float titleOffset = 0)
+    public void PickUpFromInventory(GameObject selectedObject)
     {
-        if(lastSelectedObj == null && !selectedObject.GetComponent<ItemBase>().actualStateItemDescriptinShowed)
+        lastSelectedObj = selectedObject;
+        selectedObject.transform.parent = destinationPosPick;
+        selectedObject.transform.position = destinationPosPick.position;
+        selectedObject.transform.rotation = destinationPosPick.rotation;
+        focus.OnDisable();
+        playerMove.inspectMode = false;
+        delivereToHand = true;
+        itemMode = enManagerItemMode.inHand;
+    }
+
+    public void PickUp(GameObject selectedObject, float objInspectModeOffsetScale = 1, float titleOffset = 0, bool destructible = false)
+    {
+        if (lastSelectedObj == null && !selectedObject.GetComponent<ItemBase>().actualStateItemDescriptinShowed)
         {
             isGrabbedFirstTime = true;
             title.text = selectedObject.GetComponent<ItemBase>().titleTxt;
@@ -120,6 +147,70 @@ public class PickUpManager : MonoBehaviour
             inProgressBar.text = selectedObject.GetComponent<ItemBase>().inProgressBarTxt;
 
         }
+
+        inspectObjOnly = false;
+
+        if (selectedObject.GetComponent<Rigidbody>())
+            selectedObject.GetComponent<Rigidbody>().useGravity = false;
+
+        if (selectedObject.GetComponent<BoxCollider>())
+            selectedObject.GetComponent<BoxCollider>().enabled = false;
+
+        lastSelectedObj = selectedObject;
+        objDestructible = destructible;
+
+        selectedObject.transform.parent = destinationPosPick.transform;
+        volume.weight = 0;
+
+        objInspectModeOffsetScale = selectedObject.GetComponent<ItemManager>().objInspectModeOffset;
+        objectInspectScale = new Vector3(selectedObject.transform.localScale.x * objInspectModeOffsetScale, selectedObject.transform.localScale.y * objInspectModeOffsetScale, selectedObject.transform.localScale.z * objInspectModeOffsetScale);
+        objectDefaultScale = new Vector3(selectedObject.transform.localScale.x, selectedObject.transform.localScale.y, selectedObject.transform.localScale.z);
+
+        //clone with no components
+        copiedObj = Instantiate(selectedObject, this.transform);
+
+        foreach (var comp in copiedObj.GetComponents<Component>())
+        {
+            if (!(comp is Transform))
+            {
+                Destroy(comp);
+            }
+        }
+
+        copiedObj.SetActive(false);
+        copiedObj.transform.parent = binFolderParent.transform;
+
+        originGrabbedItemPos = selectedObject.GetComponent<ItemManager>().originPos;
+        originGrabbedItemRot = selectedObject.GetComponent<ItemManager>().originRot;
+        distance = Vector3.Distance(originGrabbedItemPos, destinationPosPick.position);
+        delivereToHand = false;
+
+        if (selectedObject.GetComponent<ItemBase>())
+        {
+            for (int i = 0; i < inspectModeDirInteractionFlags.Length; i++)
+            {
+                inspectModeDirInteractionFlags[i] = selectedObject.GetComponent<ItemBase>().inspectModeDirInteractionFlags[i];
+            }
+        }
+
+        itemMode = enManagerItemMode.inHand;
+    }
+
+    ////pickUp object first time so its inspect mode first
+    public void PickUpOnlyInspect(GameObject selectedObject, float objInspectModeOffsetScale = 1, float titleOffset = 0)
+    {
+        if (lastSelectedObj == null && !selectedObject.GetComponent<ItemBase>().actualStateItemDescriptinShowed)
+        {
+            isGrabbedFirstTime = true;
+            title.text = selectedObject.GetComponent<ItemBase>().titleTxt;
+            description.text = selectedObject.GetComponent<ItemBase>().descriptionTxt;
+            press.text = selectedObject.GetComponent<ItemBase>().pressTxt;
+            controlInfo.text = selectedObject.GetComponent<ItemBase>().controlText;
+            controlInfo.text = "\n...PRESS <ESC> TO IT BACK...";
+
+        }
+
+        inspectObjOnly = true;
 
         if (selectedObject.GetComponent<Rigidbody>())
             selectedObject.GetComponent<Rigidbody>().useGravity = false;
@@ -132,31 +223,17 @@ public class PickUpManager : MonoBehaviour
 
         playerMove.inspectMode = true;
 
-
         selectedObject.transform.parent = destinationPosInspect.transform;
 
-        objectInspectScale = new Vector3(objInspectModeOffsetScale, objInspectModeOffsetScale, objInspectModeOffsetScale);
+        objInspectModeOffsetScale = selectedObject.GetComponent<ItemManager>().objInspectModeOffset;
+        objectInspectScale = new Vector3(selectedObject.transform.localScale.x * objInspectModeOffsetScale, selectedObject.transform.localScale.y * objInspectModeOffsetScale, selectedObject.transform.localScale.z * objInspectModeOffsetScale);
         objectDefaultScale = new Vector3(selectedObject.transform.localScale.x, selectedObject.transform.localScale.y, selectedObject.transform.localScale.z);
 
-        //clone with no components
-        copiedObj = Instantiate(selectedObject, this.transform);
-
-        foreach(var comp in copiedObj.GetComponents<Component>())
-        {
-            if(!(comp is Transform))
-            {
-                Destroy(comp);
-            }
-        }
-
-        copiedObj.SetActive(false);
-        copiedObj.transform.parent = binFolderParent.transform;
 
         originGrabbedItemPos = selectedObject.GetComponent<ItemManager>().originPos;
         originGrabbedItemRot = selectedObject.GetComponent<ItemManager>().originRot;
 
         destinationPosInspect.position = new Vector3(destinationPosInspect.position.x, destinationPosInspect.position.y, destinationPosInspect.position.z);
-       // destinationPosInspect.localPosition += new Vector3(0, 0, objOffset);
         distance = Vector3.Distance(originGrabbedItemPos, destinationPosInspect.position);
 
         if (selectedObject.GetComponent<ItemBase>())
@@ -232,9 +309,8 @@ public class PickUpManager : MonoBehaviour
     {
         if(itemMode == enManagerItemMode.isGrabbed)
         {
-            lastSelectedObj.transform.position = new Vector3(Mathf.Lerp(lastSelectedObj.transform.position.x, destinationPosInspect.position.x, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.position.y, destinationPosInspect.position.y, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.position.z, destinationPosInspect.position.z, Time.deltaTime * 5.0f));
+            lastSelectedObj.transform.position = new Vector3(Mathf.Lerp(lastSelectedObj.transform.position.x, destinationPosInspect.position.x, Time.deltaTime *10), Mathf.Lerp(lastSelectedObj.transform.position.y, destinationPosInspect.position.y, Time.deltaTime * 10), Mathf.Lerp(lastSelectedObj.transform.position.z, destinationPosInspect.position.z, Time.deltaTime * 10));
             lastSelectedObj.transform.localScale = objectInspectScale;
-            //lastSelectedObj.transform.localScale = new Vector3(Mathf.Lerp(lastSelectedObj.transform.localScale.x, objOffsetScale, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.localScale.y, objOffsetScale, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.localScale.z, objOffsetScale, Time.deltaTime * 5.0f));
             lastSelectedObj.transform.localEulerAngles = new Vector3(0, 0, 0);
 
             volume.weight = Mathf.Lerp(volume.weight, 1, Time.deltaTime * 5.0f);
@@ -245,10 +321,10 @@ public class PickUpManager : MonoBehaviour
             {
                 smallDistanceValueFlag = true;
                 title.color = new Vector4(title.color.r, title.color.g, title.color.b, 0);
-                controlInfo.color = new Vector4(controlInfo.color.r, controlInfo.color.g, controlInfo.color.b, 0);
+                controlInfo.color = new Vector4(controlInfo.color.r, controlInfo.color.g, controlInfo.color.b, 1);
                 if(freezeDescriptionOnScreen)
                 {
-                    description.color = new Vector4(description.color.r, description.color.g, description.color.b, 0);
+                    description.color = new Vector4(description.color.r, description.color.g, description.color.b, 1);
                 }
                 fadeInTextFlag = true;
                 itemMode = enManagerItemMode.inspectMode;
@@ -266,8 +342,7 @@ public class PickUpManager : MonoBehaviour
             }
 
             lastSelectedObj.transform.localScale = objectDefaultScale;
-            lastSelectedObj.transform.position = new Vector3(Mathf.Lerp(lastSelectedObj.transform.position.x, originGrabbedItemPos.x, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.position.y, originGrabbedItemPos.y, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.position.z, originGrabbedItemPos.z, Time.deltaTime * 5.0f));
-            //lastSelectedObj.transform.localScale = new Vector3(Mathf.Lerp(lastSelectedObj.transform.localScale.x, 1.0f/ objOffsetScale, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.localScale.y, 1.0f / objOffsetScale, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.localScale.z, 1.0f / objOffsetScale, Time.deltaTime * 5.0f));
+            lastSelectedObj.transform.position = new Vector3(Mathf.Lerp(lastSelectedObj.transform.position.x, originGrabbedItemPos.x, Time.deltaTime * 10), Mathf.Lerp(lastSelectedObj.transform.position.y, originGrabbedItemPos.y, Time.deltaTime * 10), Mathf.Lerp(lastSelectedObj.transform.position.z, originGrabbedItemPos.z, Time.deltaTime * 10));
             lastSelectedObj.transform.rotation = originGrabbedItemRot;
 
             volume.weight = Mathf.Lerp(volume.weight, 0, Time.deltaTime * 10.0f);
@@ -294,7 +369,7 @@ public class PickUpManager : MonoBehaviour
             //playerLook.disableCamera = true;
             //playerMove.disablePlayerController = true;
 
-            lastSelectedObj.transform.localPosition = new Vector3(Mathf.Lerp(lastSelectedObj.transform.localPosition.x, originGrabbedItemPos.x, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.localPosition.y, originGrabbedItemPos.y, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.localPosition.z, originGrabbedItemPos.z, Time.deltaTime * 5.0f));
+            lastSelectedObj.transform.localPosition = new Vector3(Mathf.Lerp(lastSelectedObj.transform.localPosition.x, originGrabbedItemPos.x, Time.deltaTime *10), Mathf.Lerp(lastSelectedObj.transform.localPosition.y, originGrabbedItemPos.y, Time.deltaTime * 10), Mathf.Lerp(lastSelectedObj.transform.localPosition.z, originGrabbedItemPos.z, Time.deltaTime * 10));
             lastSelectedObj.transform.localScale = objectDefaultScale;
             lastSelectedObj.transform.rotation = originGrabbedItemRot;
 
@@ -307,41 +382,20 @@ public class PickUpManager : MonoBehaviour
                 focus.OnDisable();
             }
 
-            //if (lastSelectedObj.transform.localPosition == lastObjPos)
-            //{
-            //    if (lastSelectedObj.GetComponent<PlateManager>())
-            //        lastSelectedObj.GetComponent<PlateManager>().dishSoap.UseAnim();
-
-            //    return;
-            //}
-        }
-        else if(itemMode == enManagerItemMode.stopGrab)
-        {
-            lastSelectedObj.transform.position = new Vector3(Mathf.Lerp(lastSelectedObj.transform.position.x, destinationPosPick.position.x, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.position.y, destinationPosPick.position.y, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.position.z, destinationPosPick.position.z, Time.deltaTime * 5.0f));
-            lastSelectedObj.transform.localScale = objectInspectScale;
-            volume.weight = Mathf.Lerp(volume.weight, 0, Time.deltaTime * 5.0f);
-
-            lastSelectedObj.transform.localEulerAngles = new Vector3(Mathf.LerpAngle(lastSelectedObj.transform.localEulerAngles.x, 0, Time.deltaTime), Mathf.Lerp(lastSelectedObj.transform.localEulerAngles.y, 0, Time.deltaTime), Mathf.Lerp(lastSelectedObj.transform.localEulerAngles.z, 0, Time.deltaTime));
-            if (lastSelectedObj.transform.position == lastObjPos)
-            {
-                itemMode = enManagerItemMode.inHand;
-                lastSelectedObj.transform.localEulerAngles = new Vector3(0, 0, 0);
-            }
-        }
+        }   
         else if(itemMode == enManagerItemMode.inspectMode)
         {
             ////////////////copy from isGrabbed mode to finish transformation//////////////////////
             
             if(smallDistanceValueFlag)
             {
-                lastSelectedObj.transform.position = new Vector3(Mathf.Lerp(lastSelectedObj.transform.position.x, destinationPosInspect.position.x, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.position.y, destinationPosInspect.position.y, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.position.z, destinationPosInspect.position.z, Time.deltaTime * 5.0f));
+                lastSelectedObj.transform.position = new Vector3(Mathf.Lerp(lastSelectedObj.transform.position.x, destinationPosInspect.position.x, Time.deltaTime * 10), Mathf.Lerp(lastSelectedObj.transform.position.y, destinationPosInspect.position.y, Time.deltaTime * 10), Mathf.Lerp(lastSelectedObj.transform.position.z, destinationPosInspect.position.z, Time.deltaTime * 10));
                 lastSelectedObj.transform.localScale = objectInspectScale;
                 volume.weight = Mathf.Lerp(volume.weight, 1, Time.deltaTime * 5.0f);
                 actualDistance = Vector3.Distance(lastSelectedObj.transform.position, destinationPosInspect.position);
 
                 if (lastSelectedObj.transform.position == lastObjPos)
                 {
-
                     smallDistanceValueFlag = false;
                 }
 
@@ -352,7 +406,12 @@ public class PickUpManager : MonoBehaviour
 
 
             title.enabled = true;
-            controlInfo.enabled = true;
+            if(!inspectObjOnly)
+            {
+                controlInfo.enabled = false;
+            }
+            
+
             if (freezeDescriptionOnScreen)
                 description.enabled = true;
 
@@ -373,7 +432,38 @@ public class PickUpManager : MonoBehaviour
             {
                 RotateObj(lastSelectedObj, lastSelectedObj.GetComponent<ItemBase>().isRotationVertical);
             }
+
+            
+            if(!stopBlinkText)
+            {
+                stopBlinkText = true;
+                StartCoroutine(blinkText());
+            }
+           
+
             InspectInteractionFind(lastSelectedObj);
+        }
+        else if(itemMode == enManagerItemMode.moveToHand)
+        {
+            lastSelectedObj.transform.position = new Vector3(Mathf.MoveTowards(lastSelectedObj.transform.position.x, destinationPosPick.position.x, Time.deltaTime * 10), Mathf.Lerp(lastSelectedObj.transform.position.y, destinationPosPick.position.y, Time.deltaTime * 10), Mathf.Lerp(lastSelectedObj.transform.position.z, destinationPosPick.position.z, Time.deltaTime * 10));
+            lastSelectedObj.transform.localScale = objectDefaultScale;
+            lastSelectedObj.transform.localEulerAngles = new Vector3(0, 0, 0);
+
+            volume.weight = Mathf.Lerp(volume.weight, 0, Time.deltaTime * 5.0f);
+
+            actualDistance = Vector3.Distance(lastSelectedObj.transform.position, destinationPosPick.position);
+
+            if(distance / 3.0f >= actualDistance)
+            {
+                if(volume.weight <= 0.05f)
+                {
+                    delivereToHand = false;
+                    itemMode = enManagerItemMode.inHand;
+                }
+            }
+
+            lastObjPos = lastSelectedObj.transform.position;
+
         }
         else if(itemMode == enManagerItemMode.clear)
         {
@@ -387,25 +477,13 @@ public class PickUpManager : MonoBehaviour
         }
         else if(itemMode == enManagerItemMode.inHand)
         {
-            if(!delivereToHand)
+            if (!delivereToHand)
             {
-                lastSelectedObj.transform.position = new Vector3(Mathf.Lerp(lastSelectedObj.transform.position.x, destinationPosPick.position.x, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.position.y, destinationPosPick.position.y, Time.deltaTime * 5.0f), Mathf.Lerp(lastSelectedObj.transform.position.z, destinationPosPick.position.z, Time.deltaTime * 5.0f));
-                lastSelectedObj.transform.localScale = objectDefaultScale;
-                volume.weight = Mathf.Lerp(volume.weight, 0, Time.deltaTime * 10.0f);
-            }       
-
-            if(lastSelectedObj.transform.position == destinationPosPick.position && !delivereToHand)
-            {
+                lastSelectedObj.transform.position = destinationPosPick.position;
+                lastSelectedObj.transform.rotation = destinationPosPick.rotation;
                 lastSelectedObj.transform.parent = handHandleItemAttach.transform;
-
-                title.enabled = false;
-                press.enabled = false;
-                description.enabled = false;
-                inProgressBar.enabled = false;
-
-                volume.weight = 0f;
+                currentItemRot = handHandlePivot.transform.localRotation;
                 delivereToHand = true;
-
                 idleCounter = 0;
                 moveCounter = 0;
             }
@@ -414,12 +492,14 @@ public class PickUpManager : MonoBehaviour
             {
                 HoldInHand(lastSelectedObj);
             }
-                 
+            
+
         }
         else if(itemMode == enManagerItemMode.dropped)
         {
             Drop(lastSelectedObj);
         }
+
     }
 
     public void PutAwayObject()
@@ -429,7 +509,7 @@ public class PickUpManager : MonoBehaviour
 
     public void InspectInteractionFind(GameObject obj)
     {
-        if(Input.GetKeyUp(KeyCode.Mouse1) && !isGrabbedFirstTime)
+        if(Input.GetKeyUp(KeyCode.Mouse1) && !isGrabbedFirstTime && !inspectObjOnly)
         {
             stopCoroutine = true;
             StartCoroutine(FadeOutTextLoop(title));
@@ -443,11 +523,15 @@ public class PickUpManager : MonoBehaviour
             focus.OnDisable();
             playerMove.inspectMode = false;
             delivereToHand = false;
-            itemMode = enManagerItemMode.inHand;
+            stopBlinkText = false;
+
+            distance = UpdateDistance(destinationPosPick.position);
+
+            itemMode = enManagerItemMode.moveToHand;
             return;
         }
 
-        if(Input.GetKeyDown(putAwayButton) && isGrabbedFirstTime)
+        if(Input.GetKeyDown(putAwayButton) && isGrabbedFirstTime && inspectObjOnly)
         {
             stopCoroutine = true;
             StartCoroutine(FadeOutTextLoop(title));
@@ -458,7 +542,7 @@ public class PickUpManager : MonoBehaviour
             itemMode = enManagerItemMode.returnToPos;
             return;
         }
-        else if(Input.GetKeyDown(KeyCode.Mouse1) && isGrabbedFirstTime)
+        else if(Input.GetKeyDown(KeyCode.Mouse1) && isGrabbedFirstTime && !inspectObjOnly)
         {
             stopCoroutine = true;
             StartCoroutine(FadeOutTextLoop(title));
@@ -664,9 +748,23 @@ public class PickUpManager : MonoBehaviour
             focus.SetFocused(lastSelectedObj);
             playerMove.inspectMode = true;
 
+            originGrabbedItemPos = obj.transform.position;
+            distance = UpdateDistance(destinationPosInspect.position);
+
             itemMode = enManagerItemMode.isGrabbed;
             return;
         }
+        else if(Input.GetKeyDown(KeyCode.G))
+        {
+            playerRHand.button = invButton;
+            playerRHand.buttonTxt = invButtonText;
+            ButtonOn(invButton, invButtonText);
+            playerRHand.HideObjAnim();
+            return;
+        }
+
+        invButton.SetActive(true);
+        invButtonText.enabled = true;
 
         float t_hmove = Input.GetAxisRaw("Horizontal");
         float t_vmove = Input.GetAxisRaw("Vertical");
@@ -716,12 +814,16 @@ public class PickUpManager : MonoBehaviour
         //rotate towards target rotation
         handHandlePivot.transform.localRotation = Quaternion.Lerp(handHandlePivot.transform.localRotation, target_rotation, Time.deltaTime * smoothSway);
 
-        if(t_x_mouse > forceValueToDropItem || t_x_mouse < -forceValueToDropItem || t_y_mouse > forceValueToDropItem || t_y_mouse < -forceValueToDropItem)
+
+        if (objDestructible)
         {
-            Debug.Log("ITEM DROPPED!");
-            lastSelectedObj.GetComponent<ItemBase>().itemDrop = true;
-            itemMode = enManagerItemMode.dropped;
+            if (t_x_mouse > forceValueToDropItem || t_x_mouse < -forceValueToDropItem || t_y_mouse > forceValueToDropItem || t_y_mouse < -forceValueToDropItem)
+            {
+                lastSelectedObj.GetComponent<ItemBase>().itemDrop = true;
+                itemMode = enManagerItemMode.dropped;
+            }
         }
+        
     }
 
     public IEnumerator FadeInTextLoop(Text text)
@@ -752,7 +854,8 @@ public class PickUpManager : MonoBehaviour
 
 
 
-        copiedObj.transform.position = new Vector3(hitObj.transform.position.x, hitObj.transform.position.y, hitPos.z);
+        copiedObj.transform.position = new Vector3(hitPos.x, hitObj.transform.position.y, hitPos.z);
+        copiedObj.transform.rotation = originGrabbedItemRot;
 
         int i = 0;
         foreach (Transform child in copiedObj.transform)
@@ -820,10 +923,75 @@ public class PickUpManager : MonoBehaviour
 
     }
 
-    public float UpdateDistance()
+    public float UpdateDistance(Vector3 destination)
     {
         float tmp;
-        tmp = Vector3.Distance(originGrabbedItemPos, destinationPosInspect.position);
+        tmp = Vector3.Distance(originGrabbedItemPos, destination);
         return tmp;
+    }
+
+    public void HideInvAnim()
+    {
+        inventory.AddToInventory(lastSelectedObj);
+        lastSelectedObj.transform.parent = invParent;
+        lastSelectedObj.transform.position = invParent.position;
+        itemMode = enManagerItemMode.clear;
+    }
+
+    public void ButtonOn(GameObject button, Text buttonTxt)
+    {
+        button.GetComponent<RectTransform>().localScale = new Vector3(0.45f, 0.35f, 0.45f);
+        if(button.transform.GetChild(0).GetComponent<Image>())
+        {
+            button.transform.GetChild(0).GetComponent<Image>().color = new Vector4(button.transform.GetChild(0).GetComponent<Image>().color.r, button.transform.GetChild(0).GetComponent<Image>().color.g, button.transform.GetChild(0).GetComponent<Image>().color.b, 1f);
+        }
+
+        buttonTxt.color = new Vector4(1, 1, 1, 1);
+        buttonTxt.GetComponent<RectTransform>().localPosition = new Vector3(-242, -364,0);
+       
+    }
+
+    public void ButtonOff(GameObject button, Text buttonTxt)
+    {
+        button.GetComponent<RectTransform>().localScale = new Vector3(0.45f, 0.45f, 0.45f);
+        if (button.transform.GetChild(0).GetComponent<Image>())
+        {
+            button.transform.GetChild(0).GetComponent<Image>().color = new Vector4(button.transform.GetChild(0).GetComponent<Image>().color.r, button.transform.GetChild(0).GetComponent<Image>().color.g, button.transform.GetChild(0).GetComponent<Image>().color.b, 0.49f);
+        }
+
+        buttonTxt.color = new Vector4(1, 1, 1, 0.784f);
+        buttonTxt.GetComponent<RectTransform>().localPosition = new Vector3(-242, -359, 0);
+
+        invButton.SetActive(false);
+        invButtonText.enabled = false;
+    }
+
+    private IEnumerator blinkText()
+    {
+        bool disapearing = true;
+        press.color = new Vector4(1, 1, 1, 1);
+
+        while (stopBlinkText)
+        {
+            if (disapearing)
+            {
+                press.color = Vector4.MoveTowards(new Vector4(press.color.r, press.color.g, press.color.b, press.color.a), new Vector4(1, 1, 1, 0), Time.deltaTime*2);
+                if (press.color.a == 0)
+                {
+                    disapearing = !disapearing;
+                }
+            }
+            else
+            {
+                press.color = Vector4.MoveTowards(new Vector4(press.color.r, press.color.g, press.color.b, press.color.a), new Vector4(1, 1, 1, 1), Time.deltaTime*2);
+                if (press.color.a == 1)
+                {
+                    disapearing = !disapearing;
+                }
+            }
+
+            yield return null;
+        }
+
     }
 }

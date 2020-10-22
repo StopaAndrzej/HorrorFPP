@@ -54,6 +54,7 @@ public class PlayerEquipment : MonoBehaviour
 
     //missions interface
     [SerializeField] private PlayerMove player;
+    [SerializeField] private PickUpManager pickUp;
     [SerializeField] private PlayerFootprint footsteps;
     [SerializeField] private Camera cameraPlayer;
     [SerializeField] private InventoryScript inventoryManager;
@@ -75,6 +76,7 @@ public class PlayerEquipment : MonoBehaviour
     private int trackCountOnScreen;
     private int subMissionsOffset;
     private int detailShownMissionId;
+    private int inventoryId;
 
     [SerializeField] private Text headerMenu;
     [SerializeField] private Text spaceText;
@@ -110,6 +112,7 @@ public class PlayerEquipment : MonoBehaviour
         countMissions = 0;
         subMissionsOffset = 0;
         detailShownMissionId = -1;
+        inventoryId = 0;
 
         trackTxt.text = "PRESS <F> TO TRACK (" + trackCount + "/3)";
         spaceText.text = "PRESS <SPACE> FOR DETAILS";
@@ -175,7 +178,8 @@ public class PlayerEquipment : MonoBehaviour
                 footsteps.stopFlag = true;
 
                 inventoryCanvas.SetActive(true);
-                inventoryManager.ShowItem(0);
+                dotCanvas.enabled = false;
+                inventoryManager.ShowItem(inventoryId, true, true);
             }
             else
             {
@@ -184,11 +188,13 @@ public class PlayerEquipment : MonoBehaviour
                 footsteps.stopFlag = false;
 
                 inventoryCanvas.SetActive(false);
+                dotCanvas.enabled = true;
+                inventoryManager.activateMenu = false;
             }
 
             inventoryModeFlag = !inventoryModeFlag;
         }
-        else if (Input.GetKeyDown(keyboardButton) && !showDetailsMode)
+        else if (Input.GetKeyDown(keyboardButton) && !showDetailsMode && !inventoryModeFlag)
         {
             if (!missionModeFlag)
             {
@@ -240,7 +246,7 @@ public class PlayerEquipment : MonoBehaviour
             }
         }
 
-        if (missionModeFlag && !showDetailsMode)
+        if (missionModeFlag && !showDetailsMode && !inventoryModeFlag)
         {
             if (Input.GetKeyDown(KeyCode.S))
             {
@@ -299,7 +305,7 @@ public class PlayerEquipment : MonoBehaviour
                 }
             }      
         }
-        else if (Input.GetKeyDown(keyboardButton) && showDetailsMode)
+        else if (Input.GetKeyDown(keyboardButton) && showDetailsMode && !inventoryModeFlag)
         {
             headerMenu.text = "CURRENT MISSIONS:";
             showDetailsMode = false;
@@ -335,7 +341,66 @@ public class PlayerEquipment : MonoBehaviour
                 SelectTracingMission2();
             }
         }
+        else if(inventoryModeFlag)
+        {
+            if(Input.GetKeyDown(KeyCode.D))
+            {
+                inventoryId++;
+                if(inventoryId>inventoryManager.inventoryItems.Length-1)
+                {
+                    inventoryId = 0;
+                    inventoryManager.ShowItem(inventoryId, true, false);
+                }
+                else if(!inventoryManager.ShowItem(inventoryId, true, false))
+                {
+                    inventoryId = 0;
+                    inventoryManager.ShowItem(inventoryId, true, false);
+                }
+            }
+            else if(Input.GetKeyDown(KeyCode.A))
+            {
+                inventoryId--;
+                if(inventoryId<0)
+                {
+                    if(inventoryManager.inventoryItems[0] != null)
+                    {
+                        for (int i = 0; i < inventoryManager.inventoryItems.Length; i++)
+                        {
+                            inventoryId = i;
+                            if (inventoryManager.inventoryItems[i] == null)
+                            {
+                                inventoryId--;
+                                inventoryManager.ShowItem(inventoryId, false, false);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        inventoryId = 0;
+                    }
+                    
+                }
+                else
+                {
+                    inventoryManager.ShowItem(inventoryId, false, false);
+                }
+            }
+            else if(Input.GetKeyDown(KeyCode.Space))
+            {
+                pickUp.PickUpFromInventory(inventoryManager.inventoryItems[inventoryId]);
+                inventoryManager.RemoveFromInventory(inventoryId);
+                inventoryId = 0;
 
+                cameraPlayer.enabled = true;
+                player.disablePlayerController = false;
+                footsteps.stopFlag = false;
+
+                inventoryCanvas.SetActive(false);
+                inventoryManager.activateMenu = false;
+
+                inventoryModeFlag = false;
+            }
+        }
 
     }
 

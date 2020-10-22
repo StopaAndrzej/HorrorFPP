@@ -15,7 +15,7 @@ public class ItemManager : InteractableObjectBase
     public Transform parent;
     public Transform originLocation;
 
-    [SerializeField] private float objInspectModeOffset = 0;
+    public float objInspectModeOffset = 1;
     [SerializeField] private float txtTitleOffset = 0;
 
     private void Start()
@@ -58,7 +58,15 @@ public class ItemManager : InteractableObjectBase
                 parent = this.transform.parent;
                 originPos = this.GetComponent<Transform>().transform.position;
                 originRot = this.GetComponent<Transform>().transform.rotation;
-                pickUpManager.PickUp(this.gameObject, objInspectModeOffset, txtTitleOffset);
+
+                if(this.gameObject.tag == "ObjectInspectOnly")
+                {
+                    pickUpManager.PickUpOnlyInspect(this.gameObject);
+                }
+                else
+                {
+                    pickUpManager.PickUp(this.gameObject);
+                }
 
                 foreach (Transform child in transform)
                 {

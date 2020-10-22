@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BatteriesPackManager : ItemBase
 {
+    [SerializeField] private InventoryScript inventory;
+
     public enum enPackCondition { withBatteries, withouutBatteries};
     public enPackCondition itemMode;
 
@@ -15,6 +17,9 @@ public class BatteriesPackManager : ItemBase
 
     [SerializeField] private KeyCode keyboardButton = KeyCode.F;
     [SerializeField] private KeyCode mouseButton = KeyCode.Mouse0;
+
+    [SerializeField] private GameObject batteries1;
+    [SerializeField] private Transform inventoryParent;
 
     void Start()
     {
@@ -134,6 +139,11 @@ public class BatteriesPackManager : ItemBase
         {
             itemMode = enPackCondition.withouutBatteries;
             HideCD();
+
+            inventory.AddToInventory(batteries1);
+            batteries1.transform.SetParent(inventoryParent);
+            batteries1.transform.position = inventoryParent.position;
+            batteries1.SetActive(true);
         }
 
         pickUpManager.freezeInspectRotationFlag = false;

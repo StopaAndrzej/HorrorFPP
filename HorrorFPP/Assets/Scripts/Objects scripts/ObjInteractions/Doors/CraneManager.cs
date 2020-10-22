@@ -55,7 +55,7 @@ public class CraneManager : InteractableObjectBase
                         pickUpManager.originGrabbedItemPos = dishSlotPos;
                         pickUpManager.originGrabbedItemRot = dishSlotRot;
 
-                        pickUpManager.distance = pickUpManager.UpdateDistance();
+                        pickUpManager.distance = pickUpManager.UpdateDistance(pickUpManager.destinationPosInspect.position);
 
                         pickUpManager.itemMode = PickUpManager.enManagerItemMode.getToPos;
 

@@ -43,7 +43,7 @@ public class DishSoapManager : InteractableObjectBase
 
                         pickUpManager.originGrabbedItemPos = dishSlotPos;
                         pickUpManager.originGrabbedItemRot = dishSlotRot;
-                        pickUpManager.distance = pickUpManager.UpdateDistance();
+                        pickUpManager.distance = pickUpManager.UpdateDistance(pickUpManager.destinationPosInspect.position);
 
                         pickUpManager.itemMode = PickUpManager.enManagerItemMode.getToPos;
                         pickUpManager.lastSelectedObj.GetComponent<BoxCollider>().enabled = true;

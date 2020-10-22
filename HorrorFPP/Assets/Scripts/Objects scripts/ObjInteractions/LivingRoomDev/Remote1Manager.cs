@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Remote1Manager : ItemBase
 {
+    [SerializeField] private InventoryScript inventory;
+
     public enum enFoodCondition { emptyClosed, emptyOpened, loadedOpen, loadedClosed };
     public enFoodCondition itemMode;
 
@@ -13,6 +15,8 @@ public class Remote1Manager : ItemBase
     private Animator animator;
 
     [SerializeField] private GameObject batteries;
+    private string pressTxt3;
+    private bool itemInInventory = false;
 
     private void Start()
     {
@@ -28,6 +32,7 @@ public class Remote1Manager : ItemBase
         pressTxt = "PRESS F TO INSPECT";
         pressTxt1 = "PRESS F TO OPEN";
         pressTxt2 = "PRESS F TO LOAD BATTERIES";
+        pressTxt3 = "NO BATTERIES!";
 
         descriptionTxt = "WHEN IT IS POINTED AT THE RECEIVER,\nIT IS USED TO CHANGE TV STATIONS...";
 
@@ -57,15 +62,37 @@ public class Remote1Manager : ItemBase
             }
 
         }
-        else if (itemMode == enFoodCondition.emptyOpened || itemMode == enFoodCondition.loadedOpen)
+        else if (itemMode == enFoodCondition.emptyOpened)
         {
             if (!discardBack)
             {
-                if (Input.GetKeyDown(keyboardButton) || Input.GetKeyUp(mouseButton))
+                for(int i=0; i<inventory.inventoryItems.Length; i++)
+                {
+                    if(inventory.inventoryItems[i] == null)
+                    {
+                        itemInInventory = false;
+                        break;
+                    }
+
+                    if (inventory.inventoryItems[i].GetComponent<ItemBase>().titleTxt == "AA BATERIES")
+                    {
+                        itemInInventory = true;
+                        break;
+                    }
+                    itemInInventory = false;
+                }
+
+                if ((Input.GetKeyDown(keyboardButton) || Input.GetKeyUp(mouseButton)) && itemInInventory)
                 {
                     discardBack = true;
                 }
-                return pressTxt2;
+
+                if(itemInInventory)
+                {
+                    return pressTxt2;
+                }
+
+                return pressTxt3;
             }
 
         }
@@ -102,6 +129,18 @@ public class Remote1Manager : ItemBase
             }
         }
 
+        else if (itemMode == enFoodCondition.loadedClosed)
+        {
+            if (discardBack)
+            {
+                if (!discardBackFirstTime)
+                {
+                    discardBackFirstTime = true;
+                    OpenLidAnim();
+                }
+            }
+        }
+
         else if (itemMode == enFoodCondition.emptyOpened)
         {
             if (discardBack)
@@ -109,10 +148,11 @@ public class Remote1Manager : ItemBase
                 if (!discardBackFirstTime)
                 {
                     discardBackFirstTime = true;
-                    LoadBatteriesAnim();
+                    LoadAnim();
                 }
             }
         }
+
         return null;
     }
 
@@ -149,16 +189,16 @@ public class Remote1Manager : ItemBase
         animator.SetBool("isOpen", true);
     }
 
-    private void CloseLidAnim()
+    private void LoadAnim()
     {
+        batteries.SetActive(true);
+        animator.SetBool("load", true);
         animator.SetBool("isOpen", false);
     }
 
-    private void LoadBatteriesAnim()
-        
+    private void CloseLidAnim()
     {
-        batteries.transform.localScale = new Vector3(1, 1, 0.6f);
-        animator.SetBool("reloadBatteries", true);
+        animator.SetBool("isOpen", false);
     }
 
     public void lockRotation()
@@ -166,11 +206,6 @@ public class Remote1Manager : ItemBase
         pickUpManager.freezeInspectRotationFlag = true;
     }
 
-    public void lockDownBatteries()
-    {
-        animator.SetBool("isLoad", true);
-        animator.SetBool("isOpen", false);
-    }
 
     public void makeBatteriesVisible()
     {
@@ -179,20 +214,25 @@ public class Remote1Manager : ItemBase
 
     public void unlockRotation()
     {
-        if (itemMode == enFoodCondition.emptyClosed)
-            itemMode = enFoodCondition.emptyOpened;
-        else if (itemMode == enFoodCondition.emptyOpened)
-            itemMode = enFoodCondition.emptyClosed;
-        else if (itemMode == enFoodCondition.loadedClosed)
+        if (itemMode == enFoodCondition.loadedClosed)
+        {
             itemMode = enFoodCondition.loadedOpen;
-        else if (itemMode == enFoodCondition.loadedOpen)
-            itemMode = enFoodCondition.loadedClosed;
+            discardBack = false;
+            discardBackFirstTime = false;
+        }
+        else if(itemMode == enFoodCondition.emptyOpened)
+        {
+            itemMode = enFoodCondition.loadedOpen;
+            discardBack = false;
+            discardBackFirstTime = false;
+        }
+        else if(itemMode == enFoodCondition.emptyClosed)
+        {
+            itemMode = enFoodCondition.emptyOpened;
+            discardBack = false;
+            discardBackFirstTime = false;
+        }
 
         pickUpManager.freezeInspectRotationFlag = false;
-        discardBack = false;
-        discardBackFirstTime = false;
-        discardFront = false;
-        discardFrontFirstTime = false;
-
     }
 }

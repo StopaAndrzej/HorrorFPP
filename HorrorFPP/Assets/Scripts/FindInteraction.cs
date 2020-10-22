@@ -47,7 +47,7 @@ public class FindInteraction : MonoBehaviour
     {
         //disable when drop mode is use
         //before !dropMode &&...
-        if (!peepHoleMode && !showMissionsMode)
+        if (!peepHoleMode && !showMissionsMode && pickUpManager.itemMode != PickUpManager.enManagerItemMode.inspectMode)
         {
             RaycastHit hit;
             
@@ -94,6 +94,19 @@ public class FindInteraction : MonoBehaviour
                                 }
 
                             }
+
+                            foreach (Transform child in raycastedObject.transform)
+                            {
+                                foreach (Transform childChild in child)
+                                {
+                                    if (childChild.GetComponent<MeshRenderer>())
+                                    {
+                                        childChild.GetComponent<MeshRenderer>().material.SetColor("_Color", new Vector4(0.5882352941176471f, 0.5882352941176471f, 0.5882352941176471f, 1));
+                                        childChild.GetComponent<MeshRenderer>().material.SetColor("_SpecularColor", new Vector4(0.0f, 0.0f, 0.0f, 1));
+                                    }
+                                }
+
+                            }
                         }
                     }
 
@@ -121,7 +134,9 @@ public class FindInteraction : MonoBehaviour
                     if (hit.collider.CompareTag("ObjectNoInteraction"))
                     {
                         actionText.GetComponent<Text>().text = raycastedObject.GetComponent<InteractableObjectBase>().interactText;
-                        dot.SetActive(false);
+                        actionText.GetComponent<RectTransform>().localPosition = new Vector3(actionText.GetComponent<RectTransform>().localPosition.x, -18f,actionText.GetComponent<RectTransform>().localPosition.z);
+                        actionText.GetComponent<Text>().color = new Vector4(1, 1, 1, 0.5f);
+                        dot.SetActive(true);
                         actionText.SetActive(true);
 
                         multiInteractionSelected = false;
@@ -135,6 +150,8 @@ public class FindInteraction : MonoBehaviour
                             if(raycastedObject.GetComponent<AttachmentScript>().Interact())
                             {
                                 actionText.GetComponent<Text>().text = raycastedObject.GetComponent<InteractableObjectBase>().interactText1;
+                                actionText.GetComponent<RectTransform>().localPosition = new Vector3(actionText.GetComponent<RectTransform>().localPosition.x, 0, actionText.GetComponent<RectTransform>().localPosition.z);
+                                actionText.GetComponent<Text>().color = new Vector4(1, 1, 1, 1);
                             }
                             else
                             {
@@ -143,6 +160,8 @@ public class FindInteraction : MonoBehaviour
                         }
 
                         actionText.GetComponent<Text>().text = raycastedObject.GetComponent<InteractableObjectBase>().interactText;
+                        actionText.GetComponent<RectTransform>().localPosition = new Vector3(actionText.GetComponent<RectTransform>().localPosition.x, 0, actionText.GetComponent<RectTransform>().localPosition.z);
+                        actionText.GetComponent<Text>().color = new Vector4(1, 1, 1, 1);
 
                         raycastedObject.GetComponent<InteractableObjectBase>().Interact();
 
@@ -185,6 +204,8 @@ public class FindInteraction : MonoBehaviour
                     else if (hit.collider.CompareTag("ObjectMultiInteractions"))
                     {
                         actionText.GetComponent<Text>().text = raycastedObject.GetComponent<InteractableObjectBase>().interactText;
+                        actionText.GetComponent<RectTransform>().localPosition = new Vector3(actionText.GetComponent<RectTransform>().localPosition.x, 0, actionText.GetComponent<RectTransform>().localPosition.z);
+                        actionText.GetComponent<Text>().color = new Vector4(1, 1, 1, 1);
                         dot.SetActive(false);
                         actionText.SetActive(true);
 
@@ -192,6 +213,22 @@ public class FindInteraction : MonoBehaviour
                         multiInteractionSelected = true;
                         multiInteractionSelectedChild2 = false;
 
+                    }
+
+                    else if (hit.collider.CompareTag("ObjectInspectOnly"))
+                    {
+                        actionText.GetComponent<Text>().text = raycastedObject.GetComponent<InteractableObjectBase>().interactText;
+                        actionText.GetComponent<RectTransform>().localPosition = new Vector3(actionText.GetComponent<RectTransform>().localPosition.x, 0, actionText.GetComponent<RectTransform>().localPosition.z);
+                        actionText.GetComponent<Text>().color = new Vector4(1, 0, 0, 1);
+
+                        raycastedObject.GetComponent<InteractableObjectBase>().Interact();
+
+                        dot.SetActive(false);
+                        actionText.SetActive(true);
+
+                        multiInteractionSelected = false;
+                        multiInteractionSelectedChild = false;
+                        multiInteractionSelectedChild2 = false;
                     }
                 }
 
@@ -273,6 +310,11 @@ public class FindInteraction : MonoBehaviour
             {
                 savedrayCastedObject.transform.parent.GetComponent<InteractableObjectBase>().InteractMulti();
             }
+        }
+        else if(pickUpManager.itemMode == PickUpManager.enManagerItemMode.inspectMode)
+        {
+            actionText.active = false;
+            dot.active = false;
         }
     }
 }

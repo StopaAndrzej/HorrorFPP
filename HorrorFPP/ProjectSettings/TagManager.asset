@@ -17,6 +17,7 @@ TagManager:
   - Object1
   - Object2
   - ObjectQuest
+  - PlayerComponent
   layers:
   - Default
   - TransparentFX
