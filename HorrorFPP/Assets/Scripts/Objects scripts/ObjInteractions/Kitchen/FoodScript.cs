@@ -377,5 +377,14 @@ public class FoodScript : ItemBase
             itemMode = enFoodCondition.spoiled;
         }
     }
+
+    public override void SpecialActionAfterGrab()
+    {
+        foreach(GameObject el in dropSlots)
+        {
+            if (el.GetComponent<DropSlotScript>())
+                el.GetComponent<DropSlotScript>().ActivateDrop();
+        }
+    }
 }
 //descriptionTxt1

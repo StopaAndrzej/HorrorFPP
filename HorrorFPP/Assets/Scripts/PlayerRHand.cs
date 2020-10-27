@@ -18,7 +18,8 @@ public class PlayerRHand : MonoBehaviour
 
     public void HideObjAnim()
     {
-        animatorHand.Play("PlayersHand");
+        animatorHand.Play("PlayersHand", -1, 0f);
+        pickUp.itemMode = PickUpManager.enManagerItemMode.wait;
     }
 
     public void HideInvAnim()
@@ -29,4 +30,5 @@ public class PlayerRHand : MonoBehaviour
         pickUp.ButtonOff(button, buttonTxt);
         pickUp.itemMode = PickUpManager.enManagerItemMode.clear;
     }
+
 }

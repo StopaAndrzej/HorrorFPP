@@ -64,7 +64,19 @@ public class ItemBase : MonoBehaviour
     public bool actualStateItemDescriptinShowed = false;
     public bool isRotationVertical;                             //which axis should be used to rotate obj, false -use X true -use Y
 
+    public List<GameObject> dropSlots;
+
     public virtual void SwitchToBreakMode()                     //if object has DestructableObject script enable, break obj on peaces;
+    {
+
+    }
+
+    public virtual void SpecialActionAfterGrab()
+    {
+
+    }
+
+    public virtual void SpecialActionAfterDrop()
     {
 
     }

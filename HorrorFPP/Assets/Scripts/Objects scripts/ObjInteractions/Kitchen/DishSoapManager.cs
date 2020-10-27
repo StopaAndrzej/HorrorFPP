@@ -45,8 +45,8 @@ public class DishSoapManager : InteractableObjectBase
                         pickUpManager.originGrabbedItemRot = dishSlotRot;
                         pickUpManager.distance = pickUpManager.UpdateDistance(pickUpManager.destinationPosInspect.position);
 
-                        pickUpManager.itemMode = PickUpManager.enManagerItemMode.getToPos;
                         pickUpManager.lastSelectedObj.GetComponent<BoxCollider>().enabled = true;
+                        pickUpManager.itemMode = PickUpManager.enManagerItemMode.getToPos;
                         trigger.enabled = true;
                     }
                     else
@@ -70,22 +70,14 @@ public class DishSoapManager : InteractableObjectBase
 
     public void UseAnim()
     {
-        animator.SetBool("isUsed", true);
+        animator.Play("Use", -1, 0f);
     }
 
-    public void lockPlayer()
-    {
-        //playerLook.disableCamera = true;
-        //playerMove.seatMode = true; 
-    }
 
     public void unlockPlayer()
     {
-        animator.SetBool("isUsed", false);
         pickUpManager.lastSelectedObj.GetComponent<PlateManager>().ChangeSolidDirtySoap();
         pickUpManager.PickUp(pickUpManager.lastSelectedObj);
-        //playerLook.disableCamera = false;
-        //playerMove.seatMode = false;
     }
 
     public override void DeInteract()

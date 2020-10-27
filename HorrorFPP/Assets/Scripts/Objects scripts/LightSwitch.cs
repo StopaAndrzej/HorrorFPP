@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LightSwitch : InteractableObjectBase
 {
@@ -12,27 +13,56 @@ public class LightSwitch : InteractableObjectBase
 
     [SerializeField] private List<Light> lights;
     [SerializeField] private GameObject buttonObj;
-    private bool switchOn;
+    public bool switchOn;
 
     [SerializeField] private Transform player;
 
     [SerializeField] private GameObject LeftButton;
     [SerializeField] private GameObject RightButton;
 
+    [SerializeField] bool switchLock = false;
+
+    [SerializeField] private Material offMaterial;
+    [SerializeField] private Material onMaterial;
+
+    [SerializeField] private List<GameObject> bulbs;
+
     private void Start()
     {
-        switchOn = true;
-        interactText = "SWITCH OFF";
-
-        foreach (Light li in lights)
+        if (switchOn)
         {
-            li.enabled = true;
+            buttonObj.transform.localRotation = Quaternion.Euler(-90, 0, -180);
+            interactText = "SWITCH ON";
+            foreach (Light li in lights)
+            {
+                li.enabled = false;
+            }
+
+            foreach (GameObject el in bulbs)
+            {
+                el.GetComponent<MeshRenderer>().material = offMaterial;
+            }
         }
+        else
+        {
+            buttonObj.transform.localRotation = Quaternion.Euler(-90, 0, 0);
+            interactText = "SWITCH OFF";
+            foreach (Light li in lights)
+            {
+                li.enabled = true;
+            }
+
+            foreach (GameObject el in bulbs)
+            {
+                el.GetComponent<MeshRenderer>().material = onMaterial;
+            }
+        }
+
     }
 
     public override void Interact()
     {
-        if (Input.GetKeyDown(interactionKey) || Input.GetKeyDown(mouseButton))
+        if ((Input.GetKeyDown(interactionKey) || Input.GetKeyDown(mouseButton)))
         {
             if(switchOn)
             {
@@ -42,6 +72,11 @@ public class LightSwitch : InteractableObjectBase
                 {
                     li.enabled = false;
                 }
+
+                foreach(GameObject el in bulbs)
+                {
+                    el.GetComponent<MeshRenderer>().material = offMaterial;
+                }
             }
             else
             {
@@ -50,6 +85,11 @@ public class LightSwitch : InteractableObjectBase
                 foreach (Light li in lights)
                 {
                     li.enabled = true;
+                }
+
+                foreach (GameObject el in bulbs)
+                {
+                    el.GetComponent<MeshRenderer>().material = onMaterial;
                 }
             }
 
@@ -70,7 +110,7 @@ public class LightSwitch : InteractableObjectBase
                 RightButton.SetActive(true);
                 LeftButton.SetActive(false);
 
-                if (Input.GetKeyDown(interactionKey3))
+                if (Input.GetKeyDown(interactionKey3) && !switchLock)
                 {
                     if (switchOn)
                     {
@@ -91,6 +131,7 @@ public class LightSwitch : InteractableObjectBase
                         }
                     }
 
+                    StartCoroutine(blinkButton(RightButton));
                     switchOn = !switchOn;
                 }
             }
@@ -99,7 +140,7 @@ public class LightSwitch : InteractableObjectBase
                 LeftButton.SetActive(true);
                 RightButton.SetActive(false);
 
-                if (Input.GetKeyDown(interactionKey1))
+                if (Input.GetKeyDown(interactionKey1) && !switchLock)
                 {
                     if (switchOn)
                     {
@@ -120,6 +161,7 @@ public class LightSwitch : InteractableObjectBase
                         }
                     }
 
+                    StartCoroutine(blinkButton(LeftButton));
                     switchOn = !switchOn;
                 }
             }
@@ -145,5 +187,14 @@ public class LightSwitch : InteractableObjectBase
         Vector3 forwardPlayerVector = player.forward;
         float angleBetweenObjs = Vector3.SignedAngle(forwardPlayerVector, newVector, Vector3.up);
         return angleBetweenObjs;
+    }
+
+    private IEnumerator blinkButton(GameObject obj)
+    {
+        switchLock = true;
+        obj.GetComponent<Image>().color = new Vector4(1, 1, 1, 1);
+        yield return new WaitForSeconds(0.5f);
+        obj.GetComponent<Image>().color = new Vector4(0.764f, 0.635f, 0.356f, 0.490f);
+        switchLock = false;
     }
 }

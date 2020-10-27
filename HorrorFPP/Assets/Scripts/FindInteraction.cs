@@ -37,6 +37,8 @@ public class FindInteraction : MonoBehaviour
 
     public bool lastFrameRayHitSurface = false;
 
+    private bool pilotMode = false;
+
     private void Start()
     {
         actionText.active = false;
@@ -54,22 +56,92 @@ public class FindInteraction : MonoBehaviour
             Vector3 fwd = transform.TransformDirection(Vector3.forward);
             Debug.DrawRay(transform.position, fwd * 10000f, Color.blue);
 
+            //drop mode
             if (Physics.Raycast(transform.position, fwd, out hit, rayLength, putlayerMask.value) && pickUpManager.itemMode == PickUpManager.enManagerItemMode.inHand)
             {
-                if (hit.collider.CompareTag("Surface"))
+                if (hit.collider.CompareTag("SurfaceNormal"))
                 {
-                    pickUpManager.visualObjectPutArea(hit.point, hit.transform.gameObject);
+                    pickUpManager.visualObjectPutArea(hit.transform.gameObject, 0);
                     lastFrameRayHitSurface = true;
                 }
-                else if (hit.collider.CompareTag("SurfaceDirectly"))
+                else if (hit.collider.CompareTag("SurfaceOrigin"))
                 {
-                    pickUpManager.visualObjectPutArea(hit.transform.gameObject);
+                    pickUpManager.visualObjectPutArea(hit.transform.gameObject,1);
                     lastFrameRayHitSurface = true;
                 }
+                else if (hit.collider.CompareTag("SurfaceAction"))
+                {
+                    pickUpManager.visualObjectPutArea(hit.transform.gameObject,2);
+                    lastFrameRayHitSurface = true;
+                }
+
+                //else if (hit.collider.CompareTag("Surface"))
+                //{
+                //    pickUpManager.visualObjectPutArea(hit.point, hit.transform.gameObject);
+                //    lastFrameRayHitSurface = true;
+                //}
 
             }
 
-            if (Physics.Raycast(transform.position, fwd, out hit, rayLength, layerMaskInteract.value))
+            //additional ray for remoteController
+            else if(pilotMode)
+            {
+                RaycastHit hit1;
+              
+                if (Physics.Raycast(transform.position, fwd, out hit1, rayLength*20))
+                {
+                    if(hit1.collider.CompareTag("Object"))
+                    {
+                        if(hit1.collider.gameObject.name == "TVManager")
+                        {
+                            if (raycastedObject != null)
+                            {
+                                raycastedObject.GetComponent<InteractableObjectBase>().DeInteractMulti();
+                                raycastedObject.GetComponent<InteractableObjectBase>().DeInteract();
+                                multiInteractionSelectedChild = false;
+
+                                if (raycastedObject.CompareTag("Object") || raycastedObject.CompareTag("ObjectInspectOnly"))
+                                {
+                                    foreach (GameObject element in raycastedObject.GetComponent<InteractableObjectBase>().outlineObjects)
+                                    {
+                                        element.GetComponent<MeshRenderer>().enabled = false;
+                                    }
+
+                                }
+
+                                foreach (Transform child in raycastedObject.transform)
+                                {
+                                    foreach (Transform childChild in child)
+                                    {
+                                        if (childChild.GetComponent<MeshRenderer>())
+                                        {
+                                            childChild.GetComponent<MeshRenderer>().material.SetColor("_Color", new Vector4(0.5882352941176471f, 0.5882352941176471f, 0.5882352941176471f, 1));
+                                            childChild.GetComponent<MeshRenderer>().material.SetColor("_SpecularColor", new Vector4(0.0f, 0.0f, 0.0f, 1));
+                                        }
+                                    }
+
+                                }
+                            }
+
+                           
+                            actionText.GetComponent<Text>().text = "CHANGE CHANNEL";
+                            actionText.GetComponent<RectTransform>().localPosition = new Vector3(actionText.GetComponent<RectTransform>().localPosition.x, 0, actionText.GetComponent<RectTransform>().localPosition.z);
+                            actionText.GetComponent<Text>().color = new Vector4(1, 1, 1, 1);
+
+                            dot.SetActive(false);
+                            actionText.SetActive(true);
+
+                            multiInteractionSelected = false;
+                            multiInteractionSelectedChild = false;
+                            multiInteractionSelectedChild2 = false;
+
+                            selected = true;
+                        }
+                    }
+                }
+            }
+
+            else if (Physics.Raycast(transform.position, fwd, out hit, rayLength, layerMaskInteract.value))
             {
                 //object to recognize items with single interaction
                 //multi for objects that contains more interactable objects like doors(handle, lock...)/and objectMultiCild for one of this child object
@@ -316,5 +388,10 @@ public class FindInteraction : MonoBehaviour
             actionText.active = false;
             dot.active = false;
         }
+    }
+
+    public void setPilotMode(bool value)
+    {
+        pilotMode = value;
     }
 }

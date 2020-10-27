@@ -89,13 +89,16 @@ public class CraneManager : InteractableObjectBase
     {
         if (other.GetComponent<PlateManager>())
         {
-            pickUpManager.lastSelectedObj.GetComponent<PlateManager>().foam.SetActive(true);
-            timeToWait = pickUpManager.lastSelectedObj.GetComponent<PlateManager>().foam.GetComponent<ParticleSystem>().duration + pickUpManager.lastSelectedObj.GetComponent<PlateManager>().foam.GetComponent<ParticleSystem>().startLifetime;
-            StartCoroutine(CleanDish());
-        }
+            if(other.GetComponent<PlateManager>().itemMode == PlateManager.enFoodCondition.soaped)
+            {
+                pickUpManager.lastSelectedObj.GetComponent<PlateManager>().foam.SetActive(true);
+                timeToWait = pickUpManager.lastSelectedObj.GetComponent<PlateManager>().foam.GetComponent<ParticleSystem>().duration + pickUpManager.lastSelectedObj.GetComponent<PlateManager>().foam.GetComponent<ParticleSystem>().startLifetime;
+                StartCoroutine(CleanDish());
 
-        pickUpManager.lastSelectedObj.GetComponent<BoxCollider>().enabled = false;
-        trigger.enabled = false;
+                pickUpManager.lastSelectedObj.GetComponent<BoxCollider>().enabled = false;
+                trigger.enabled = false;
+            }      
+        }
     }
 
     private IEnumerator CleanDish()

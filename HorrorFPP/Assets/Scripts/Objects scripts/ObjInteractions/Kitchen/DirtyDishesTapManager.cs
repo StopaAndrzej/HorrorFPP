@@ -43,7 +43,7 @@ public class DirtyDishesTapManager : InteractableObjectBase
                     if(x==tapManager.dishesInTapList.Count-1)
                     {
                         tapManager.RemoveLastDishFromDirtyDishesList(el);
-                        pickUpManager.PickUp(el);
+                        pickUpManager.PickUp(el, 1.5f, 0, true);
 
                         if(x==0)
                         {

@@ -11,7 +11,7 @@ public class MopScript : ItemBase
     [SerializeField] private Material dirtyTexture;
     private Material cleanTexture;
 
-    [SerializeField] private GameObject cloth;
+    [SerializeField] private List<GameObject> cloth;
 
     [SerializeField] private KeyCode keyboardButton = KeyCode.F;
     [SerializeField] private KeyCode mouseButton = KeyCode.Mouse0;
@@ -22,7 +22,7 @@ public class MopScript : ItemBase
     {
         itemMode = enItemCondition.clear;
 
-        cleanTexture = cloth.GetComponent<MeshRenderer>().material;
+        cleanTexture = cloth[0].GetComponent<MeshRenderer>().material;
 
         titleTxt = "MOP";
         titleTxt1 = "DIRTY MOP";
@@ -90,13 +90,19 @@ public class MopScript : ItemBase
 
     public void ClearMop()
     {
-        cloth.GetComponent<MeshRenderer>().material = cleanTexture;
+        foreach(GameObject el in cloth)
+        {
+            el.GetComponent<MeshRenderer>().material = cleanTexture;
+        }
         pickUpManager.title.text = titleTxt;
     }
 
     public void GetMopDirty()
     {
-        cloth.GetComponent<MeshRenderer>().material = dirtyTexture;
+        foreach (GameObject el in cloth)
+        {
+            el.GetComponent<MeshRenderer>().material = dirtyTexture;
+        }
         pickUpManager.title.text = titleTxt1;
     }
 

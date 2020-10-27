@@ -5,6 +5,7 @@ using UnityEngine;
 public class Remote1Manager : ItemBase
 {
     [SerializeField] private InventoryScript inventory;
+    [SerializeField] private FindInteraction interaction;
 
     public enum enFoodCondition { emptyClosed, emptyOpened, loadedOpen, loadedClosed };
     public enFoodCondition itemMode;
@@ -231,6 +232,13 @@ public class Remote1Manager : ItemBase
             itemMode = enFoodCondition.emptyOpened;
             discardBack = false;
             discardBackFirstTime = false;
+        }
+        else if (itemMode == enFoodCondition.loadedOpen)
+        {
+            itemMode = enFoodCondition.loadedClosed;
+            discardBack = false;
+            discardBackFirstTime = false;
+            interaction.setPilotMode(true);
         }
 
         pickUpManager.freezeInspectRotationFlag = false;

@@ -41,8 +41,12 @@ public class PickUpManager : MonoBehaviour
     [SerializeField] private Shader originalShader;
     [SerializeField] private Shader transparecyShader;
 
+    private Color dropOriginalPosColor = new Color(0.333f, 0.384f, 0.576f, 0.6f);
+    private Color dropNormalColor = new Color(0.176f, 0.176f, 0.176f, 0.6f);
+    private Color dropActionColor = new Color(0.878f, 0.650f, 0.384f, 0.6f);
+
     //make a distinction between interaction stages of selected obj
-    public enum enManagerItemMode { clear ,isGrabbed, returnToPos, getToPos ,inHand, inspectMode, dropped, moveToHand};
+    public enum enManagerItemMode { clear ,isGrabbed, returnToPos, getToPos ,inHand, inspectMode, dropped, moveToHand, wait};
     public enManagerItemMode itemMode;
 
     [SerializeField] private KeyCode putAwayButton = KeyCode.Y;
@@ -135,7 +139,7 @@ public class PickUpManager : MonoBehaviour
         itemMode = enManagerItemMode.inHand;
     }
 
-    public void PickUp(GameObject selectedObject, float objInspectModeOffsetScale = 1, float titleOffset = 0, bool destructible = false)
+    public void PickUp(GameObject selectedObject, float objInspectModeOffsetScale = 10, float titleOffset = 0, bool destructible = false)
     {
         if (lastSelectedObj == null && !selectedObject.GetComponent<ItemBase>().actualStateItemDescriptinShowed)
         {
@@ -156,6 +160,9 @@ public class PickUpManager : MonoBehaviour
         if (selectedObject.GetComponent<BoxCollider>())
             selectedObject.GetComponent<BoxCollider>().enabled = false;
 
+        if (selectedObject.GetComponent<ItemBase>())
+            selectedObject.GetComponent<ItemBase>().SpecialActionAfterGrab();
+
         lastSelectedObj = selectedObject;
         objDestructible = destructible;
 
@@ -174,6 +181,14 @@ public class PickUpManager : MonoBehaviour
             if (!(comp is Transform))
             {
                 Destroy(comp);
+            }
+        }
+
+        foreach(Transform el in copiedObj.transform)
+        {
+            if(el.gameObject.transform.childCount==0)
+            {
+                Destroy(el.gameObject);
             }
         }
 
@@ -262,6 +277,10 @@ public class PickUpManager : MonoBehaviour
             
 
         selectedObject.GetComponent<BoxCollider>().enabled = true;
+
+        if (selectedObject.GetComponent<ItemBase>())
+            selectedObject.GetComponent<ItemBase>().SpecialActionAfterDrop();
+
         lastSelectedObj = null;
 
         title.enabled = false;
@@ -277,6 +296,8 @@ public class PickUpManager : MonoBehaviour
     private void Drop(GameObject selectedObject)
     {
         selectedObject.GetComponent<BoxCollider>().enabled = true;
+        selectedObject.GetComponent<BoxCollider>().isTrigger = false;
+
         lastSelectedObj.transform.parent = lastSelectedObj.GetComponent<ItemManager>().parent;
 
         if (selectedObject.GetComponent<Rigidbody>())
@@ -370,7 +391,7 @@ public class PickUpManager : MonoBehaviour
             //playerMove.disablePlayerController = true;
 
             lastSelectedObj.transform.localPosition = new Vector3(Mathf.Lerp(lastSelectedObj.transform.localPosition.x, originGrabbedItemPos.x, Time.deltaTime *10), Mathf.Lerp(lastSelectedObj.transform.localPosition.y, originGrabbedItemPos.y, Time.deltaTime * 10), Mathf.Lerp(lastSelectedObj.transform.localPosition.z, originGrabbedItemPos.z, Time.deltaTime * 10));
-            lastSelectedObj.transform.localScale = objectDefaultScale;
+            //lastSelectedObj.transform.localScale = objectDefaultScale;
             lastSelectedObj.transform.rotation = originGrabbedItemRot;
 
             volume.weight = Mathf.Lerp(volume.weight, 0, Time.deltaTime * 10.0f);
@@ -848,34 +869,34 @@ public class PickUpManager : MonoBehaviour
         text.enabled = false;
     }
 
-   public void visualObjectPutArea(Vector3 hitPos, GameObject hitObj)
-    {
-        copiedObj.SetActive(true);
+   //public void visualObjectPutArea(Vector3 hitPos, GameObject hitObj)
+   // {
+   //     copiedObj.SetActive(true);
 
 
 
-        copiedObj.transform.position = new Vector3(hitPos.x, hitObj.transform.position.y, hitPos.z);
-        copiedObj.transform.rotation = originGrabbedItemRot;
+   //     copiedObj.transform.position = new Vector3(hitPos.x, hitObj.transform.position.y, hitPos.z);
+   //     copiedObj.transform.rotation = originGrabbedItemRot;
 
-        int i = 0;
-        foreach (Transform child in copiedObj.transform)
-        {
-            if(child.GetComponent<MeshRenderer>())
-            {
-                child.GetComponent<MeshRenderer>().material.shader = transparecyShader;
-                child.GetComponent<MeshRenderer>().material.color = new Color(child.GetComponent<MeshRenderer>().material.color.r, child.GetComponent<MeshRenderer>().material.color.g, child.GetComponent<MeshRenderer>().material.color.b, 0.5f);
-                i++;
-            }
-        }
+   //     int i = 0;
+   //     foreach (Transform child in copiedObj.transform)
+   //     {
+   //         if(child.GetComponent<MeshRenderer>())
+   //         {
+   //             child.GetComponent<MeshRenderer>().material.shader = transparecyShader;
+   //             child.GetComponent<MeshRenderer>().material.color = new Color(child.GetComponent<MeshRenderer>().material.color.r, child.GetComponent<MeshRenderer>().material.color.g, child.GetComponent<MeshRenderer>().material.color.b, 0.5f);
+   //             i++;
+   //         }
+   //     }
 
-        copiedObj.transform.rotation = new Quaternion(0, 0, 0, 0);
+   //     copiedObj.transform.rotation = new Quaternion(0, 0, 0, 0);
 
-        if(Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            itemMode = enManagerItemMode.returnToPos;
-            playerMove.inspectMode = true;
-        }
-    }
+   //     if(Input.GetKeyDown(KeyCode.Mouse0))
+   //     {
+   //         itemMode = enManagerItemMode.returnToPos;
+   //         playerMove.inspectMode = true;
+   //     }
+   // }
 
     public void disableVisualPutAre()
     {
@@ -883,21 +904,54 @@ public class PickUpManager : MonoBehaviour
             copiedObj.SetActive(false);
     }
 
-    public void visualObjectPutArea(GameObject hitObj)
+    public void visualObjectPutArea(GameObject hitObj, int colorId)
     {
         copiedObj.SetActive(true);
-        copiedObj.transform.position = hitObj.transform.position;
-
-        foreach (Transform child in copiedObj.transform)
+        Color color1;
+        switch(colorId)
         {
-            if (child.GetComponent<MeshRenderer>())
-            {
-                child.GetComponent<MeshRenderer>().material.shader = transparecyShader;
-                child.GetComponent<MeshRenderer>().material.color = new Color(0.8f, 0.8f,0.1f, 0.5f);
-            }
+            case 0:
+                color1 = dropNormalColor;
+                break;
+            case 1:
+                color1 = dropOriginalPosColor;
+                break;
+            case 2:
+                color1 = dropActionColor;
+                break;
+            default:
+                color1 = dropNormalColor;
+                break;
         }
 
-        copiedObj.transform.rotation = new Quaternion(0, 0, 0, 0);
+        if (hitObj.transform.parent.GetComponent<DropSlotScript>())
+        {
+            copiedObj.transform.position = hitObj.transform.parent.GetComponent<DropSlotScript>().dropPos.position;
+            copiedObj.transform.localRotation = hitObj.transform.parent.GetComponent<DropSlotScript>().dropPos.localRotation;
+
+            foreach (Transform child in copiedObj.transform)
+            {
+                if (child.GetComponent<MeshRenderer>())
+                {
+                    child.GetComponent<MeshRenderer>().material.shader = transparecyShader;
+                    child.GetComponent<MeshRenderer>().material.color = color1;
+                }
+
+                foreach(Transform child1 in child)
+                {
+                    if (child1.GetComponent<MeshRenderer>())
+                    {
+                        child1.GetComponent<MeshRenderer>().material.shader = transparecyShader;
+                        child1.GetComponent<MeshRenderer>().material.color = color1;
+                    }  
+                }
+            }
+
+        }
+        else
+        {
+            copiedObj.transform.position = hitObj.transform.position;
+        }
 
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {

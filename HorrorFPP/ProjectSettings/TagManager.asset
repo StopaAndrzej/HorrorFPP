@@ -18,6 +18,9 @@ TagManager:
   - Object2
   - ObjectQuest
   - PlayerComponent
+  - SurfaceNormal
+  - SurfaceOrigin
+  - SurfaceAction
   layers:
   - Default
   - TransparentFX
