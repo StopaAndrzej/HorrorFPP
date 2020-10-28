@@ -93,6 +93,7 @@ public class PickUpManager : MonoBehaviour
 
     //copy  of selected obj -  for placing item system
     public GameObject copiedObj;
+    private GameObject coppiedObjArrow;
     private bool objDestructible;
     private bool stopBlinkText = false;
     private bool inspectObjOnly = false;
@@ -102,7 +103,6 @@ public class PickUpManager : MonoBehaviour
 
     public InventoryScript inventory;
     public Transform invParent;
-
 
     private void Start()
     {
@@ -269,12 +269,11 @@ public class PickUpManager : MonoBehaviour
 
     private void PutAway(GameObject selectedObject)
     {
-        if (selectedObject.GetComponent<Rigidbody>())
-        {
-           selectedObject.GetComponent<Rigidbody>().useGravity = true;
-           selectedObject.GetComponent<Rigidbody>().isKinematic = false;
-        }
-            
+         if (selectedObject.GetComponent<Rigidbody>())
+         {
+             selectedObject.GetComponent<Rigidbody>().useGravity = true;
+             selectedObject.GetComponent<Rigidbody>().isKinematic = false;
+         }
 
         selectedObject.GetComponent<BoxCollider>().enabled = true;
 
@@ -902,11 +901,20 @@ public class PickUpManager : MonoBehaviour
     {
         if(copiedObj != null)
             copiedObj.SetActive(false);
+
+        if(coppiedObjArrow != null)
+        {
+            coppiedObjArrow.transform.parent.GetComponent<DropSlotScript>().ShowArrow();
+            coppiedObjArrow = null;
+        }
     }
 
     public void visualObjectPutArea(GameObject hitObj, int colorId)
     {
         copiedObj.SetActive(true);
+        hitObj.transform.parent.GetComponent<DropSlotScript>().HideArrow();
+        coppiedObjArrow = hitObj;               //used to get obj reference to drop slot arrow to hide/show it
+
         Color color1;
         switch(colorId)
         {
@@ -955,6 +963,7 @@ public class PickUpManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
+            originGrabbedItemRot = hitObj.transform.parent.GetComponent<DropSlotScript>().dropPos.rotation;
             itemMode = enManagerItemMode.returnToPos;
             playerMove.inspectMode = true;
         }

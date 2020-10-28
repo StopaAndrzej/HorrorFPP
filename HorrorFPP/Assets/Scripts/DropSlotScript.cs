@@ -55,6 +55,16 @@ public class DropSlotScript : MonoBehaviour
         activate = false;
     }
 
+    public void HideArrow()
+    {
+        arrow.SetActive(false);
+    }
+
+    public void ShowArrow()
+    {
+        arrow.SetActive(true);
+    }
+
     private void FixedUpdate()
     {
         if(activate)

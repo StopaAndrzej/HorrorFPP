@@ -66,20 +66,25 @@ public class FindInteraction : MonoBehaviour
                 }
                 else if (hit.collider.CompareTag("SurfaceOrigin"))
                 {
-                    pickUpManager.visualObjectPutArea(hit.transform.gameObject,1);
+                    pickUpManager.visualObjectPutArea(hit.transform.gameObject, 1);
                     lastFrameRayHitSurface = true;
                 }
                 else if (hit.collider.CompareTag("SurfaceAction"))
                 {
-                    pickUpManager.visualObjectPutArea(hit.transform.gameObject,2);
+                    pickUpManager.visualObjectPutArea(hit.transform.gameObject, 2);
                     lastFrameRayHitSurface = true;
                 }
 
-                //else if (hit.collider.CompareTag("Surface"))
-                //{
-                //    pickUpManager.visualObjectPutArea(hit.point, hit.transform.gameObject);
-                //    lastFrameRayHitSurface = true;
-                //}
+                else
+                {
+                    pickUpManager.disableVisualPutAre();
+                    if (lastFrameRayHitSurface)
+                    {
+                        hit.transform.parent.GetComponent<DropSlotScript>().ShowArrow();
+                        lastFrameRayHitSurface = false;
+
+                    }   
+                }
 
             }
 
@@ -140,8 +145,18 @@ public class FindInteraction : MonoBehaviour
                     }
                 }
             }
+            else
+            {
+                
+                if(lastFrameRayHitSurface)
+                {
+                    pickUpManager.disableVisualPutAre();
+                    lastFrameRayHitSurface = false;
+                }
+                
+            }
 
-            else if (Physics.Raycast(transform.position, fwd, out hit, rayLength, layerMaskInteract.value))
+            if (Physics.Raycast(transform.position, fwd, out hit, rayLength, layerMaskInteract.value))
             {
                 //object to recognize items with single interaction
                 //multi for objects that contains more interactable objects like doors(handle, lock...)/and objectMultiCild for one of this child object

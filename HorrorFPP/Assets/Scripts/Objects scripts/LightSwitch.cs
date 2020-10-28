@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class LightSwitch : InteractableObjectBase
 {
+    [SerializeField] private LightSwitchManager switchManager;
+
     private KeyCode interactionKey = KeyCode.F;
     private KeyCode mouseButton = KeyCode.Mouse0;
 
@@ -26,6 +28,9 @@ public class LightSwitch : InteractableObjectBase
     [SerializeField] private Material onMaterial;
 
     [SerializeField] private List<GameObject> bulbs;
+
+    public bool switchLeftButtonFlag = false;
+    public bool switchRightButtonFlag = false;
 
     private void Start()
     {
@@ -108,7 +113,9 @@ public class LightSwitch : InteractableObjectBase
             if (value > 60f && value < 150f)
             {
                 RightButton.SetActive(true);
-                LeftButton.SetActive(false);
+
+                switchRightButtonFlag = true;
+                switchLeftButtonFlag = false;
 
                 if (Input.GetKeyDown(interactionKey3) && !switchLock)
                 {
@@ -138,7 +145,9 @@ public class LightSwitch : InteractableObjectBase
             else if (value < -60f && value > -150f)
             {
                 LeftButton.SetActive(true);
-                RightButton.SetActive(false);
+
+                switchLeftButtonFlag = true;
+                switchRightButtonFlag = false;
 
                 if (Input.GetKeyDown(interactionKey1) && !switchLock)
                 {
@@ -167,14 +176,9 @@ public class LightSwitch : InteractableObjectBase
             }
             else
             {
-                RightButton.SetActive(false);
-                LeftButton.SetActive(false);
+                switchLeftButtonFlag = false;
+                switchRightButtonFlag = false;
             }
-        }
-        else
-        {
-            RightButton.SetActive(false);
-            LeftButton.SetActive(false);
         }
         
     }
