@@ -13,18 +13,43 @@ public class DirtyDishesTapManager : InteractableObjectBase
     public bool resetText = false;
     private int x = 0;
 
+    //bucket
+    [SerializeField] private DropSlotScript dropSlotBucket;
+    [SerializeField] private GameObject arrow;
+
+    private Material defaultArrowMaterial;
+    [SerializeField] private Material deniedArrowMaterial;
+
     // Start is called before the first frame update
     void Start()
     {
+        defaultArrowMaterial = arrow.transform.GetChild(0).GetComponent<MeshRenderer>().material;
+
         if (tapManager != null)
         {
             if(tapManager.dishesInTapList.Count == 0)
             {
                 interactText = "TAP";
+                dropSlotBucket.slotDenied = false;
+                foreach(Transform el in arrow.transform)
+                {
+                    if(el.GetComponent<MeshRenderer>())
+                    {
+                        el.GetComponent<MeshRenderer>().material = defaultArrowMaterial;
+                    }
+                }
             }
             else
             {
                 interactText = "DIRTY_DISHES";
+                dropSlotBucket.slotDenied = true;
+                foreach (Transform el in arrow.transform)
+                {
+                    if (el.GetComponent<MeshRenderer>())
+                    {
+                        el.GetComponent<MeshRenderer>().material = deniedArrowMaterial;
+                    }
+                }
             }
         }
     }
@@ -48,6 +73,15 @@ public class DirtyDishesTapManager : InteractableObjectBase
                         if(x==0)
                         {
                             interactText = "TAP";
+
+                            dropSlotBucket.slotDenied = false;
+                            foreach (Transform el1 in arrow.transform)
+                            {
+                                if (el1.GetComponent<MeshRenderer>())
+                                {
+                                    el1.GetComponent<MeshRenderer>().material = defaultArrowMaterial;
+                                }
+                            }
                         }
 
                         break;
@@ -60,6 +94,15 @@ public class DirtyDishesTapManager : InteractableObjectBase
             {
                 //add obj to dirty dishes list
                 tapManager.AddDishToDirtyDishesList(pickUpManager.lastSelectedObj);
+
+                dropSlotBucket.slotDenied = true;
+                foreach (Transform el in arrow.transform)
+                {
+                    if (el.GetComponent<MeshRenderer>())
+                    {
+                        el.GetComponent<MeshRenderer>().material = deniedArrowMaterial;
+                    }
+                }
             }
             
         }

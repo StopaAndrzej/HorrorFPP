@@ -26,6 +26,9 @@ public class TapHandle : InteractableObjectBase
     [SerializeField] private float lowestWaterLevel;
     [SerializeField] private float highestWaterLevel = 1.707f;
 
+    //additional for specific obj
+    public GameObject objInTap;
+
     private void Start()
     {
         closedPos = this.GetComponent<Transform>().position;
@@ -84,11 +87,31 @@ public class TapHandle : InteractableObjectBase
     {
         if (waterOn)
         {
-            waterTap.GetComponent<Transform>().localPosition = new Vector3(waterTap.GetComponent<Transform>().localPosition.x, Mathf.Lerp(waterTap.GetComponent<Transform>().localPosition.y, highestWaterLevel, Time.deltaTime * 0.1f), waterTap.GetComponent<Transform>().localPosition.z);
+            if(objInTap!=null)
+            {
+                if(objInTap.GetComponent<BucketScript>())
+                {
+                    objInTap.GetComponent<BucketScript>().waterOn = true;
+                }
+            }
+            else
+            {
+                waterTap.GetComponent<Transform>().localPosition = new Vector3(waterTap.GetComponent<Transform>().localPosition.x, Mathf.Lerp(waterTap.GetComponent<Transform>().localPosition.y, highestWaterLevel, Time.deltaTime * 0.1f), waterTap.GetComponent<Transform>().localPosition.z);
+            }
         }
         else
         {
-            waterTap.GetComponent<Transform>().localPosition = new Vector3(waterTap.GetComponent<Transform>().localPosition.x, Mathf.Lerp(waterTap.GetComponent<Transform>().localPosition.y, lowestWaterLevel, Time.deltaTime * 0.1f), waterTap.GetComponent<Transform>().localPosition.z);
+            if (objInTap != null)
+            {
+                if (objInTap.GetComponent<BucketScript>())
+                {
+                    objInTap.GetComponent<BucketScript>().waterOn = false;
+                }
+            }
+            else
+            {
+                waterTap.GetComponent<Transform>().localPosition = new Vector3(waterTap.GetComponent<Transform>().localPosition.x, Mathf.Lerp(waterTap.GetComponent<Transform>().localPosition.y, lowestWaterLevel, Time.deltaTime * 0.1f), waterTap.GetComponent<Transform>().localPosition.z);
+            }
         }
     }
 }

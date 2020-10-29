@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DropSlotScript : MonoBehaviour
 {
-    private GameObject arrow;
+    public GameObject arrow;
     private BoxCollider collider;
     public Transform dropPos;
 
@@ -14,6 +14,8 @@ public class DropSlotScript : MonoBehaviour
     [SerializeField] private float maxScale = 1.2f;
 
     private bool activate;
+    public bool slotEmpty = true;
+    public bool slotDenied = false;
 
     private void Start()
     {
@@ -48,7 +50,7 @@ public class DropSlotScript : MonoBehaviour
         activate = true;
     }
 
-    public void DeactivateDrop()
+    public  void DeactivateDrop()
     {
         arrow.SetActive(false);
         collider.enabled = false;
@@ -63,20 +65,6 @@ public class DropSlotScript : MonoBehaviour
     public void ShowArrow()
     {
         arrow.SetActive(true);
-    }
-
-    private void FixedUpdate()
-    {
-        if(activate)
-        {
-            CalculateScale();
-        }
-    }
-
-    void CalculateScale()
-    {
-        float distance = Vector3.Distance(player.transform.position, this.gameObject.transform.position);
-       // Debug.Log(distance);
     }
 
 }

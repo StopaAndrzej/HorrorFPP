@@ -44,6 +44,7 @@ public class PickUpManager : MonoBehaviour
     private Color dropOriginalPosColor = new Color(0.333f, 0.384f, 0.576f, 0.6f);
     private Color dropNormalColor = new Color(0.176f, 0.176f, 0.176f, 0.6f);
     private Color dropActionColor = new Color(0.878f, 0.650f, 0.384f, 0.6f);
+    private Color dropDeniedColor = new Color(1f, 0f, 0f, 0.6f);
 
     //make a distinction between interaction stages of selected obj
     public enum enManagerItemMode { clear ,isGrabbed, returnToPos, getToPos ,inHand, inspectMode, dropped, moveToHand, wait};
@@ -97,6 +98,7 @@ public class PickUpManager : MonoBehaviour
     private bool objDestructible;
     private bool stopBlinkText = false;
     private bool inspectObjOnly = false;
+    private bool allowGravity;
 
     [SerializeField] private GameObject binFolderParent;
     [SerializeField] private PlayerRHand playerRHand;
@@ -162,6 +164,17 @@ public class PickUpManager : MonoBehaviour
 
         if (selectedObject.GetComponent<ItemBase>())
             selectedObject.GetComponent<ItemBase>().SpecialActionAfterGrab();
+
+        if (selectedObject.GetComponent<ItemManager>())
+        {
+            if(selectedObject.GetComponent<ItemManager>().dropSlot != null)
+            {
+                selectedObject.GetComponent<ItemManager>().dropSlot.GetComponent<DropSlotScript>().slotEmpty = true;
+                selectedObject.GetComponent<ItemManager>().dropSlot = null;
+            }
+        }
+
+
 
         lastSelectedObj = selectedObject;
         objDestructible = destructible;
@@ -269,11 +282,20 @@ public class PickUpManager : MonoBehaviour
 
     private void PutAway(GameObject selectedObject)
     {
-         if (selectedObject.GetComponent<Rigidbody>())
-         {
-             selectedObject.GetComponent<Rigidbody>().useGravity = true;
-             selectedObject.GetComponent<Rigidbody>().isKinematic = false;
-         }
+        if (selectedObject.GetComponent<Rigidbody>())
+        {
+            if (allowGravity)
+            {
+                selectedObject.GetComponent<Rigidbody>().useGravity = true;
+                selectedObject.GetComponent<Rigidbody>().isKinematic = false;
+            }
+            else
+            {
+                selectedObject.GetComponent<Rigidbody>().useGravity = false;
+                selectedObject.GetComponent<Rigidbody>().isKinematic = true;
+            }
+        }
+
 
         selectedObject.GetComponent<BoxCollider>().enabled = true;
 
@@ -920,15 +942,22 @@ public class PickUpManager : MonoBehaviour
         {
             case 0:
                 color1 = dropNormalColor;
+                allowGravity = true;
                 break;
             case 1:
                 color1 = dropOriginalPosColor;
+                allowGravity = true;
                 break;
             case 2:
+                allowGravity = false;
                 color1 = dropActionColor;
                 break;
+            case 3:
+                color1 = dropDeniedColor;
+                break;
             default:
-                color1 = dropNormalColor;
+                color1 = dropDeniedColor;
+                allowGravity = true;
                 break;
         }
 
@@ -958,12 +987,21 @@ public class PickUpManager : MonoBehaviour
         }
         else
         {
+            //not used, for except. if has no dropPos objects
             copiedObj.transform.position = hitObj.transform.position;
         }
 
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKeyDown(KeyCode.Mouse0) && !hitObj.transform.parent.GetComponent<DropSlotScript>().slotDenied)
         {
             originGrabbedItemRot = hitObj.transform.parent.GetComponent<DropSlotScript>().dropPos.rotation;
+            hitObj.transform.parent.GetComponent<DropSlotScript>().slotEmpty = false;
+            lastSelectedObj.transform.parent = hitObj.transform.parent.gameObject.transform;
+
+            if(lastSelectedObj.GetComponent<ItemManager>())
+            {
+                lastSelectedObj.GetComponent<ItemManager>().dropSlot = hitObj.transform.parent.gameObject;
+            }
+
             itemMode = enManagerItemMode.returnToPos;
             playerMove.inspectMode = true;
         }

@@ -18,6 +18,8 @@ public class ItemManager : InteractableObjectBase
     public float objInspectModeOffset = 1;
     [SerializeField] private float txtTitleOffset = 0;
 
+    public GameObject dropSlot = null;
+
     private void Start()
     {
         if (pickUpManager == null)

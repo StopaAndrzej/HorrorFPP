@@ -74,6 +74,11 @@ public class FindInteraction : MonoBehaviour
                     pickUpManager.visualObjectPutArea(hit.transform.gameObject, 2);
                     lastFrameRayHitSurface = true;
                 }
+                else if (hit.collider.CompareTag("SurfaceDenied"))
+                {
+                    pickUpManager.visualObjectPutArea(hit.transform.gameObject, 3);
+                    lastFrameRayHitSurface = true;
+                }
 
                 else
                 {
